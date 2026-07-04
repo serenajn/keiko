@@ -169,15 +169,16 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   color:var(--ink);white-space:nowrap;
 }
 .scheme small{font-size:.68rem;color:var(--ink-2);font-family:var(--sans);display:block;text-align:right;margin-top:-.1rem}
-.cue{font-size:.78rem;color:var(--ink-2);font-style:italic;margin-top:.3rem;max-width:34ch;line-height:1.5}
-.choices{display:flex;flex-wrap:wrap;gap:.2rem 1.1rem;margin-top:.55rem}
+.choices{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.65rem;align-items:center}
 .choice{
-  font-size:.8rem;color:var(--ink-2);
-  padding:.25rem 0;
-  border-bottom:1.5px solid transparent;
+  font-size:.76rem;color:var(--ink-2);
+  padding:.34rem .85rem;
+  border:1px solid var(--line);border-radius:999px;
+  transition:background .18s,color .18s,border-color .18s;
 }
-.choice small{font-size:.64rem;color:var(--ink-3);margin-left:.3em}
-.choice.sel{color:var(--ink);font-weight:500;border-bottom-color:var(--ink)}
+.choice small{font-size:.62rem;color:var(--ink-3);margin-left:.35em}
+.choice.sel{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:500}
+.choice.sel small{color:color-mix(in srgb,var(--paper) 70%,transparent)}
 
 /* log controls */
 .logrow{display:flex;align-items:center;gap:1rem;margin-top:.75rem}
@@ -204,50 +205,58 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 .sessswap select{
   appearance:none;-webkit-appearance:none;
-  background:transparent;border:none;border-bottom:1.5px solid rgba(38,39,35,.25);
-  border-radius:0;padding:.2rem 1.15rem .2rem 0;
+  border:1px solid rgba(38,39,35,.2);border-radius:999px;
+  padding:.34rem 1.6rem .34rem .9rem;
   font:inherit;font-weight:600;color:var(--ink);letter-spacing:.08em;text-transform:uppercase;
+  background-color:color-mix(in srgb,var(--paper) 55%,transparent);
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2373746d' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right .05rem center;background-size:.6rem;
+  background-repeat:no-repeat;background-position:right .7rem center;background-size:.6rem;
   max-width:16rem;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;
 }
-.sessswap select:focus{outline:none;border-bottom-color:var(--ink)}
+.sessswap select:focus{outline:none;border-color:var(--ink)}
+.today-jump{
+  font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--hanko);border:1px solid rgba(178,58,43,.4);border-radius:999px;
+  padding:.22rem .65rem;margin-left:.7em;vertical-align:.1em;
+}
 
 /* exercise swap */
 .swaplink{
-  font-size:.74rem;color:var(--ink-3);padding:.25rem 0;
-  text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line);
+  font-size:.74rem;color:var(--ink-2);
+  padding:.34rem .85rem;border:1px dashed var(--ink-3);border-radius:999px;
 }
 .swapin{
-  width:100%;margin-top:.55rem;
-  background:transparent;border:none;border-bottom:1.5px solid var(--ink-3);
-  padding:.35rem 0;font:inherit;font-size:.9rem;outline:none;color:var(--ink);
+  width:100%;margin-top:.6rem;
+  background:var(--paper-2);border:none;border-radius:.65rem;
+  padding:.6rem .85rem;font:inherit;font-size:.9rem;outline:none;color:var(--ink);
 }
 .swapin::placeholder{color:var(--ink-3)}
 .subnote{font-size:.7rem;color:var(--hanko);margin-left:.1rem}
-.wt{margin-left:auto;display:flex;align-items:center;gap:.15rem}
+.wt{
+  margin-left:auto;display:flex;align-items:center;gap:.05rem;
+  background:var(--paper-2);border-radius:999px;padding:.18rem .3rem;
+}
 .wt button{
-  width:1.9rem;height:1.9rem;border-radius:50%;
-  color:var(--ink-2);font-family:var(--serif);font-size:1rem;
+  width:1.8rem;height:1.8rem;border-radius:50%;
+  color:var(--ink-2);font-size:1rem;
   display:grid;place-items:center;
 }
-.wt button:active{background:var(--paper-2)}
+.wt button:active{background:var(--paper)}
 .wtin{
-  width:3.1rem;text-align:right;
-  background:transparent;border:none;border-bottom:1px solid var(--line);
-  font-family:var(--serif);font-size:1.05rem;font-weight:600;
-  padding:.1rem .15rem;outline:none;
+  width:2.8rem;text-align:center;
+  background:transparent;border:none;
+  font-family:var(--serif);font-size:1rem;font-weight:600;
+  padding:.1rem 0;outline:none;
 }
-.wtin:focus{border-bottom-color:var(--ink)}
 .wtin::placeholder{color:var(--ink-3);font-weight:400}
-.wt .unit{font-size:.68rem;color:var(--ink-2);margin-left:.1rem}
+.wt .unit{font-size:.66rem;color:var(--ink-2);margin:0 .2rem 0 -.05rem}
 .repsin{
-  width:2.6rem;text-align:center;
-  background:transparent;border:none;border-bottom:1px solid var(--line);
-  font-family:var(--serif);font-size:.95rem;
-  padding:.1rem;outline:none;color:var(--ink);
+  width:3.2rem;text-align:center;
+  background:var(--paper-2);border:none;border-radius:999px;
+  font-family:var(--serif);font-size:.95rem;font-weight:600;
+  padding:.44rem .3rem;outline:none;color:var(--ink);
 }
-.repsin::placeholder{color:var(--ink-3);font-family:var(--sans);font-size:.68rem;letter-spacing:.05em}
+.repsin::placeholder{color:var(--ink-3);font-family:var(--sans);font-size:.66rem;letter-spacing:.05em;font-weight:400}
 .lasthint{font-size:.68rem;color:var(--ink-3);margin-top:.45rem;text-align:right}
 .lasthint b{color:var(--ink-2);font-weight:500}
 .skipnote{font-size:.72rem;color:var(--ink-3);font-style:italic;padding:.8rem 0;text-align:center}
@@ -645,6 +654,8 @@ for (const d of Object.values(PLAN)) {
     else NAMES[it.id] = it.name;
   }
 }
+NAMES["mat-pilates"] = "Mat Pilates";
+NAMES["light-walk"] = "Light walk";
 const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "bulgarian-split-squat":"contralateral DB" };
 
 /* Exercise Library — generated from the vault's Exercise Library.md by sync-library.py.
@@ -898,7 +909,7 @@ function renderToday(){
   let h = `<div class="dayhead" data-day="${sessKey}">
     <div class="datebar">
       <button class="dnav" data-act="daynav" data-dir="-1" aria-label="previous day">‹</button>
-      <div class="dateline">${dateline}${isToday?'<span class="today-tag">· today</span>':''}</div>
+      <div class="dateline">${dateline}${isToday?'<span class="today-tag">· today</span>':'<button class="today-jump" data-act="gotoday">↩ today</button>'}</div>
       <button class="dnav" data-act="daynav" data-dir="1" aria-label="next day">›</button>
     </div>
     <h1>${esc(day.title).replace(/\n/g,"<br>")}</h1>
@@ -921,16 +932,42 @@ function renderToday(){
   if (day.note) h += `<div class="daynote">${day.note}</div>`;
 
   if (day.recovery){
-    h += `<p class="intro">${esc(day.intro)}</p>`;
-    day.blocks.forEach((b,bi)=>{
-      h += `<div class="block"><h3>${esc(b.name)}<span>${esc(b.time)}</span></h3><ul>`;
-      b.items.forEach((item,ii)=>{
-        const cid = `w${bi}-${ii}`;
-        const done = r && r.checks && r.checks[cid];
-        h += `<li class="${done?'done':''}" data-act="check" data-cid="${cid}"><span class="c"></span><span>${esc(item)}</span></li>`;
+    const mode = (r && r.wedMode) || "posture";
+    h += `<div class="choices" style="margin:1.1rem 1.25rem 0">
+      <button class="choice ${mode==='posture'?'sel':''}" data-act="wedmode" data-mode="posture">Posture &amp; mobility</button>
+      <button class="choice ${mode==='pilates'?'sel':''}" data-act="wedmode" data-mode="pilates">Mat Pilates</button>
+      <button class="choice ${mode==='walk'?'sel':''}" data-act="wedmode" data-mode="walk">Light walk</button>
+    </div>`;
+    if (mode==="posture"){
+      day.blocks.forEach((b,bi)=>{
+        h += `<div class="block"><h3>${esc(b.name)}<span>${esc(b.time)}</span></h3><ul>`;
+        b.items.forEach((item,ii)=>{
+          const cid = `w${bi}-${ii}`;
+          const done = r && r.checks && r.checks[cid];
+          h += `<li class="${done?'done':''}" data-act="check" data-cid="${cid}"><span class="c"></span><span>${esc(item)}</span></li>`;
+        });
+        h += `</ul></div>`;
       });
-      h += `</ul></div>`;
-    });
+    } else {
+      const exId = mode==="pilates" ? "mat-pilates" : "light-walk";
+      const line = mode==="pilates"
+        ? "20–30 min of deep core and lengthening."
+        : "A relaxed walk, 25–35 min. Steps in the bank.";
+      const entry = r && r.entries && r.entries[exId];
+      const done = !!(entry && entry.done);
+      h += `<div class="workwrap"><ol class="work"><li style="--i:0">
+        <div class="exhead"><div>
+          <div class="exname">${esc(NAMES[exId])}</div>
+          <div class="exdetail">${esc(line)}</div>
+        </div></div>
+        <div class="logrow">
+          <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${exId}" aria-pressed="${done}">
+            <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
+          </button>
+          <input class="repsin" inputmode="numeric" data-ex="${exId}" data-mins="1" value="${entry&&entry.mins?esc(entry.mins):""}" placeholder="min" aria-label="minutes" style="margin-left:auto">
+        </div>
+      </li></ol></div>`;
+    }
     h += extrasBlock(r, dk);
     h += stampZone(r, dk);
     $("#view-today").innerHTML = h;
@@ -984,7 +1021,6 @@ function renderToday(){
       ? `<button class="swaplink" data-act="unswap" data-key="${ikey}">undo swap</button>`
       : `<button class="swaplink" data-act="swap" data-key="${ikey}">swap</button>`;
     h += `</div>`;
-    if (!sub && it.cue) h += `<div class="cue">${esc(it.cue)}</div>`;
     if (ui.swapping===ikey){
       h += `<input class="swapin" list="exlist" data-key="${ikey}" placeholder="What are you doing instead?" aria-label="replacement exercise">`;
     }
@@ -1072,12 +1108,12 @@ function renderLog(){
     h += `<div class="daydetail">
       <div class="dl-date">${WDAYS[d.getDay()]} · ${MONTHS[d.getMonth()]} ${d.getDate()}</div>
       <h4>${esc(plan.title).replace(/\n/g," ")} ${w&&w.stamped?'<span style="color:var(--hanko);font-size:.72rem;font-family:var(--sans);font-weight:600;letter-spacing:.1em">✓ COMPLETE</span>':''}</h4>`;
-    const entries = w ? Object.entries(w.entries||{}).filter(([,e])=>e && (e.weight!=null&&e.weight!=="" || e.done || (e.sets||[]).some(Boolean) || e.reps)) : [];
+    const entries = w ? Object.entries(w.entries||{}).filter(([,e])=>e && (e.weight!=null&&e.weight!=="" || e.done || (e.sets||[]).some(Boolean) || e.reps || e.mins)) : [];
     if (entries.length){
       h += `<ul>`;
       for (const [ex,e] of entries){
         const done = e.done || (e.sets||[]).some(Boolean);
-        const right = (e.weight!=null&&e.weight!=="") ? `${e.weight} lb${e.reps?`<small>× ${esc(e.reps)}</small>`:''}` : (e.reps?`× ${esc(e.reps)}`:'—');
+        const right = (e.weight!=null&&e.weight!=="") ? `${e.weight} lb${e.reps?`<small>× ${esc(e.reps)}</small>`:''}` : e.mins ? `${esc(e.mins)} min` : (e.reps?`× ${esc(e.reps)}`:'—');
         h += `<li><span>${esc(nameOf(ex))}${done?' <span style="color:var(--hanko)">✓</span>':''}</span><span class="r">${right}</span></li>`;
       }
       h += `</ul>`;
@@ -1237,6 +1273,14 @@ document.addEventListener("click", e=>{
     const d = fromKey(ui.viewDate); d.setDate(d.getDate()+Number(t.dataset.dir));
     ui.viewDate = key(d); render(); return;
   }
+  if (act==="gotoday"){
+    ui.viewDate = key(new Date()); renderToday(); return;
+  }
+  if (act==="wedmode"){
+    const r = rec(ui.viewDate, true);
+    r.wedMode = t.dataset.mode;
+    save(); renderToday(); return;
+  }
   if (act==="check"){
     const r = rec(ui.viewDate, true);
     r.checks[t.dataset.cid] = !r.checks[t.dataset.cid];
@@ -1345,7 +1389,8 @@ document.addEventListener("change", e=>{
   if (el.classList.contains("repsin")){
     const r = rec(ui.viewDate, true);
     const entry = r.entries[el.dataset.ex] = r.entries[el.dataset.ex] || {};
-    entry.reps = el.value.trim();
+    if (el.dataset.mins) entry.mins = el.value.trim();
+    else entry.reps = el.value.trim();
     save();
   }
   if (el.id==="sessSel"){
