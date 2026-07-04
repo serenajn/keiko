@@ -273,7 +273,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   display:flex;flex-direction:column;align-items:center;gap:.5rem;
   font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
 }
-.stamped-line svg{width:56px;height:56px;transform:rotate(-7deg)}
+.stamped-line .ham{margin-bottom:.2rem}
 .unstamp{font-size:.62rem;color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;padding:.3rem .6rem}
 
 /* rest day */
@@ -370,13 +370,52 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .pempty{margin:3rem 1.5rem;text-align:center}
 .pempty p{font-size:.85rem;color:var(--ink-2);font-style:italic;line-height:1.7}
 
+/* ───────── extras ───────── */
+.addex{
+  display:flex;align-items:center;width:100%;text-align:left;
+  padding:.35rem 0;color:var(--ink-2);font-size:.85rem;
+}
+.addex span{
+  display:inline-grid;place-items:center;flex:none;
+  width:1.55rem;height:1.55rem;border:1.5px dashed var(--ink-3);border-radius:50%;
+  margin-right:.7rem;color:var(--ink-2);font-size:1rem;line-height:1;
+}
+
+/* ───────── library ───────── */
+.libsearch{
+  width:100%;background:var(--paper-2);border:none;border-radius:.65rem;
+  padding:.7rem .95rem;font:inherit;font-size:.9rem;outline:none;
+  margin-top:.8rem;color:var(--ink);
+}
+.libsearch::placeholder{color:var(--ink-3)}
+.libwrap{margin:0 1.25rem}
+.libcat{
+  font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);
+  padding:1.5rem 0 .35rem;border-bottom:1px solid var(--line);
+}
+.librow{border-bottom:1px solid var(--line-soft)}
+.librow>button{width:100%;text-align:left;padding:.85rem 0;display:block}
+.librow .lname{font-weight:600;font-size:.95rem}
+.librow .lhits{font-size:.74rem;color:var(--ink-2);margin-top:.15rem;line-height:1.5}
+.libcues{padding:0 0 1.1rem 1.15rem;font-size:.82rem;color:var(--ink-2);line-height:1.55}
+.libcues li{margin:.35rem 0;list-style:disc}
+.libnone{padding:2rem 0;text-align:center;font-size:.85rem;color:var(--ink-3);font-style:italic}
+
+/* ───────── hamster ───────── */
+.ham{width:62px;height:auto;cursor:pointer}
+.ham.dance{animation:hamdance .5s steps(1) 6;transform-origin:50% 92%}
+@keyframes hamdance{
+  0%,100%{transform:rotate(-7deg)}
+  50%{transform:rotate(7deg) translateY(-1px)}
+}
+
 /* ───────── tab bar ───────── */
 .tabbar{
   position:fixed;bottom:0;left:0;right:0;z-index:10;
   background:color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   border-top:1px solid var(--line-soft);
-  display:flex;justify-content:center;gap:3.2rem;
+  display:flex;justify-content:center;gap:1.4rem;
   padding:.55rem 0 calc(.6rem + env(safe-area-inset-bottom));
 }
 .tab{
@@ -404,12 +443,14 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
     <section id="view-today"></section>
     <section id="view-log" hidden></section>
     <section id="view-progress" hidden></section>
+    <section id="view-library" hidden></section>
   </main>
 </div>
 <nav class="tabbar" aria-label="views">
   <button class="tab active" data-tab="today"><span class="e">Today</span><span class="tickdot"></span></button>
   <button class="tab" data-tab="log"><span class="e">Record</span><span class="tickdot"></span></button>
   <button class="tab" data-tab="progress"><span class="e">Progress</span><span class="tickdot"></span></button>
+  <button class="tab" data-tab="library"><span class="e">Library</span><span class="tickdot"></span></button>
 </nav>
 <input type="file" id="importFile" accept="application/json" hidden>
 <datalist id="exlist"></datalist>
@@ -606,6 +647,73 @@ for (const d of Object.values(PLAN)) {
 }
 const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "bulgarian-split-squat":"contralateral DB" };
 
+/* Exercise Library — generated from the vault's Exercise Library.md by sync-library.py.
+   Do not edit by hand; re-run the script instead. */
+/*__LIBRARY_START__*/
+const LIBRARY = [
+{"id": "hip-thrust", "name": "Hip thrust", "cat": "Lower body", "hits": "glutes (primary), hamstrings, quads (no secondary).", "cues": ["Drive through heels, not toes.", "Squeeze glutes at the top so hard it almost feels like a cramp. Pause 1 second.", "Posterior pelvic tilt at the top (tuck tailbone under, \"hide your zipper\").", "Lower under control. Don't slam the bar down."]},
+{"id": "romanian-deadlift", "name": "Romanian deadlift (RDL)", "cat": "Lower body", "hits": "hamstrings (primary), glutes (secondary), erector spinae (stabilizer).", "cues": ["Hinge from the hips, not the waist. Push your butt straight back like you're closing a car door with your hips.", "Bar/dumbbells stay close to the legs the entire time, almost dragging.", "Lower until you feel a stretch in the hamstrings (usually mid-shin to just below the knee, not the floor).", "Back stays flat. Soft round is fine but no significant arching or rounding.", "Drive hips forward to stand, squeeze glutes at the top."]},
+{"id": "bulgarian-split-squat", "name": "Bulgarian split squat", "cat": "Lower body", "hits": "quads, glutes, adductors.", "cues": ["Most of the weight on the front leg, rear leg is just a kickstand.", "Lower straight down (not forward) until the back knee gently kisses the floor.", "Drive through the whole front foot (not just heel, not just toes) to stand.", "Slight forward torso lean is fine and biases glutes."]},
+{"id": "goblet-squat", "name": "Goblet squat", "cat": "Lower body", "hits": "quads, glutes, core.", "cues": ["Sit back AND down (not just down).", "Knees track over the middle toes, follow the direction the toes point.", "Go to at least parallel (hip crease level with the top of the knee), deeper if mobility allows.", "Chest up, elbows tuck inside the knees at the bottom.", "Drive through the whole foot, push the floor away."]},
+{"id": "walking-lunge", "name": "Walking lunge", "cat": "Lower body", "hits": "quads, glutes, hamstrings.", "cues": ["Long stride, longer than feels natural. Long stride = more glute, short stride = more quad.", "Front knee tracks over ankle, back knee descends straight down toward the floor.", "Torso upright, slight forward lean biases glutes.", "Drive through the heel of the front foot to step into the next rep.", "Hold dumbbells at sides, or goblet style."]},
+{"id": "step-up", "name": "Step-up", "cat": "Lower body", "hits": "glutes, quads.", "cues": ["Place the whole foot on the bench, not just the toes.", "Drive through the heel of the working leg to stand up tall.", "The trailing leg should not push off the floor (cheats the working leg).", "Lower under control, don't drop."]},
+{"id": "leg-press", "name": "Leg press", "cat": "Lower body", "hits": "quads, glutes (depends on foot position).", "cues": ["High foot placement = more glutes and hamstrings. Low = more quads. For your goals, place feet high on the platform.", "Feet shoulder-width or slightly wider, slight turnout.", "Lower until thighs come close to chest (deeper = more glute) but stop before the lower back rounds off the pad.", "Drive through whole foot.", "Don't lock out the knees at the top."]},
+{"id": "cable-kickback", "name": "Cable kickback", "cat": "Lower body", "hits": "glutes (especially the upper glute, gluteus medius involvement).", "cues": ["Drive the working leg back AND slightly up.", "Squeeze the glute hard at the end range. Pause 1 second.", "Lower under control. The negative is most of the work.", "Keep the working leg mostly straight (slight bend in the knee).", "Hips stay square, don't rotate the body to get extra range."]},
+{"id": "hip-abduction-machine", "name": "Hip abduction machine", "cat": "Lower body", "hits": "gluteus medius (upper glute, \"shelf\" of the glute).", "cues": ["Lean forward at the hips, ~30-45°. This is the single biggest cue. Sitting upright hits glute med some, but leaning forward dramatically increases activation.", "Push knees out against the pads, squeeze at the end range, pause 1 second.", "Slow controlled return, don't let the weight clang back."]},
+{"id": "seated-hamstring-curl", "name": "Seated hamstring curl", "cat": "Lower body", "hits": "hamstrings.", "cues": ["Pad sits just above the heel, on the lower calf.", "Knees aligned with the machine's pivot point.", "Pull the heels under the seat, full range.", "Squeeze hamstrings at the bottom, pause briefly.", "Slow eccentric (3-second count down)."]},
+{"id": "frog-pump", "name": "Frog pump", "cat": "Lower body", "hits": "glutes (isolation, constant tension). Great home/express glute finisher, no equipment needed.", "cues": ["Drive through the outer edges of the feet, push the hips up purely by squeezing the glutes.", "Pause hard at the top. Small, controlled range. High reps."]},
+{"id": "banded-standing-glute-kickback", "name": "Banded standing glute kickback (home option)", "cat": "Lower body", "hits": "glutes (upper glute). The home / no-cable substitute for the cable kickback.", "cues": ["Drive one leg straight back and slightly up against the band, squeeze at the top, slow return.", "Hips stay square, working leg mostly straight."]},
+{"id": "45-back-extension", "name": "45° back extension (glute-ham)", "cat": "Lower body", "hits": "glutes and hamstrings (posterior chain), lower-back endurance.", "cues": ["Round slightly and hinge down at the hips, then drive back up by squeezing the glutes — think hip extension, not spine extension.", "Stop at a straight body line. Do not hyperextend the lower back.", "Hold a plate at the chest to add load once bodyweight is easy."]},
+{"id": "single-leg-rdl", "name": "Single-leg RDL", "cat": "Lower body", "hits": "hamstrings, glutes, balance and hip stability. Knee-friendly and home-friendly.", "cues": ["Hinge at the hip, free leg extends straight back as a counterweight.", "Hips stay square — don't let the free-leg hip open up to the side.", "Feel the standing-leg hamstring stretch, then drive the hip forward to stand.", "Slow and controlled; this doubles as a balance drill."]},
+{"id": "reverse-lunge", "name": "Reverse lunge", "cat": "Lower body", "hits": "glutes, quads, hamstrings. Easier on the knees than forward or walking lunges.", "cues": ["Step straight back, drop the back knee toward the floor.", "Keep the weight in the front heel, drive through the front foot to return to standing.", "Slight forward torso lean biases the glutes."]},
+{"id": "sumo-db-squat", "name": "Sumo DB squat", "cat": "Lower body", "hits": "glutes, quads, adductors (inner thigh).", "cues": ["Sit straight down between the hips, knees track out over the toes, chest up.", "Drive through the heels, squeeze glutes at the top."]},
+{"id": "curtsy-lunge", "name": "Curtsy lunge", "cat": "Lower body", "hits": "gluteus medius (upper/side glute, the \"shelf\"), quads.", "cues": ["Step one leg diagonally back behind the other (like a curtsy), lower until the front thigh is near parallel.", "Drive back up through the front heel. Controlled — this is a stability movement, not a heavy lift."]},
+{"id": "banded-lateral-walk", "name": "Banded lateral walk (home option)", "cat": "Lower body", "hits": "gluteus medius. Home substitute for the hip abduction machine.", "cues": ["Stay low the whole set, step sideways keeping constant tension on the band.", "Don't let the feet click together. Toes forward, hips level."]},
+{"id": "tricep-dip", "name": "Tricep dip", "cat": "Upper body", "hits": "", "cues": []},
+{"id": "db-bench-press", "name": "DB bench press (or incline DB press)", "cat": "Upper body", "hits": "chest (primary), front delts, triceps.", "cues": ["Pinch shoulder blades down and together against the bench, keep them there the whole set.", "Lower the dumbbells under control until they're just outside the lower chest.", "Slight pause at the bottom, then press up and slightly together (not straight up).", "Don't lock the elbows out hard at the top."]},
+{"id": "push-up", "name": "Push-up (and incline regression)", "cat": "Upper body", "hits": "chest, front delts, triceps, core.", "cues": ["Hands slightly wider than shoulders.", "Body in a straight line from head to heels: no sagging hips, no piked butt.", "Elbows at ~45° to the body (not flared straight out).", "Lower until chest is an inch from the floor (or whatever surface).", "Push the floor away to come up."]},
+{"id": "lat-pulldown", "name": "Lat pulldown", "cat": "Upper body", "hits": "lats (primary), biceps, mid-back.", "cues": ["Initiate the pull by depressing the shoulder blades (pull them down toward the back pockets), then bend the elbows.", "Pull the bar to the upper chest, not behind the neck.", "Squeeze lats at the bottom, then control the bar back up under load.", "Don't shrug at the top."]},
+{"id": "seated-cable-row", "name": "Seated cable row", "cat": "Upper body", "hits": "mid-back (rhomboids, mid traps), lats, rear delts, biceps.", "cues": ["Sit upright, slight lean back ~10°.", "Pull the handle to the lower sternum / upper abs.", "Lead with the elbows, drive them straight back behind the torso.", "Squeeze shoulder blades together at the end. Pause 1 second.", "Slow return, get a full stretch at the start of each rep."]},
+{"id": "db-shoulder-press", "name": "DB shoulder press (seated)", "cat": "Upper body", "hits": "front and side delts (primary), triceps. Biggest visual lever for arm appearance.", "cues": ["Press up and slightly inward, dumbbells meet just above the head (not behind it).", "Don't fully lock out elbows.", "Lower under control until upper arms are at ~90° (forearms close to vertical).", "Ribs down, don't arch the lower back to press more weight."]},
+{"id": "db-lateral-raise", "name": "DB lateral raise", "cat": "Upper body", "hits": "side delts. Single highest ROI exercise for shoulder shape.", "cues": ["Light dumbbells. Most people use way too much weight here.", "Slight forward lean at the hips (~10°).", "Soft bend in the elbows, lock that angle in.", "Raise the dumbbells out to the sides until upper arms are parallel to the floor, no higher.", "Lead with the pinkies/elbows, not the hands. Like pouring out a pitcher of water.", "Slow controlled lower (3 seconds down)."]},
+{"id": "face-pull", "name": "Face pull", "cat": "Upper body", "hits": "rear delts, mid traps, rotator cuff. Best posture exercise that exists.", "cues": ["Pull the rope toward your face, separating the ends so they end up beside the ears.", "End position: hands beside the ears, palms facing forward, elbows high and wide.", "Squeeze the rear delts and the area between the shoulder blades.", "Light weight, high reps. This is a finishing exercise, not a heavy lift."]},
+{"id": "tricep-rope-pushdown", "name": "Tricep rope pushdown", "cat": "Upper body", "hits": "triceps (all three heads, mostly long and lateral).", "cues": ["Rope attachment at the top of a cable stack.", "Elbows pinned at the sides, stay there the whole set.", "Start with elbows at 90°, push the rope down and slightly apart at the bottom.", "At the bottom, palms face backward, hands separate as the elbows extend.", "Squeeze triceps, pause 1 second.", "Slow return, control the eccentric."]},
+{"id": "hammer-curl", "name": "Hammer curl", "cat": "Upper body", "hits": "brachialis (the muscle between bicep and tricep, makes the arm look thicker from the side without bulk), brachioradialis (forearm), biceps.", "cues": ["Dumbbells at sides, palms facing each other (neutral grip), keep that grip the whole set.", "Elbows pinned at the sides, don't let them drift forward.", "Curl the dumbbells up to shoulder height.", "Squeeze briefly at the top, slow lower."]},
+{"id": "assisted-pull-up", "name": "Assisted pull-up", "cat": "Upper body", "hits": "lats (primary), biceps, mid-back.", "cues": ["Start from a full hang, depress the shoulder blades first, then pull the chest toward the bar.", "Chin over the bar, then lower all the way down under control.", "Reduce the assistance (~5 lb) whenever you hit the top of the rep range — needing less over time is the whole point."]},
+{"id": "one-arm-db-row", "name": "One-arm DB row", "cat": "Upper body", "hits": "lats, mid-back, rear delts, biceps.", "cues": ["Pull the DB to the hip (not the armpit), elbow close to the body.", "Drive the elbow back and squeeze the shoulder blade. Slow lower, full stretch at the bottom."]},
+{"id": "db-tricep-kickback", "name": "DB tricep kickback", "cat": "Upper body", "hits": "triceps (long and lateral head).", "cues": ["Keep the upper arm still, extend only at the elbow until the arm is straight, palm facing in.", "Squeeze the tricep at lockout, slow return. Light weight — form first."]},
+{"id": "overhead-tricep-extension", "name": "Overhead tricep extension", "cat": "Upper body", "hits": "triceps (long-head emphasis — the part that adds size to the back of the arm).", "cues": ["Lower the DB behind the head by bending only at the elbows, get a stretch, then extend back up.", "Keep elbows pointing forward and tucked, ribs down."]},
+{"id": "skull-crusher", "name": "Skull crusher", "cat": "Upper body", "hits": "triceps (long head).", "cues": ["Keeping the upper arms still and vertical, bend at the elbows to lower the weight toward the forehead / just behind the head.", "Extend back up without locking out hard. Controlled tempo throughout."]},
+{"id": "close-grip-db-press", "name": "Close-grip DB press", "cat": "Upper body", "hits": "triceps (primary), inner chest, front delts.", "cues": ["Keep the DBs touching the whole set, elbows tucked close to the ribs (~30°).", "Lower to the lower chest, press straight up, squeeze the triceps at the top."]},
+{"id": "db-bicep-curl", "name": "DB bicep curl", "cat": "Upper body", "hits": "biceps.", "cues": ["Curl without swinging, keep the elbows fixed at the sides.", "Squeeze at the top, slow lower with a full stretch at the bottom. Standing or seated."]},
+{"id": "incline-db-curl", "name": "Incline DB curl", "cat": "Upper body", "hits": "biceps (long head — strong stretch position, great for the bicep peak).", "cues": ["Let the arms hang fully behind the torso for a deep stretch.", "Curl without letting the elbows travel forward, squeeze, slow lower. The stretched start is the whole point of this variation."]},
+{"id": "concentration-curl", "name": "Concentration curl", "cat": "Upper body", "hits": "biceps (peak), strict and low-momentum.", "cues": ["Curl slowly with zero body english, full squeeze at the top, full stretch at the bottom.", "This is a feel / finisher exercise — light weight, strict."]},
+{"id": "serratus-wall-slide", "name": "Serratus wall slide", "cat": "Upper body", "hits": "", "cues": []},
+{"id": "dead-bug", "name": "Dead bug", "cat": "Core", "hits": "deep core (transverse abdominis), anti-extension. Your Pilates background helps a lot here.", "cues": ["Slowly extend the opposite arm and leg toward the floor (right arm + left leg).", "Lower back stays glued to the floor the entire time. The moment it lifts, you've gone too far.", "Exhale slowly as you extend.", "Return to start, switch sides."]},
+{"id": "pallof-press", "name": "Pallof press", "cat": "Core", "hits": "core anti-rotation. Deep stabilizers. Excellent for waist appearance because it targets transverse abdominis without bulking obliques.", "cues": ["Press the handle straight out from the chest, fully extending the arms.", "The cable will try to pull you to rotate toward it. Resist that rotation.", "Hold the extended position for 1-2 seconds.", "Slow return, switch sides after the set."]},
+{"id": "side-plank", "name": "Side plank", "cat": "Core", "hits": "obliques (statically, doesn't bulk them like loaded side bends would), glute medius, deep core.", "cues": ["Forearm on the floor, elbow directly under the shoulder.", "Stack feet, or front foot in front of back foot for stability.", "Lift hips off the floor so the body forms a straight line.", "Squeeze glutes, ribs down.", "Hold."]},
+{"id": "plank", "name": "Plank", "cat": "Core", "hits": "", "cues": ["Forearms on the floor, elbows under shoulders.", "Body in a straight line from head to heels.", "Squeeze glutes, brace abs, ribs pulled down.", "Look at the floor just in front of the hands (neutral neck).", "Breathe."]},
+{"id": "hollow-hold", "name": "Hollow hold", "cat": "Core", "hits": "deep core, anterior chain. Pilates-adjacent.", "cues": ["Lift shoulders and legs a few inches off the floor.", "Lower back must stay pressed into the floor. Non-negotiable.", "Squeeze abs, keep the position rigid.", "Hold, breathe shallowly through the ribs."]},
+{"id": "bird-dog", "name": "Bird dog", "cat": "Core", "hits": "deep core, anti-rotation, spinal stabilizers. Pilates-adjacent and beginner-safe.", "cues": ["Extend the opposite arm and leg until both are level with the torso.", "Hips and shoulders stay square to the floor — don't tip or rotate.", "Pause, slowly return, switch sides. Slow and deliberate."]},
+{"id": "reverse-crunch", "name": "Reverse crunch", "cat": "Core", "hits": "lower abs / deep core. Waist-friendly — no loaded obliques.", "cues": ["Curl the knees toward the chest by lifting the hips off the floor with the abs, not by swinging the legs.", "Slow lower, don't touch down between reps. Small, controlled range."]},
+{"id": "captain-s-chair-straight-leg-raise", "name": "Captain’s chair straight-leg raise", "cat": "Core", "hits": "", "cues": []},
+{"id": "captain-s-chair-knee-raise", "name": "Captain’s chair knee raise", "cat": "Core", "hits": "", "cues": []},
+{"id": "90-90-hip-switches", "name": "90/90 hip switches", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "adductor-rockback", "name": "Adductor rockback", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "kneeling-hip-flexor-stretch", "name": "Kneeling hip flexor stretch", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "upper-trap-stretch", "name": "Upper trap stretch (ear-to-shoulder)", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "levator-scapulae-stretch", "name": "Levator scapulae stretch", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "trap-ball-release", "name": "Trap ball release (wall)", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "diaphragmatic-breathing-with-shoulder-drop", "name": "Diaphragmatic breathing with shoulder drop", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "foam-roller-thoracic-extension", "name": "Foam roller thoracic extension", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "open-book-thoracic-rotation", "name": "Open book thoracic rotation", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "prone-y-raise", "name": "Prone Y raise (lower trap)", "cat": "Stretches & Mobility", "hits": "", "cues": []},
+{"id": "prone-t-raise", "name": "Prone T raise", "cat": "Stretches & Mobility", "hits": "", "cues": []}
+];
+/*__LIBRARY_END__*/
+const LIBNAMES = {};
+for (const e of LIBRARY) LIBNAMES[e.id] = e.name;
+
 /* ══════════════════ storage ══════════════════ */
 const KEY = "keiko-v1";
 function seed(){
@@ -628,11 +736,24 @@ const MONTHS = ["January","February","March","April","May","June","July","August
 const WDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-function nameOf(id){ return NAMES[id] || db.customNames[id] || id; }
+function nameOf(id){ return NAMES[id] || LIBNAMES[id] || db.customNames[id] || id; }
 function allExNames(){
   const s = new Set(Object.values(NAMES));
+  for (const n of Object.values(LIBNAMES)) s.add(n);
   for (const n of Object.values(db.customNames)) s.add(n);
   return [...s].sort();
+}
+function resolveExId(name){
+  const lower = name.toLowerCase();
+  let id = Object.keys(NAMES).find(k=>NAMES[k].toLowerCase()===lower)
+        || Object.keys(LIBNAMES).find(k=>LIBNAMES[k].toLowerCase()===lower)
+        || Object.keys(db.customNames).find(k=>db.customNames[k].toLowerCase()===lower);
+  if (!id){
+    id = "custom-"+lower.replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+    db.customNames[id] = name;
+    buildDatalist();
+  }
+  return id;
 }
 function buildDatalist(){
   const el = document.getElementById("exlist");
@@ -645,7 +766,7 @@ function fmtShort(k){ const d=fromKey(k); return MONTHS[d.getMonth()].slice(0,3)
 function rec(dateKey, make){
   if (!db.workouts[dateKey] && make) db.workouts[dateKey] = {day:DAYKEYS[fromKey(dateKey).getDay()], entries:{}, choices:{}, checks:{}};
   const r = db.workouts[dateKey];
-  if (r){ r.entries=r.entries||{}; r.choices=r.choices||{}; r.checks=r.checks||{}; r.subs=r.subs||{}; }
+  if (r){ r.entries=r.entries||{}; r.choices=r.choices||{}; r.checks=r.checks||{}; r.subs=r.subs||{}; r.extras=r.extras||[]; }
   return r;
 }
 function scheme(it){ return (db.settings.express && it.ex) ? it.ex : {sets:it.sets, reps:it.reps}; }
@@ -681,6 +802,36 @@ function hankoSVG(cls){
     <path d="M21 33 L29 41 L44 24" fill="none" stroke="#b23a2b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
   </svg>`;
 }
+/* pixel hamster — appears when a workout is finished */
+const HAM_GRID = [
+"..OO......OO..",
+".OBBO....OBBO.",
+".OBDBO..OBDBO.",
+"..OBBBOOBBBO..",
+".OBBBBBBBBBBO.",
+"OBBBBBBBBBBBBO",
+"OBEEBBBBBBEEBO",
+"OBBBWWWWWWBBBO",
+"OBBBWWPPWWBBBO",
+".OBBBWWWWBBBO.",
+".OBBBBBBBBBBO.",
+".OBDBWWWWBDBO.",
+".OBBDWWWWDBBO.",
+".OBBWWWWWWBBO.",
+"..OBBBBBBBBO..",
+"...OPP..PPO..."
+];
+const HAM_PAL = {O:"#474860",B:"#98a5ea",D:"#7583d8",W:"#fcfcfa",P:"#f2a9b8",E:"#2e2e38"};
+function hamSVG(cls){
+  let rects = "";
+  HAM_GRID.forEach((row,y)=>{
+    [...row].forEach((ch,x)=>{
+      if (ch!==".") rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${HAM_PAL[ch]}"/>`;
+    });
+  });
+  return `<svg class="ham ${cls||""}" viewBox="0 0 14 16" shape-rendering="crispEdges" data-act="dance" role="img" aria-label="a proud hamster">${rects}</svg>`;
+}
+
 const SPRIG = `<svg class="sprig" viewBox="0 0 90 110" fill="none" stroke="#262723" stroke-width="1.3" stroke-linecap="round">
   <path d="M45 108 C 44 78, 40 52, 46 14"/>
   <path d="M45.5 88 C 34 84, 26 74, 25 62 C 37 64, 44 74, 45.5 88 Z"/>
@@ -689,10 +840,48 @@ const SPRIG = `<svg class="sprig" viewBox="0 0 90 110" fill="none" stroke="#2627
 </svg>`;
 
 /* ══════════════════ state ══════════════════ */
-let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null };
+let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null, adding:false, libq:"", libOpen:null, dance:false };
 { const t=new Date(); ui.calMonth = [t.getFullYear(), t.getMonth()]; ui.calSel = key(t); }
 
 /* ══════════════════ render: today ══════════════════ */
+function extrasHTML(r, dk, startIdx){
+  const list = (r && r.extras) || [];
+  let h = "";
+  list.forEach((id,n)=>{
+    const entry = r.entries[id];
+    const done = !!(entry && entry.done);
+    const last = lastWeight(id, dk);
+    const wVal = entry && entry.weight != null ? entry.weight : "";
+    h += `<li style="--i:${startIdx+n}">
+      <div class="exhead"><div>
+        <div class="exname">${esc(nameOf(id))}</div>
+        <div class="exdetail">extra</div>
+      </div></div>
+      <div class="choices"><button class="swaplink" data-act="rmex" data-id="${id}">remove</button></div>
+      <div class="logrow">
+        <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${id}" aria-pressed="${done}">
+          <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
+        </button>
+        <div class="wt">
+          <button data-act="wdec" data-ex="${id}">−</button>
+          <input class="wtin" inputmode="decimal" data-ex="${id}" value="${wVal!==""?esc(wVal):""}" placeholder="${last?last.w:'–'}" aria-label="weight">
+          <span class="unit">lb</span>
+          <button data-act="winc" data-ex="${id}">＋</button>
+        </div>
+        <input class="repsin" inputmode="numeric" data-ex="${id}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="reps" aria-label="reps">
+      </div>
+      ${last?`<div class="lasthint">last · <b>${last.w} lb</b>${last.when?` · ${fmtShort(last.when)}`:""}</div>`:""}
+    </li>`;
+  });
+  h += `<li style="--i:${startIdx+list.length}">
+    <button class="addex" data-act="addex"><span>＋</span>add an exercise</button>
+    ${ui.adding?`<input class="swapin" list="exlist" data-adding="1" placeholder="What did you do? Start typing…" aria-label="extra exercise">`:""}
+  </li>`;
+  return h;
+}
+function extrasBlock(r, dk){
+  return `<div class="workwrap"><ol class="work">${extrasHTML(r, dk, 0)}</ol></div>`;
+}
 function renderToday(){
   const dk = ui.viewDate, d = fromKey(dk);
   const defaultKey = DAYKEYS[d.getDay()];
@@ -723,6 +912,8 @@ function renderToday(){
       <svg class="restmark" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M46 38 A 18 18 0 1 1 28 14 A 15 15 0 0 0 46 38 Z"/></svg>
       <p>${esc(day.line)}</p>
     </div>`;
+    h += extrasBlock(r, dk);
+    if ((r && r.stamped) || (r && r.extras && r.extras.length)) h += stampZone(r, dk);
     $("#view-today").innerHTML = h;
     return;
   }
@@ -740,6 +931,7 @@ function renderToday(){
       });
       h += `</ul></div>`;
     });
+    h += extrasBlock(r, dk);
     h += stampZone(r, dk);
     $("#view-today").innerHTML = h;
     return;
@@ -815,6 +1007,7 @@ function renderToday(){
     if (!bw && last) h += `<div class="lasthint">last · <b>${last.w} lb</b>${last.when?` · ${fmtShort(last.when)}`:" · from the plan"}</div>`;
     h += `</li>`;
   });
+  h += extrasHTML(r, dk, items.length);
   h += `</ol>`;
   if (skipped>0) h += `<div class="skipnote">${skipped} ${skipped===1?'lift rests':'lifts rest'} in express mode — the 3× rule keeps what matters.</div>`;
   h += `</div>`;
@@ -827,7 +1020,7 @@ function renderToday(){
 function stampZone(r, dk){
   if (r && r.stamped){
     return `<div class="stampzone"><div class="stamped-line">
-      ${hankoSVG()}
+      ${hamSVG(ui.dance?"dance":"")}
       <span>workout complete</span>
       <button class="unstamp" data-act="unstamp" data-dk="${dk}">undo</button>
     </div></div>`;
@@ -941,7 +1134,7 @@ function chartSVG(pts){
   return s;
 }
 function renderProgress(){
-  const exIds = [...new Set([...Object.keys(NAMES), ...Object.keys(db.customNames)])]
+  const exIds = [...new Set([...Object.keys(NAMES), ...Object.keys(LIBNAMES), ...Object.keys(db.customNames)])]
     .filter(id=>series(id).length>0)
     .sort((a,b)=>series(b).length - series(a).length);
   let h = `<div class="pagehead"><h2>Progress</h2>
@@ -980,17 +1173,54 @@ function renderProgress(){
   $("#view-progress").innerHTML = h;
 }
 
+/* ══════════════════ render: library ══════════════════ */
+function libRowsHTML(){
+  const q = ui.libq.trim().toLowerCase();
+  const groups = new Map();
+  for (const e of LIBRARY){
+    if (q && !(e.name.toLowerCase().includes(q) || (e.hits||"").toLowerCase().includes(q))) continue;
+    if (!groups.has(e.cat)) groups.set(e.cat, []);
+    groups.get(e.cat).push(e);
+  }
+  if (!groups.size) return `<div class="libnone">Nothing matches "${esc(ui.libq)}".</div>`;
+  let h = "";
+  for (const [cat, list] of groups){
+    h += `<div class="libcat">${esc(cat)}</div>`;
+    for (const e of list){
+      const open = ui.libOpen===e.id;
+      h += `<div class="librow">
+        <button data-act="lib" data-id="${e.id}" aria-expanded="${open}">
+          <div class="lname">${esc(e.name)}</div>
+          ${e.hits?`<div class="lhits">${esc(e.hits)}</div>`:""}
+        </button>
+        ${open && e.cues.length ? `<ul class="libcues">${e.cues.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:""}
+      </div>`;
+    }
+  }
+  return h;
+}
+function renderLibrary(){
+  $("#view-library").innerHTML = `
+    <div class="pagehead"><h2>Library</h2>
+      <p>Every exercise from the vault, with form cues.</p>
+      <input class="libsearch" id="libq" type="search" placeholder="Search exercises…" value="${esc(ui.libq)}">
+    </div>
+    <div class="libwrap" id="librows">${libRowsHTML()}</div>`;
+}
+
 /* ══════════════════ render dispatch ══════════════════ */
 function render(){
   $("#view-today").hidden = ui.tab!=="today";
   $("#view-log").hidden = ui.tab!=="log";
   $("#view-progress").hidden = ui.tab!=="progress";
+  $("#view-library").hidden = ui.tab!=="library";
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===ui.tab));
   const eb = $("#expressBtn");
   eb.classList.toggle("on", db.settings.express);
   eb.setAttribute("aria-pressed", db.settings.express);
   if (ui.tab==="today") renderToday();
   else if (ui.tab==="log") renderLog();
+  else if (ui.tab==="library") renderLibrary();
   else renderProgress();
 }
 
@@ -1037,6 +1267,30 @@ document.addEventListener("click", e=>{
     delete r.subs[t.dataset.key];
     save(); renderToday(); return;
   }
+  if (act==="addex"){
+    ui.adding = true;
+    renderToday();
+    const inp = document.querySelector('.swapin[data-adding]');
+    if (inp) inp.focus();
+    return;
+  }
+  if (act==="rmex"){
+    const r = rec(ui.viewDate, true);
+    r.extras = r.extras.filter(x=>x!==t.dataset.id);
+    save(); renderToday(); return;
+  }
+  if (act==="lib"){
+    ui.libOpen = ui.libOpen===t.dataset.id ? null : t.dataset.id;
+    const rows = document.getElementById("librows");
+    if (rows) rows.innerHTML = libRowsHTML();
+    return;
+  }
+  if (act==="dance"){
+    t.classList.remove("dance");
+    void t.getBoundingClientRect();
+    t.classList.add("dance");
+    return;
+  }
   if (act==="winc"||act==="wdec"){
     const r = rec(ui.viewDate, true);
     const ex = t.dataset.ex;
@@ -1050,7 +1304,11 @@ document.addEventListener("click", e=>{
   if (act==="stamp"){
     const r = rec(t.dataset.dk, true);
     r.stamped = true; r.stampedAt = new Date().toISOString();
-    save(); renderToday(); return;
+    save();
+    ui.dance = true;
+    renderToday();
+    ui.dance = false;
+    return;
   }
   if (act==="unstamp"){
     const r = rec(t.dataset.dk, true);
@@ -1098,28 +1356,38 @@ document.addEventListener("change", e=>{
   }
   if (el.classList.contains("swapin")){
     const name = el.value.trim();
-    const key = el.dataset.key;
-    ui.swapping = null;
-    if (name){
-      const lower = name.toLowerCase();
-      let id = Object.keys(NAMES).find(k=>NAMES[k].toLowerCase()===lower)
-            || Object.keys(db.customNames).find(k=>db.customNames[k].toLowerCase()===lower);
-      if (!id){
-        id = "custom-"+lower.replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
-        db.customNames[id] = name;
-        buildDatalist();
+    if (el.dataset.adding){
+      ui.adding = false;
+      if (name){
+        const id = resolveExId(name);
+        const r = rec(ui.viewDate, true);
+        if (!r.extras.includes(id)) r.extras.push(id);
+        save();
       }
-      const r = rec(ui.viewDate, true);
-      r.subs[key] = {id, name: nameOf(id)};
-      save();
+    } else {
+      const key = el.dataset.key;
+      ui.swapping = null;
+      if (name){
+        const id = resolveExId(name);
+        const r = rec(ui.viewDate, true);
+        r.subs[key] = {id, name: nameOf(id)};
+        save();
+      }
     }
     renderToday();
   }
 });
+document.addEventListener("input", e=>{
+  if (e.target.id==="libq"){
+    ui.libq = e.target.value;
+    const rows = document.getElementById("librows");
+    if (rows) rows.innerHTML = libRowsHTML();
+  }
+});
 document.addEventListener("focusout", e=>{
   const el = e.target;
-  if (el.classList && el.classList.contains("swapin") && ui.swapping && !el.value.trim()){
-    ui.swapping = null; renderToday();
+  if (el.classList && el.classList.contains("swapin") && (ui.swapping || ui.adding) && !el.value.trim()){
+    ui.swapping = null; ui.adding = false; renderToday();
   }
 });
 $("#importFile").addEventListener("change", e=>{
