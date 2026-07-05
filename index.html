@@ -123,6 +123,22 @@ input{font:inherit;color:inherit}
   font-size:.78rem;color:var(--ink-2);line-height:1.6;
 }
 .daynote b{color:var(--ink);font-weight:500}
+.milestone{
+  margin:1rem 1.25rem 0;
+  display:flex;align-items:flex-start;gap:.75rem;
+  background:var(--hanko-soft);border-radius:.8rem;
+  padding:.85rem .95rem;
+  animation:rise .5s cubic-bezier(.16,1,.3,1) both;
+}
+.msheart{flex:none;width:15px;margin-top:.15rem}
+.msheart svg{width:100%;height:auto;display:block}
+.msbody b{font-size:.8rem;font-weight:600}
+.msbody p{font-size:.78rem;color:var(--ink-2);line-height:1.55;margin-top:.15rem}
+.msdismiss{
+  flex:none;width:1.7rem;height:1.7rem;border-radius:50%;
+  display:grid;place-items:center;color:var(--ink-3);font-size:1.05rem;
+  margin:-.3rem -.4rem 0 0;
+}
 
 /* ───────── warm-up ───────── */
 .warm{margin:1.1rem 1.25rem 0}
@@ -222,9 +238,10 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 .sessswap select:focus{outline:none;border-color:var(--ink)}
 .today-jump{
-  font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--hanko);border:1px solid rgba(224,87,138,.4);border-radius:999px;
-  padding:.22rem .65rem;margin-left:.7em;vertical-align:.1em;
+  font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--hanko);background:color-mix(in srgb,var(--paper) 60%,transparent);
+  border:none;border-radius:999px;
+  padding:.24rem .7rem;margin-left:.7em;vertical-align:.1em;
 }
 
 /* exercise swap */
@@ -399,9 +416,11 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 .daydetail li .delentry:active{background:var(--hanko-soft);color:var(--hanko)}
 .cleardaylink{
-  margin-top:.9rem;font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--hanko);opacity:.75;padding:.3rem 0;
+  display:block;margin-left:auto;margin-top:.7rem;
+  font-size:.72rem;color:var(--ink-3);padding:.3rem 0;
+  transition:color .2s;
 }
+.cleardaylink:active{color:var(--hanko)}
 
 /* data section */
 .datazone{margin:2.6rem 1.25rem 1rem;padding-top:1rem;border-top:1px solid var(--line)}
@@ -473,6 +492,33 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .libcues{padding:0 0 1.1rem 1.15rem;font-size:.82rem;color:var(--ink-2);line-height:1.55}
 .libcues li{margin:.35rem 0;list-style:disc}
 .libnone{padding:2rem 0;text-align:center;font-size:.85rem;color:var(--ink-3);font-style:italic}
+.minetag{
+  font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--hanko);background:var(--hanko-soft);border-radius:999px;
+  padding:.12rem .5rem;margin-left:.4em;vertical-align:.15em;
+}
+.libform{display:flex;flex-direction:column;gap:.6rem;margin-top:.8rem}
+.clcat{
+  appearance:none;-webkit-appearance:none;
+  background:var(--paper-2);border:none;border-radius:.65rem;
+  padding:.55rem .85rem;font:inherit;font-size:.9rem;color:var(--ink);outline:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2373746d' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .85rem center;background-size:.6rem;
+}
+.clnotes{
+  background:var(--paper-2);border:none;border-radius:.65rem;
+  padding:.55rem .85rem;font:inherit;font-size:.9rem;color:var(--ink);outline:none;resize:none;
+}
+.clnotes::placeholder,.clcat::placeholder{color:var(--ink-3)}
+.clfile{
+  align-self:flex-start;cursor:pointer;
+  font-size:.74rem;font-weight:600;color:var(--ink-2);
+  border:1px dashed var(--ink-3);border-radius:999px;padding:.4rem .9rem;
+}
+.libdel{
+  display:block;font-size:.72rem;color:var(--ink-3);padding:.2rem 0 1rem;
+}
+.libdel:active{color:var(--hanko)}
 
 /* ───────── pixel friends & sparkle ───────── */
 .ham{width:54px;height:auto;cursor:pointer}
@@ -830,9 +876,15 @@ function seed(){
 let db;
 try { db = JSON.parse(localStorage.getItem(KEY)) || seed(); } catch(e){ db = seed(); }
 db.settings = db.settings || {express:false};
+db.settings.programStart = db.settings.programStart || "2026-05-25"; /* week 6 as of 2026-07-05, per Serena */
 db.workouts = db.workouts || {};
 db.customNames = db.customNames || {};
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){} }
+db.customLib = db.customLib || [];
+db.seen = db.seen || {};
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(db)); }
+  catch(e){ alert("Storage is full — that image may be too large. Try a smaller one."); }
+}
 
 /* ══════════════════ helpers ══════════════════ */
 const DAYKEYS = ["sun","mon","tue","wed","thu","fri","sat"];
@@ -840,10 +892,12 @@ const MONTHS = ["January","February","March","April","May","June","July","August
 const WDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-function nameOf(id){ return NAMES[id] || LIBNAMES[id] || db.customNames[id] || id; }
+function customLibName(id){ const e = db.customLib.find(x=>x.id===id); return e ? e.name : null; }
+function nameOf(id){ return NAMES[id] || LIBNAMES[id] || customLibName(id) || db.customNames[id] || id; }
 function allExNames(){
   const s = new Set(Object.values(NAMES));
   for (const n of Object.values(LIBNAMES)) s.add(n);
+  for (const e of db.customLib) s.add(e.name);
   for (const n of Object.values(db.customNames)) s.add(n);
   return [...s].sort();
 }
@@ -851,6 +905,7 @@ function resolveExId(name){
   const lower = name.toLowerCase();
   let id = Object.keys(NAMES).find(k=>NAMES[k].toLowerCase()===lower)
         || Object.keys(LIBNAMES).find(k=>LIBNAMES[k].toLowerCase()===lower)
+        || (db.customLib.find(e=>e.name.toLowerCase()===lower)||{}).id
         || Object.keys(db.customNames).find(k=>db.customNames[k].toLowerCase()===lower);
   if (!id){
     id = "custom-"+lower.replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
@@ -858,6 +913,46 @@ function resolveExId(name){
     buildDatalist();
   }
   return id;
+}
+
+/* ── program milestones ── */
+function sessionsLogged(){
+  return Object.values(db.workouts).filter(w=>w.stamped).length;
+}
+function weeksIn(){
+  const ms = new Date() - fromKey(db.settings.programStart);
+  return Math.max(1, Math.floor(ms / (7*24*3600*1000)) + 1);
+}
+const MILESTONES = [
+  {id:"log1",  test:(w,n)=>n>=1,  title:"First log in the book",
+    body:"Progress you can point at starts here. The mirror lies day to day — the log doesn't."},
+  {id:"wk4",   test:(w,n)=>w>=4,  title:"Weeks 1–4 · learning the moves",
+    body:"Early strength jumps are mostly your nervous system getting efficient — they're fast, real, and normal. Enjoy them."},
+  {id:"wk6",   test:(w,n)=>w>=6,  title:"Week 6 · under the surface",
+    body:"By now hinge lifts are typically up 20–40% from your start, sessions feel smoother, and the in-session pump shows. Shape changes are brewing but mostly invisible yet — clothes usually notice before the scale does."},
+  {id:"wk8",   test:(w,n)=>w>=8,  title:"Week 8 · mirror territory",
+    body:"This is when early glute and shoulder changes tend to show in the mirror. A hip thrust around 1.5× your starting weight means you're right on schedule."},
+  {id:"n10",   test:(w,n)=>n>=10, title:"10 sessions logged",
+    body:"Enough data that your Progress charts start showing real trends instead of noise. Add small weight whenever the top of a rep range feels easy."},
+  {id:"wk12",  test:(w,n)=>w>=12, title:"Week 12 · visible to others",
+    body:"Around three months, changes stop being a secret. For recomposition, lifts climbing while the scale stays put isn't a stall — it's the whole plan working."},
+  {id:"n25",   test:(w,n)=>n>=25, title:"25 sessions logged",
+    body:"The habit is real, and you have receipts. Consistency is beating intensity, exactly as designed."},
+  {id:"wk16",  test:(w,n)=>w>=16, title:"Week 16 · the long game",
+    body:"Newbie-gain pace naturally eases off from here. Progress becomes slower and steadier — double progression (reps first, then weight) is now your best friend."}
+];
+function milestoneHTML(){
+  const w = weeksIn(), n = sessionsLogged();
+  const unlocked = MILESTONES.filter(m=>m.test(w,n));
+  const unseen = unlocked.filter(m=>!db.seen[m.id]);
+  if (!unseen.length) return "";
+  const m = unseen[unseen.length-1];
+  const ids = unlocked.map(x=>x.id).join(",");
+  return `<div class="milestone">
+    <span class="msheart">${MINIHEART("#ee6fa4")}</span>
+    <div class="msbody"><b>${esc(m.title)}</b><p>${esc(m.body)}</p></div>
+    <button class="msdismiss" data-act="msdismiss" data-ms="${ids}" aria-label="dismiss">×</button>
+  </div>`;
 }
 function buildDatalist(){
   const el = document.getElementById("exlist");
@@ -1131,13 +1226,15 @@ function renderToday(){
   let h = `<div class="dayhead" data-day="${sessKey}">
     <div class="datebar">
       <button class="dnav" data-act="daynav" data-dir="-1" aria-label="previous day">‹</button>
-      <div class="dateline">${dateline}${isToday?'<span class="today-tag">· today</span>':'<button class="today-jump" data-act="gotoday">↩ today</button>'}</div>
+      <div class="dateline">${dateline}${isToday?'<span class="today-tag">· today</span>':'<button class="today-jump" data-act="gotoday">today</button>'}</div>
       <button class="dnav" data-act="daynav" data-dir="1" aria-label="next day">›</button>
     </div>
     <h1>${esc(day.title).replace(/\n/g,"<br>")}<img class="headbuddy" src="assets/ui/buddy${(d.getDate()+d.getMonth())%3+1}.gif" alt="" aria-hidden="true"></h1>
     <label class="sessswap">Doing <select id="sessSel" aria-label="which session are you doing">${opts}</select></label>
     ${(r&&r.stamped)?hankoSVG("headstamp"):sparksFor(dk)}
   </div>`;
+
+  if (isToday) h += milestoneHTML();
 
   if (day.rest){
     h += `<div class="restcard">
@@ -1335,7 +1432,7 @@ function renderLog(){
   const today = new Date();
 
   let h = `<div class="pagehead"><h2>Record</h2>
-    <p>Every mark is a session kept.</p></div>`;
+    <p>Week ${weeksIn()} of the program · ${sessionsLogged()} ${sessionsLogged()===1?'session':'sessions'} logged</p></div>`;
   h += `<div class="calhead"><h3>${MONTHS[m]} ${y}</h3>
     <div class="mnav">
       <button data-act="mnav" data-dir="-1" aria-label="previous month">‹</button>
@@ -1379,7 +1476,7 @@ function renderLog(){
       h += `<p class="empty">${w&&w.stamped ? "Complete, nothing written down — some days are like that." : "Nothing logged."}</p>`;
     }
     if (w && (w.stamped || entries.length)){
-      h += `<button class="cleardaylink" data-act="clearday" data-dk="${sel}">delete this day's log</button>`;
+      h += `<button class="cleardaylink" data-act="clearday" data-dk="${sel}">Clear this day…</button>`;
     }
     h += `</div>`;
   }
@@ -1476,7 +1573,7 @@ function renderProgress(){
 function libRowsHTML(){
   const q = ui.libq.trim().toLowerCase();
   const groups = new Map();
-  for (const e of LIBRARY){
+  for (const e of LIBRARY.concat(db.customLib)){
     if (q && !(e.name.toLowerCase().includes(q) || (e.hits||"").toLowerCase().includes(q))) continue;
     if (!groups.has(e.cat)) groups.set(e.cat, []);
     groups.get(e.cat).push(e);
@@ -1489,23 +1586,65 @@ function libRowsHTML(){
       const open = ui.libOpen===e.id;
       h += `<div class="librow">
         <button data-act="lib" data-id="${e.id}" aria-expanded="${open}">
-          <div class="lname">${esc(e.name)}</div>
+          <div class="lname">${esc(e.name)}${e.mine?` <span class="minetag">yours</span>`:""}</div>
           ${e.hits?`<div class="lhits">${esc(e.hits)}</div>`:""}
         </button>
         ${open && e.img ? `<img class="libgif" src="${esc(e.img)}" loading="lazy" alt="${esc(e.name)} demonstration">`:""}
-        ${open && e.cues.length ? `<ul class="libcues">${e.cues.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:""}
+        ${open && (e.cues||[]).length ? `<ul class="libcues">${e.cues.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:""}
+        ${open && e.mine ? `<button class="libdel" data-act="libdel" data-id="${e.id}">Remove from library…</button>`:""}
       </div>`;
     }
   }
   return h;
+}
+function libFormHTML(){
+  if (!ui.libAdding){
+    return `<button class="addex" data-act="libadd" style="margin-top:.4rem"><span>＋</span>add your own exercise</button>`;
+  }
+  return `<div class="libform">
+    <input class="ef-name" id="clName" placeholder="Exercise name" aria-label="exercise name">
+    <select class="clcat" id="clCat" aria-label="category">
+      <option>Lower body</option><option>Upper body</option><option>Core</option><option>Stretches &amp; Mobility</option>
+    </select>
+    <textarea class="clnotes" id="clNotes" rows="2" placeholder="Notes or cues (optional)"></textarea>
+    <label class="clfile">＋ photo or gif<input type="file" id="clImg" accept="image/*" hidden></label>
+    ${ui.libImg ? `<img class="libgif" src="${ui.libImg}" alt="preview">` : ""}
+    <div class="ef-btns">
+      <button class="choice sel" data-act="libsave">save</button>
+      <button class="choice" data-act="libcancel">cancel</button>
+    </div>
+  </div>`;
 }
 function renderLibrary(){
   $("#view-library").innerHTML = `
     <div class="pagehead"><h2>Library</h2>
       <p>Every exercise from the vault, with form cues.</p>
       <input class="libsearch" id="libq" type="search" placeholder="Search exercises…" value="${esc(ui.libq)}">
+      <div id="libformzone">${libFormHTML()}</div>
     </div>
     <div class="libwrap" id="librows">${libRowsHTML()}</div>`;
+}
+function processLibImage(file, cb){
+  if (file.type === "image/gif"){
+    if (file.size > 2.5*1024*1024){ alert("That gif is a little large — try one under 2.5 MB."); return; }
+    const rd = new FileReader();
+    rd.onload = ()=>cb(rd.result);
+    rd.readAsDataURL(file);
+    return;
+  }
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    const im = new Image();
+    im.onload = ()=>{
+      const scale = Math.min(1, 640/Math.max(im.width, im.height));
+      const cv = document.createElement("canvas");
+      cv.width = Math.round(im.width*scale); cv.height = Math.round(im.height*scale);
+      cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+      cb(cv.toDataURL("image/jpeg", .82));
+    };
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(file);
 }
 
 /* ══════════════════ render dispatch ══════════════════ */
@@ -1657,6 +1796,36 @@ document.addEventListener("click", e=>{
     if (rows) rows.innerHTML = libRowsHTML();
     return;
   }
+  if (act==="libadd"){
+    ui.libAdding = true; ui.libImg = null;
+    renderLibrary();
+    const inp = document.getElementById("clName");
+    if (inp) inp.focus();
+    return;
+  }
+  if (act==="libcancel"){ ui.libAdding = false; ui.libImg = null; renderLibrary(); return; }
+  if (act==="libsave"){
+    const name = (document.getElementById("clName").value||"").trim();
+    if (!name){ document.getElementById("clName").focus(); return; }
+    const cat = document.getElementById("clCat").value;
+    const notes = (document.getElementById("clNotes").value||"").trim();
+    let id = "my-"+name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+    while (NAMES[id] || LIBNAMES[id] || db.customLib.some(e=>e.id===id)) id += "-2";
+    db.customLib.push({id, name, cat, hits:"", cues: notes ? [notes] : [], img: ui.libImg || undefined, mine:true});
+    ui.libAdding = false; ui.libImg = null; ui.libOpen = id;
+    save(); buildDatalist(); renderLibrary(); return;
+  }
+  if (act==="libdel"){
+    if (!confirm("Remove this exercise from your library? Logged history keeps its name.")) return;
+    const e = db.customLib.find(x=>x.id===t.dataset.id);
+    if (e) db.customNames[e.id] = e.name; /* keep history readable */
+    db.customLib = db.customLib.filter(x=>x.id!==t.dataset.id);
+    save(); buildDatalist(); renderLibrary(); return;
+  }
+  if (act==="msdismiss"){
+    for (const id of t.dataset.ms.split(",")) db.seen[id] = 1;
+    save(); renderToday(); return;
+  }
   if (act==="dance"){
     t.classList.remove("dance");
     void t.getBoundingClientRect();
@@ -1738,6 +1907,23 @@ document.addEventListener("change", e=>{
     else entry.reps = el.value.trim();
     save();
   }
+  if (el.id==="clImg"){
+    const f = el.files && el.files[0];
+    if (f) processLibImage(f, data=>{
+      ui.libImg = data;
+      const keepName = (document.getElementById("clName")||{}).value || "";
+      const keepCat = (document.getElementById("clCat")||{}).value || "Lower body";
+      const keepNotes = (document.getElementById("clNotes")||{}).value || "";
+      const zone = document.getElementById("libformzone");
+      if (zone){
+        zone.innerHTML = libFormHTML();
+        document.getElementById("clName").value = keepName;
+        document.getElementById("clCat").value = keepCat;
+        document.getElementById("clNotes").value = keepNotes;
+      }
+    });
+    return;
+  }
   if (el.id==="sessSel"){
     const r = rec(ui.viewDate, true);
     const def = DAYKEYS[fromKey(ui.viewDate).getDay()];
@@ -1789,7 +1975,11 @@ $("#importFile").addEventListener("change", e=>{
       if (!parsed || typeof parsed.workouts!=="object") throw new Error("bad file");
       db = parsed;
       db.settings = db.settings || {express:false};
-      save(); render();
+      db.settings.programStart = db.settings.programStart || "2026-05-25";
+      db.customNames = db.customNames || {};
+      db.customLib = db.customLib || [];
+      db.seen = db.seen || {};
+      save(); buildDatalist(); render();
     } catch(err){ alert("That file doesn't look like a Keiko export."); }
   };
   rd.readAsText(f);
