@@ -392,6 +392,16 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .daydetail li .r{margin-left:auto;font-family:var(--serif);font-weight:500;white-space:nowrap}
 .daydetail li .r small{color:var(--ink-2);font-family:var(--sans);font-weight:400;font-size:.68rem;margin-left:.4em}
 .daydetail .empty{font-size:.8rem;color:var(--ink-3);font-style:italic;margin-top:.5rem}
+.daydetail li .delentry{
+  flex:none;width:1.6rem;height:1.6rem;border-radius:50%;
+  display:grid;place-items:center;color:var(--ink-3);font-size:1rem;line-height:1;
+  margin:-.2rem -.3rem -.2rem .1rem;
+}
+.daydetail li .delentry:active{background:var(--hanko-soft);color:var(--hanko)}
+.cleardaylink{
+  margin-top:.9rem;font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--hanko);opacity:.75;padding:.3rem 0;
+}
 
 /* data section */
 .datazone{margin:2.6rem 1.25rem 1rem;padding-top:1rem;border-top:1px solid var(--line)}
@@ -881,12 +891,25 @@ function isBW(it, cid){
   if (it.choices){ const c = it.choices.find(c=>c.id===cid); return !!(c && c.bw); }
   return !!it.bw;
 }
+/* an entry only "counts" (record, progress, hints) if it was marked done or its day was completed */
+function countsEntry(w, e){
+  return !!(e && (e.done || (e.sets||[]).some(Boolean) || w.stamped));
+}
+function gcDay(dk){
+  const w = db.workouts[dk];
+  if (!w) return;
+  const hasStuff = w.stamped || Object.keys(w.entries||{}).length || (w.extras||[]).length ||
+    Object.keys(w.checks||{}).length || Object.keys(w.subs||{}).length ||
+    Object.keys(w.choices||{}).length || w.session || w.wedMode;
+  if (!hasStuff) delete db.workouts[dk];
+}
 function lastWeight(exId, beforeKey){
   const dates = Object.keys(db.workouts).sort().reverse();
   for (const dk of dates){
     if (dk >= beforeKey) continue;
-    const e = db.workouts[dk].entries && db.workouts[dk].entries[exId];
-    if (e && e.weight != null && e.weight !== "") return {w:e.weight, when:dk};
+    const w = db.workouts[dk];
+    const e = w.entries && w.entries[exId];
+    if (e && countsEntry(w, e) && e.weight != null && e.weight !== "") return {w:e.weight, when:dk};
   }
   if (HINTS[exId] != null) return {w:HINTS[exId], when:null};
   return null;
@@ -1308,7 +1331,7 @@ function renderLog(){
   const [y,m] = ui.calMonth;
   const first = new Date(y,m,1);
   const start = new Date(first);
-  start.setDate(1 - ((first.getDay()+6)%7)); /* back to Monday */
+  start.setDate(1 - first.getDay()); /* back to Sunday */
   const today = new Date();
 
   let h = `<div class="pagehead"><h2>Record</h2>
@@ -1319,7 +1342,7 @@ function renderLog(){
       <button data-act="mnav" data-dir="1" aria-label="next month">›</button>
     </div></div>`;
   h += `<div class="calgrid">`;
-  for (const w of ["M","T","W","T","F","S","S"]) h += `<div class="dow">${w}</div>`;
+  for (const w of ["S","M","T","W","T","F","S"]) h += `<div class="dow">${w}</div>`;
   const cur = new Date(start);
   for (let i=0;i<42;i++){
     const dk = key(cur);
@@ -1329,7 +1352,7 @@ function renderLog(){
     const cls = ["cal-day", inMonth?"":"other", sameDay(cur,today)?"today":"", dk===ui.calSel?"sel":"", stamped?"stamped":""].filter(Boolean).join(" ");
     h += `<div class="cal-cell"><button class="${cls}" data-act="calsel" data-dk="${dk}">${cur.getDate()}${stamped?`<span class="seal">${hankoSVG()}</span>`:''}</button></div>`;
     cur.setDate(cur.getDate()+1);
-    if (i>=34 && cur.getMonth()!==m && cur.getDay()===1) break;
+    if (i>=34 && cur.getMonth()!==m && cur.getDay()===0) break;
   }
   h += `</div>`;
 
@@ -1343,17 +1366,20 @@ function renderLog(){
     h += `<div class="daydetail">
       <div class="dl-date">${WDAYS[d.getDay()]} · ${MONTHS[d.getMonth()]} ${d.getDate()}</div>
       <h4>${esc(plan.title).replace(/\n/g," ")} ${w&&w.stamped?'<span style="color:var(--hanko);font-size:.72rem;font-family:var(--sans);font-weight:600;letter-spacing:.1em">✓ COMPLETE</span>':''}</h4>`;
-    const entries = w ? Object.entries(w.entries||{}).filter(([,e])=>e && (e.weight!=null&&e.weight!=="" || e.done || (e.sets||[]).some(Boolean) || e.reps || e.mins)) : [];
+    const entries = w ? Object.entries(w.entries||{}).filter(([,e])=>e && countsEntry(w,e) && (e.weight!=null&&e.weight!=="" || e.done || (e.sets||[]).some(Boolean) || e.reps || e.mins)) : [];
     if (entries.length){
       h += `<ul>`;
       for (const [ex,e] of entries){
         const done = e.done || (e.sets||[]).some(Boolean);
         const right = (e.weight!=null&&e.weight!=="") ? `${e.weight} lb${e.reps?`<small>× ${esc(e.reps)}</small>`:''}` : e.mins ? `${esc(e.mins)} min` : (e.reps?`× ${esc(e.reps)}`:'—');
-        h += `<li><span>${esc(nameOf(ex))}${done?' <span style="color:var(--hanko)">✓</span>':''}</span><span class="r">${right}</span></li>`;
+        h += `<li><span>${esc(nameOf(ex))}${done?' <span style="color:var(--hanko)">✓</span>':''}</span><span class="r">${right}</span><button class="delentry" data-act="delentry" data-dk="${sel}" data-ex="${ex}" aria-label="delete this entry">×</button></li>`;
       }
       h += `</ul>`;
     } else {
-      h += `<p class="empty">${w&&w.stamped ? "Stamped, nothing written down — some days are like that." : "Nothing logged."}</p>`;
+      h += `<p class="empty">${w&&w.stamped ? "Complete, nothing written down — some days are like that." : "Nothing logged."}</p>`;
+    }
+    if (w && (w.stamped || entries.length)){
+      h += `<button class="cleardaylink" data-act="clearday" data-dk="${sel}">delete this day's log</button>`;
     }
     h += `</div>`;
   }
@@ -1372,8 +1398,9 @@ function renderLog(){
 function series(exId){
   const out = [];
   for (const dk of Object.keys(db.workouts).sort()){
-    const e = db.workouts[dk].entries && db.workouts[dk].entries[exId];
-    if (e && e.weight != null && e.weight !== "" && !isNaN(parseFloat(e.weight)))
+    const w = db.workouts[dk];
+    const e = w.entries && w.entries[exId];
+    if (e && countsEntry(w, e) && e.weight != null && e.weight !== "" && !isNaN(parseFloat(e.weight)))
       out.push({dk, w:parseFloat(e.weight), reps:e.reps});
   }
   return out;
@@ -1667,6 +1694,22 @@ document.addEventListener("click", e=>{
     ui.calMonth=[y,m]; renderLog(); return;
   }
   if (act==="calsel"){ ui.calSel=t.dataset.dk; renderLog(); return; }
+  if (act==="delentry"){
+    const w = db.workouts[t.dataset.dk];
+    if (w){
+      if (w.entries) delete w.entries[t.dataset.ex];
+      w.extras = (w.extras||[]).filter(x=>x!==t.dataset.ex);
+      gcDay(t.dataset.dk);
+    }
+    save(); renderLog(); return;
+  }
+  if (act==="clearday"){
+    if (confirm("Delete everything logged on this day?")){
+      delete db.workouts[t.dataset.dk];
+      save(); renderLog();
+    }
+    return;
+  }
   if (act==="prog"){ ui.progOpen = ui.progOpen===t.dataset.ex ? null : t.dataset.ex; renderProgress(); return; }
   if (act==="export"){
     const blob = new Blob([JSON.stringify(db,null,2)], {type:"application/json"});
