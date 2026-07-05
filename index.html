@@ -3,28 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#fbfbf9">
+<meta name="theme-color" content="#fefcfd">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="description" content="Keiko — a quiet training log">
 <title>Keiko — Training Log</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='25' fill='none' stroke='%23b23a2b' stroke-width='5'/%3E%3Cpath d='M21 33 L29 41 L44 24' fill='none' stroke='%23b23a2b' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21C8 18 3 13.6 3 8.8 3 5.6 5.4 3 8.4 3c1.5 0 2.9.7 3.6 1.9C12.7 3.7 14.1 3 15.6 3 18.6 3 21 5.6 21 8.8c0 4.8-5 9.2-9 12.2z' fill='%23e0578a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme: light;
-  --paper:#fbfbf9;
-  --paper-2:#f1f1ed;
-  --ink:#262723;
-  --ink-2:#73746d;
-  --ink-3:#abaca4;
-  --line:rgba(38,39,35,.15);
-  --line-soft:rgba(38,39,35,.08);
-  --hanko:#b23a2b;
-  --hanko-soft:rgba(178,58,43,.1);
-  --wash:#f0f0ec;
+  --paper:#fefcfd;
+  --paper-2:#f8f0f4;
+  --ink:#342e34;
+  --ink-2:#7e747c;
+  --ink-3:#b8acb4;
+  --line:rgba(52,46,52,.14);
+  --line-soft:rgba(52,46,52,.08);
+  --hanko:#e0578a;
+  --hanko-soft:rgba(224,87,138,.1);
+  --gold:#f2c94c;
+  --lav:#b9a8e8;
+  --wash:#f5eff3;
   --serif:'Instrument Sans',-apple-system,'Helvetica Neue',sans-serif;
   --sans:'Instrument Sans',-apple-system,'Helvetica Neue',sans-serif;
 }
@@ -48,11 +50,16 @@ input{font:inherit;color:inherit}
   display:flex;align-items:baseline;justify-content:space-between;
   padding:calc(.9rem + env(safe-area-inset-top)) 1.25rem .7rem;
 }
-.brand{font-family:var(--serif);font-weight:700;font-size:1.02rem;letter-spacing:-.01em}
+.brand{
+  font-family:'Press Start 2P',var(--sans);font-weight:400;font-size:.72rem;letter-spacing:0;
+  display:flex;align-items:center;gap:.5rem;
+}
 .brand small{
   font-family:var(--sans);font-weight:500;font-size:.62rem;color:var(--ink-2);
-  text-transform:uppercase;letter-spacing:.22em;margin-left:.45rem;
+  text-transform:uppercase;letter-spacing:.22em;
 }
+.brandheart{width:13px;height:auto;animation:heartpulse 2.4s ease-in-out infinite}
+@keyframes heartpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
 .express{
   font-size:.66rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;
   color:var(--ink-2);
@@ -65,7 +72,7 @@ input{font:inherit;color:inherit}
   background:var(--ink-3);margin-right:.5em;vertical-align:.08em;
   transition:background .25s;
 }
-.express.on{color:var(--hanko);border-color:rgba(178,58,43,.45);background:var(--hanko-soft)}
+.express.on{color:var(--hanko);border-color:rgba(224,87,138,.45);background:var(--hanko-soft)}
 .express.on .dot{background:var(--hanko)}
 
 /* ───────── day header ───────── */
@@ -77,13 +84,13 @@ input{font:inherit;color:inherit}
   padding:1.15rem 1.3rem 1.35rem;
   overflow:hidden;
 }
-.dayhead[data-day="mon"]{--wash:#f1e2e0}
-.dayhead[data-day="tue"]{--wash:#e0e8ed}
-.dayhead[data-day="wed"]{--wash:#e3eadd}
-.dayhead[data-day="thu"]{--wash:#ede4d8}
-.dayhead[data-day="fri"]{--wash:#efefec}
-.dayhead[data-day="sat"]{--wash:#e6e3ee}
-.dayhead[data-day="sun"]{--wash:#efefec}
+.dayhead[data-day="mon"]{--wash:#fae0ea}
+.dayhead[data-day="tue"]{--wash:#e3e9f8}
+.dayhead[data-day="wed"]{--wash:#e0f0e4}
+.dayhead[data-day="thu"]{--wash:#fdf0d8}
+.dayhead[data-day="fri"]{--wash:#f5eff3}
+.dayhead[data-day="sat"]{--wash:#ecdff7}
+.dayhead[data-day="sun"]{--wash:#f5eff3}
 .datebar{display:flex;align-items:center;gap:.4rem;margin-bottom:.55rem}
 .dnav{
   width:2rem;height:2rem;border-radius:50%;
@@ -194,9 +201,9 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   transition:background .18s,border-color .18s;
 }
 .donebtn .ring svg{width:.95rem;height:.95rem;opacity:0;transition:opacity .18s;stroke:var(--paper);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.donebtn.on .ring{background:var(--ink);border-color:var(--ink)}
+.donebtn.on .ring{background:var(--hanko);border-color:var(--hanko)}
 .donebtn.on .ring svg{opacity:1}
-.donebtn.on{color:var(--ink-2)}
+.donebtn.on{color:var(--hanko)}
 
 /* session picker */
 .sessswap{
@@ -216,7 +223,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .sessswap select:focus{outline:none;border-color:var(--ink)}
 .today-jump{
   font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--hanko);border:1px solid rgba(178,58,43,.4);border-radius:999px;
+  color:var(--hanko);border:1px solid rgba(224,87,138,.4);border-radius:999px;
   padding:.22rem .65rem;margin-left:.7em;vertical-align:.1em;
 }
 
@@ -410,13 +417,35 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .libcues li{margin:.35rem 0;list-style:disc}
 .libnone{padding:2rem 0;text-align:center;font-size:.85rem;color:var(--ink-3);font-style:italic}
 
-/* ───────── hamster ───────── */
-.ham{width:62px;height:auto;cursor:pointer}
-.ham.dance{animation:hamdance .5s steps(1) 6;transform-origin:50% 92%}
+/* ───────── pixel friends & sparkle ───────── */
+.ham{width:54px;height:auto;cursor:pointer}
+.cat{width:64px;height:auto;cursor:pointer}
+.ham.dance,.cat.dance{animation:hamdance .5s steps(1) 6;transform-origin:50% 92%}
+.cat.dance{animation-delay:.12s}
 @keyframes hamdance{
   0%,100%{transform:rotate(-7deg)}
   50%{transform:rotate(7deg) translateY(-1px)}
 }
+.party{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.duo{display:flex;align-items:flex-end;gap:1rem}
+.bobheart{width:17px;animation:bob 1.4s ease-in-out infinite}
+.bobheart svg{width:100%;height:auto;display:block}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.sparkcluster{position:absolute;right:1.15rem;top:3.4rem;width:64px;height:64px;pointer-events:none}
+.spark{position:absolute;width:13px;animation:twinkle 2.8s ease-in-out infinite}
+.spark svg{width:100%;height:auto;display:block}
+.spark.s1{right:4px;top:0}
+.spark.s2{right:32px;top:22px;width:10px;animation-delay:.9s}
+.spark.s3{right:6px;top:42px;width:8px;animation-delay:1.8s}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:.9;transform:scale(1)}}
+.burst{position:absolute;z-index:60;width:13px;pointer-events:none;animation:burstfly .62s cubic-bezier(.22,1,.36,1) forwards}
+.burst svg{width:100%;height:auto;display:block}
+@keyframes burstfly{
+  from{transform:translate(-50%,-50%) scale(.45);opacity:1}
+  to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.05);opacity:0}
+}
+.restsprite{width:78px;height:auto}
+.pemptybunny{width:104px;height:auto;margin-bottom:1rem}
 
 /* ───────── tab bar ───────── */
 .tabbar{
@@ -445,7 +474,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 <body>
 <div class="app">
   <header class="top">
-    <div class="brand">Keiko <small>training log</small></div>
+    <div class="brand">KEIKO <svg class="brandheart" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="0" width="2" height="1" fill="#ee6fa4"/><rect x="4" y="0" width="2" height="1" fill="#ee6fa4"/><rect x="0" y="1" width="7" height="2" fill="#ee6fa4"/><rect x="1" y="3" width="5" height="1" fill="#ee6fa4"/><rect x="2" y="4" width="3" height="1" fill="#ee6fa4"/><rect x="3" y="5" width="1" height="1" fill="#ee6fa4"/></svg> <small>training log</small></div>
     <button class="express" id="expressBtn" aria-pressed="false"><span class="dot"></span>6-6 express</button>
   </header>
   <main>
@@ -808,12 +837,65 @@ function lastWeight(exId, beforeKey){
   return null;
 }
 function hankoSVG(cls){
-  return `<svg class="${cls||''}" viewBox="0 0 64 64" aria-label="done">
-    <circle cx="32" cy="32" r="26" fill="none" stroke="#b23a2b" stroke-width="4.5" opacity=".9"/>
-    <path d="M21 33 L29 41 L44 24" fill="none" stroke="#b23a2b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
-  </svg>`;
+  return pix(HEART_GRID, HEART_PAL, "pixheart "+(cls||""), "completed");
 }
-/* pixel hamster — appears when a workout is finished */
+/* ── pixel sprite library (recreated from Serena's asset references) ── */
+function pix(grid, pal, cls, label, act){
+  let r = "";
+  grid.forEach((row,y)=>{
+    [...row].forEach((ch,x)=>{
+      const c = pal[ch];
+      if (c) r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${c}"/>`;
+    });
+  });
+  return `<svg class="${cls||""}" viewBox="0 0 ${grid[0].length} ${grid.length}" shape-rendering="crispEdges" role="img" aria-label="${label||""}"${act?` data-act="${act}"`:""}>${r}</svg>`;
+}
+
+/* glossy pink heart — the completion mark */
+const HEART_GRID = [
+"..DDD...DDD..",
+".DPPPD.DPPPD.",
+"DPWWPPDPPPPLD",
+"DPWPPPPPPPPLD",
+"DPPPPPPPPPPLD",
+".DPPPPPPPPLD.",
+"..DPPPPPPLD..",
+"...DPPPPLD...",
+"....DPPLD....",
+".....DPD.....",
+"......D......"
+];
+const HEART_PAL = {D:"#d4568b",P:"#f6a8c8",W:"#fff3f8",L:"#cfaee2"};
+
+/* tiny heart + sparkle particles */
+const MINIHEART_GRID = [".HH.HH.","HHHHHHH","HHHHHHH",".HHHHH.","..HHH..","...H..."];
+const SPARK_GRID = ["..S..","..S..","SSSSS","..S..","..S.."];
+const MINIHEART = p => pix(MINIHEART_GRID,{H:p},"","");
+const SPARK = p => pix(SPARK_GRID,{S:p},"","");
+
+/* dancing cat — white, blushing, arms up */
+const CAT_GRID = [
+".OO.........OO..",
+"OPPO.......OPPO.",
+"OPPPO.....OPPPO.",
+".OWWWWWWWWWWWWO.",
+"OWWWWWWWWWWWWWWO",
+"OWWWWWWWWWWWWWWO",
+"OWWOOWWWWWWOOWWO",
+"OWPWWWWGGWWWWPWO",
+"OWWWWWWWWWWWWWWO",
+".OWWWWWWWWWWWWO.",
+"..OWWWWWWWWWWO..",
+"..OWWOWWWWOWWO..",
+"..OWWOWWWWOWWO..",
+"..OWWWWWWWWWWO..",
+"...OWWWWWWWWO...",
+"....OOOOOOOO...."
+];
+const CAT_PAL = {O:"#3a3138",W:"#ffffff",P:"#f6b6cb",G:"#8d939c"};
+function catSVG(cls){ return pix(CAT_GRID, CAT_PAL, "cat "+(cls||""), "a dancing cat", "dance"); }
+
+/* periwinkle hamster — the original mascot */
 const HAM_GRID = [
 "..OO......OO..",
 ".OBBO....OBBO.",
@@ -833,22 +915,65 @@ const HAM_GRID = [
 "...OPP..PPO..."
 ];
 const HAM_PAL = {O:"#474860",B:"#98a5ea",D:"#7583d8",W:"#fcfcfa",P:"#f2a9b8",E:"#2e2e38"};
-function hamSVG(cls){
-  let rects = "";
-  HAM_GRID.forEach((row,y)=>{
-    [...row].forEach((ch,x)=>{
-      if (ch!==".") rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${HAM_PAL[ch]}"/>`;
-    });
-  });
-  return `<svg class="ham ${cls||""}" viewBox="0 0 14 16" shape-rendering="crispEdges" data-act="dance" role="img" aria-label="a proud hamster">${rects}</svg>`;
-}
+function hamSVG(cls){ return pix(HAM_GRID, HAM_PAL, "ham "+(cls||""), "a proud hamster", "dance"); }
 
-const SPRIG = `<svg class="sprig" viewBox="0 0 90 110" fill="none" stroke="#262723" stroke-width="1.3" stroke-linecap="round">
-  <path d="M45 108 C 44 78, 40 52, 46 14"/>
-  <path d="M45.5 88 C 34 84, 26 74, 25 62 C 37 64, 44 74, 45.5 88 Z"/>
-  <path d="M44.5 62 C 55 58, 62 48, 63 36 C 51 38, 45 48, 44.5 62 Z"/>
-  <path d="M45.8 38 C 37 34, 32 27, 31.5 18 C 40 20, 45 27, 45.8 38 Z"/>
-</svg>`;
+/* bunny with a flower — keeps watch over empty pages */
+const BUNNY_GRID = [
+"........O...O.....",
+".......OPO.OPO....",
+".......OPO.OPO....",
+"......OOPOOOPOO...",
+"...OWWRYUWWWWWO...",
+"..OWWWWWWWWWWWWO..",
+".OWWWWWWWWWWWWWWWO",
+".OWWWOOWWWWWOOWWWO",
+".OWBWWWWWPWWWWBWWO",
+".OWWWWWWWWWWWWWWWO",
+"..OWWWWWWWWWWWWWO.",
+"...OOOOOOOOOOOOO.."
+];
+const BUNNY_PAL = {O:"#342e34",W:"#ffffff",P:"#f8c9d8",B:"#f2a5b0",R:"#e07575",Y:"#f5d04c",U:"#7288a0"};
+
+/* sleeping hamster — rest days */
+const SLEEPY_GRID = [
+"...OOOOOO.....",
+"..OTTTTTTOO...",
+".OTTTTTTTTTO..",
+".OTTCCCCCCTO..",
+"OTCCEECEECCTO.",
+"OTCCCCCCCCCTO.",
+"OTCCCCCCCCCTO.",
+".OCCCCCCCCCO..",
+"..OOOOOOOOO..."
+];
+const SLEEPY_PAL = {O:"#4a4038",T:"#c9b8a6",C:"#f8f2e4",E:"#5a4f44"};
+
+/* twinkling sparkles for the day header */
+const SPARKS = `<div class="sparkcluster">
+  <span class="spark s1">${SPARK("#f48fb8")}</span>
+  <span class="spark s2">${SPARK("#f2c94c")}</span>
+  <span class="spark s3">${SPARK("#b9a8e8")}</span>
+</div>`;
+
+/* heart-sparkle burst on done / finish */
+const BURST_SPRITES = [MINIHEART("#ee6fa4"), SPARK("#f48fb8"), SPARK("#f2c94c"), MINIHEART("#f6a8c8"), SPARK("#b9a8e8")];
+function heartBurst(anchor, count){
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const rect = anchor.getBoundingClientRect();
+  const n = count || 6;
+  for (let i=0;i<n;i++){
+    const p = document.createElement("div");
+    p.className = "burst";
+    p.innerHTML = BURST_SPRITES[i % BURST_SPRITES.length];
+    const ang = (Math.PI*2*i)/n + (Math.random()-.5)*.7;
+    p.style.setProperty("--dx", (Math.cos(ang)*(22+Math.random()*14)).toFixed(1)+"px");
+    p.style.setProperty("--dy", (Math.sin(ang)*(18+Math.random()*12)-12).toFixed(1)+"px");
+    p.style.left = (rect.left + rect.width/2 + window.scrollX)+"px";
+    p.style.top = (rect.top + rect.height/2 + window.scrollY)+"px";
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 700);
+  }
+}
 
 /* ══════════════════ state ══════════════════ */
 let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null, adding:false, libq:"", libOpen:null, dance:false };
@@ -915,12 +1040,12 @@ function renderToday(){
     <h1>${esc(day.title).replace(/\n/g,"<br>")}</h1>
     ${day.sub?`<div class="sub">${esc(day.sub)}</div>`:''}
     <label class="sessswap">Doing <select id="sessSel" aria-label="which session are you doing">${opts}</select></label>
-    ${(r&&r.stamped)?hankoSVG("headstamp"):SPRIG}
+    ${(r&&r.stamped)?hankoSVG("headstamp"):SPARKS}
   </div>`;
 
   if (day.rest){
     h += `<div class="restcard">
-      <svg class="restmark" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M46 38 A 18 18 0 1 1 28 14 A 15 15 0 0 0 46 38 Z"/></svg>
+      ${pix(SLEEPY_GRID, SLEEPY_PAL, "restsprite", "a hamster, resting hard")}
       <p>${esc(day.line)}</p>
     </div>`;
     h += extrasBlock(r, dk);
@@ -1055,8 +1180,12 @@ function renderToday(){
 
 function stampZone(r, dk){
   if (r && r.stamped){
+    const d = ui.dance ? "dance" : "";
     return `<div class="stampzone"><div class="stamped-line">
-      ${hamSVG(ui.dance?"dance":"")}
+      <div class="party">
+        <span class="bobheart">${MINIHEART("#ee6fa4")}</span>
+        <div class="duo">${catSVG(d)}${hamSVG(d)}</div>
+      </div>
       <span>workout complete</span>
       <button class="unstamp" data-act="unstamp" data-dk="${dk}">undo</button>
     </div></div>`;
@@ -1177,6 +1306,7 @@ function renderProgress(){
     <p>Weight over time, one lift at a time.</p></div>`;
   if (!exIds.length){
     h += `<div class="pempty">
+      ${pix(BUNNY_GRID, BUNNY_PAL, "pemptybunny", "a patient bunny")}
       <p>Nothing here yet — weights you write down on the Today page gather into charts here. The first entry is the hardest one.</p></div>`;
     $("#view-progress").innerHTML = h;
     return;
@@ -1297,6 +1427,7 @@ document.addEventListener("click", e=>{
     const entry = r.entries[ex] = r.entries[ex] || {};
     const cur = !!(entry.done || (entry.sets||[]).some(Boolean));
     entry.done = !cur; delete entry.sets;
+    if (!cur) heartBurst(t, 6);
     save(); renderToday(); return;
   }
   if (act==="swap"){
@@ -1349,6 +1480,7 @@ document.addEventListener("click", e=>{
     const r = rec(t.dataset.dk, true);
     r.stamped = true; r.stampedAt = new Date().toISOString();
     save();
+    heartBurst(t, 10);
     ui.dance = true;
     renderToday();
     ui.dance = false;
