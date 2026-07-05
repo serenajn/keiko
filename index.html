@@ -490,6 +490,16 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 .restsprite{width:78px;height:auto}
 .pemptybunny{width:104px;height:auto;margin-bottom:1rem}
+.dgif{width:86px;height:auto;image-rendering:pixelated}
+.dgif.ham2{width:78px}
+.restgif{width:96px;height:auto;image-rendering:pixelated}
+.bunnygif{width:112px;height:auto;image-rendering:pixelated;margin-bottom:.8rem}
+.bongogif{display:block;width:74px;height:auto;image-rendering:pixelated;margin:0 auto .7rem}
+.headbuddy{
+  display:inline-block;width:32px;height:auto;
+  image-rendering:pixelated;pointer-events:none;
+  margin-left:.5rem;vertical-align:baseline;transform:translateY(6px);
+}
 
 /* ───────── tab bar ───────── */
 .tabbar{
@@ -1101,14 +1111,14 @@ function renderToday(){
       <div class="dateline">${dateline}${isToday?'<span class="today-tag">· today</span>':'<button class="today-jump" data-act="gotoday">↩ today</button>'}</div>
       <button class="dnav" data-act="daynav" data-dir="1" aria-label="next day">›</button>
     </div>
-    <h1>${esc(day.title).replace(/\n/g,"<br>")}</h1>
+    <h1>${esc(day.title).replace(/\n/g,"<br>")}<img class="headbuddy" src="assets/ui/buddy${(d.getDate()+d.getMonth())%3+1}.gif" alt="" aria-hidden="true"></h1>
     <label class="sessswap">Doing <select id="sessSel" aria-label="which session are you doing">${opts}</select></label>
     ${(r&&r.stamped)?hankoSVG("headstamp"):sparksFor(dk)}
   </div>`;
 
   if (day.rest){
     h += `<div class="restcard">
-      ${pix(SLEEPY_GRID, SLEEPY_PAL, "restsprite", "a hamster, resting hard")}
+      <img class="restgif" src="assets/ui/sleep-ham.gif" alt="a hamster, resting hard">
       <p>${esc(day.line)}</p>
     </div>`;
     h += extrasBlock(r, dk);
@@ -1273,12 +1283,15 @@ function renderToday(){
 
 function stampZone(r, dk){
   if (r && r.stamped){
-    const d = ui.dance ? "dance" : "";
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const party = reduced
+      ? hankoSVG("")
+      : `<div class="duo">
+          <img class="dgif" src="assets/ui/dance-cat.gif" alt="a cat, celebrating you">
+          <img class="dgif ham2" src="assets/ui/dance-ham.gif" alt="a hamster, celebrating you">
+        </div>`;
     return `<div class="stampzone"><div class="stamped-line">
-      <div class="party">
-        <span class="bobheart">${MINIHEART("#ee6fa4")}</span>
-        <div class="duo">${catSVG(d)}${hamSVG(d)}</div>
-      </div>
+      ${party}
       <span>workout complete</span>
       <button class="unstamp" data-act="unstamp" data-dk="${dk}">undo</button>
     </div></div>`;
@@ -1399,7 +1412,7 @@ function renderProgress(){
     <p>Weight over time, one lift at a time.</p></div>`;
   if (!exIds.length){
     h += `<div class="pempty">
-      ${pix(BUNNY_GRID, BUNNY_PAL, "pemptybunny", "a patient bunny")}
+      <img class="bunnygif" src="assets/ui/bunny.gif" alt="a patient bunny">
       <p>Nothing here yet — weights you write down on the Today page gather into charts here. The first entry is the hardest one.</p></div>`;
     $("#view-progress").innerHTML = h;
     return;
@@ -1441,7 +1454,7 @@ function libRowsHTML(){
     if (!groups.has(e.cat)) groups.set(e.cat, []);
     groups.get(e.cat).push(e);
   }
-  if (!groups.size) return `<div class="libnone">Nothing matches "${esc(ui.libq)}".</div>`;
+  if (!groups.size) return `<div class="libnone"><img class="bongogif" src="assets/ui/bongo.gif" alt="">Nothing matches "${esc(ui.libq)}".</div>`;
   let h = "";
   for (const [cat, list] of groups){
     h += `<div class="libcat">${esc(cat)}</div>`;
