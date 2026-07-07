@@ -263,16 +263,20 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   position:relative;z-index:2;background:var(--paper);
   transition:transform .28s cubic-bezier(.22,1,.36,1);
 }
-.exrow.open .rowslide{transform:translateX(calc(-1*var(--tray,132px)))}
+.exrow.open .rowslide{transform:translateX(calc(-1*var(--tray,212px)))}
 .rowslide.dragging{transition:none}
 .rowactions{
   position:absolute;top:0;bottom:0;right:0;z-index:1;
   display:flex;align-items:center;gap:.4rem;padding:0 .1rem 0 .5rem;
 }
 .rowactions button{
-  font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  padding:.55rem .75rem;border-radius:.7rem;
+  display:flex;flex-direction:column;align-items:center;gap:.1rem;
+  font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:.45rem .6rem;border-radius:.7rem;line-height:1.15;
   background:var(--paper-2);color:var(--ink-2);
+}
+.rowactions button small{
+  font-size:.5rem;font-weight:500;letter-spacing:.03em;text-transform:none;opacity:.75;
 }
 .rowactions button.warn{background:var(--hanko-soft);color:var(--hanko)}
 .rowmore{
@@ -296,7 +300,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   padding:.42rem .3rem;font:inherit;font-weight:600;outline:none;color:var(--ink);
 }
 .ef-btns{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
-.ef-hide{margin-left:auto;font-size:.68rem;color:var(--hanko);padding:.3rem 0}
+.ef-note{font-size:.64rem;color:var(--ink-3);letter-spacing:.04em;font-style:italic}
 .restorelink{color:var(--hanko);font-style:normal;text-decoration:underline;text-underline-offset:2px}
 .wt{
   margin-left:auto;display:flex;align-items:center;gap:.05rem;
@@ -653,7 +657,8 @@ const PLAN = {
         cue:"Elbows track back, not flared. Stop at 90°."},
       {id:"cc-straight-leg", name:"Captain's chair — straight-leg raise", sets:3, reps:"10", bw:true,
         cue:"Three-second lower. No swinging."},
-      {id:"cc-knee", name:"Captain's chair — knee raise", sets:3, reps:"10", bw:true},
+      {id:"db-shoulder-press", name:"DB shoulder press", detail:"seated · the width lever", sets:3, reps:"8–10", ex:{sets:2,reps:"8–10"},
+        cue:"Ribs down, press up and slightly in. Don't arch the lower back."},
       {id:"lateral-raise", name:"DB lateral raise", detail:"highest value for taper", sets:3, reps:"12–15", ex:{sets:2,reps:"12–15"},
         cue:"Lead with the elbow, stay at or below shoulder height. Stop if the shoulder shrugs up."},
       {id:"one-arm-row", name:"One-arm DB row", sets:3, reps:"10 / side", ex:{sets:3,reps:"10 / side"},
@@ -1004,7 +1009,7 @@ function lastWeight(exId, beforeKey){
     if (dk >= beforeKey) continue;
     const w = db.workouts[dk];
     const e = w.entries && w.entries[exId];
-    if (e && countsEntry(w, e) && e.weight != null && e.weight !== "") return {w:e.weight, when:dk};
+    if (e && countsEntry(w, e) && e.weight != null && e.weight !== "") return {w:e.weight, reps:e.reps, when:dk};
   }
   if (HINTS[exId] != null) return {w:HINTS[exId], when:null};
   return null;
@@ -1175,7 +1180,7 @@ function extrasHTML(r, dk, startIdx){
     const done = !!(entry && entry.done);
     const last = lastWeight(id, dk);
     const wVal = entry && entry.weight != null ? entry.weight : "";
-    h += `<li class="exrow ${ui.rowOpen==="x:"+id?'open':''}" data-rowkey="x:${id}" style="--i:${startIdx+n};--tray:92px">
+    h += `<li class="exrow ${ui.rowOpen==="x:"+id?'open':''}" data-rowkey="x:${id}" style="--i:${startIdx+n};--tray:100px">
       <div class="rowslide">
       <div class="exhead">
         <div>
@@ -1198,7 +1203,7 @@ function extrasHTML(r, dk, startIdx){
       </div>
       ${last?`<div class="lasthint">last · <b>${last.w} lb</b>${last.when?` · ${fmtShort(last.when)}`:""}</div>`:""}
       </div>
-      <div class="rowactions"><button class="warn" data-act="rmex" data-id="${id}">remove</button></div>
+      <div class="rowactions"><button class="warn" data-act="rmex" data-id="${id}"><span>remove</span><small>today</small></button></div>
     </li>`;
   });
   h += `<li style="--i:${startIdx+list.length}">
@@ -1359,10 +1364,10 @@ function renderToday(){
           <label>sets<input class="ef-sets" inputmode="numeric" value="${sc.sets}"></label>
           <label>reps<input class="ef-reps" value="${esc(sc.reps)}"></label>
         </div>
+        <div class="ef-note">applies to every ${WDAYS[DAYKEYS.indexOf(sessKey)]}</div>
         <div class="ef-btns">
           <button class="choice sel" data-act="editsave" data-key="${ikey}">save</button>
           <button class="choice" data-act="editcancel">cancel</button>
-          <button class="ef-hide" data-act="edithide" data-key="${ikey}">remove from routine</button>
         </div>
       </div>`;
     } else {
@@ -1376,17 +1381,20 @@ function renderToday(){
           <input class="wtin" inputmode="decimal" data-ex="${cid}" value="${wVal!==""?esc(wVal):""}" placeholder="${last?last.w:'–'}" aria-label="weight">
           <span class="unit">lb</span>
           <button data-act="winc" data-ex="${cid}">＋</button>
-        </div>`;
+        </div>
+        <input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="reps" aria-label="reps">`;
       } else {
         h += `<input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="reps" aria-label="reps" style="margin-left:auto">`;
       }
       h += `</div>`;
-      if (!bw && last) h += `<div class="lasthint">last · <b>${last.w} lb</b>${last.when?` · ${fmtShort(last.when)}`:" · from the plan"}</div>`;
+      if (!bw && last) h += `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${last.when?` · ${fmtShort(last.when)}`:" · from the plan"}</div>`;
     }
     h += `</div>
       <div class="rowactions">
-        ${sub?`<button data-act="unswap" data-key="${ikey}">undo</button>`:`<button data-act="swap" data-key="${ikey}">swap</button>`}
-        <button data-act="rowedit" data-key="${ikey}">edit</button>
+        ${sub?`<button data-act="unswap" data-key="${ikey}"><span>undo</span><small>today</small></button>`
+             :`<button data-act="swap" data-key="${ikey}"><span>swap</span><small>just today</small></button>`}
+        <button data-act="rowedit" data-key="${ikey}"><span>edit</span><small>every week</small></button>
+        <button class="warn" data-act="rowremove" data-key="${ikey}"><span>remove</span><small>every week</small></button>
       </div>
     </li>`;
   });
@@ -1756,7 +1764,7 @@ document.addEventListener("click", e=>{
     ui.editing = null;
     save(); renderToday(); return;
   }
-  if (act==="edithide"){
+  if (act==="edithide" || act==="rowremove"){
     const k = t.dataset.key;
     const sk = sessOf(ui.viewDate);
     db.planOv = db.planOv || {};
@@ -2003,7 +2011,7 @@ document.addEventListener("touchmove", e=>{
   const dx = p.clientX - touchS.x, dy = p.clientY - touchS.y;
   if (touchS.horiz===null && (Math.abs(dx)>6 || Math.abs(dy)>6)) touchS.horiz = Math.abs(dx) > Math.abs(dy)*1.2;
   if (!touchS.horiz) return;
-  const tray = parseFloat(getComputedStyle(touchS.row).getPropertyValue("--tray")) || 132;
+  const tray = parseFloat(getComputedStyle(touchS.row).getPropertyValue("--tray")) || 212;
   const base = touchS.row.classList.contains("open") ? -tray : 0;
   const off = Math.max(-tray-18, Math.min(6, base+dx));
   touchS.slide.classList.add("dragging");
