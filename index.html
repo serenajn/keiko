@@ -198,8 +198,9 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   font-size:.76rem;color:var(--ink-2);
   padding:.34rem .85rem;
   border:1px solid var(--line);border-radius:999px;
-  transition:background .18s,color .18s,border-color .18s;
+  transition:background .18s,color .18s,border-color .18s,transform .15s ease;
 }
+.choice:active{transform:scale(.95)}
 .choice small{font-size:.62rem;color:var(--ink-3);margin-left:.35em}
 .choice.sel{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:500}
 .choice.sel small{color:color-mix(in srgb,var(--paper) 70%,transparent)}
@@ -221,6 +222,8 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .donebtn.on .ring{background:var(--hanko);border-color:var(--hanko)}
 .donebtn.on .ring svg{opacity:1}
 .donebtn.on{color:var(--hanko)}
+.donebtn .ring.pop{animation:ringpop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes ringpop{0%{transform:scale(.7)}55%{transform:scale(1.16)}100%{transform:scale(1)}}
 
 /* session picker */
 .sessswap{
@@ -264,7 +267,10 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   position:relative;z-index:2;background:var(--paper);
   transition:transform .28s cubic-bezier(.22,1,.36,1);
 }
-.exrow.open .rowslide{transform:translateX(calc(-1*var(--tray,212px)))}
+.exrow.open .rowslide{
+  transform:translateX(calc(-1*var(--tray,212px)));
+  transition:transform .55s cubic-bezier(.3,1.4,.45,1); /* springy settle when the tray opens */
+}
 .rowslide.dragging{transition:none}
 .rowactions{
   position:absolute;top:0;bottom:0;right:0;z-index:1;
@@ -274,12 +280,18 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   display:flex;flex-direction:column;align-items:center;gap:.1rem;
   font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
   padding:.45rem .6rem;border-radius:.7rem;line-height:1.15;
-  background:#ece7f8;color:#6f63a0;
+  background:#f0ebee;color:#6b6169;
+  transition:transform .15s ease;
 }
+.rowactions button:active{transform:scale(.93)}
 .rowactions button small{
   font-size:.5rem;font-weight:500;letter-spacing:.03em;text-transform:none;opacity:.75;
 }
-.rowactions button.warn{background:#dfd7f3;color:#57498c}
+.rowactions button.warn{background:rgba(224,87,138,.12);color:#c0497a}
+.exrow.open .rowactions button{animation:traypop .4s cubic-bezier(.34,1.56,.64,1) both}
+.exrow.open .rowactions button:nth-child(2){animation-delay:.05s}
+.exrow.open .rowactions button:nth-child(3){animation-delay:.1s}
+@keyframes traypop{from{transform:scale(.82)}to{transform:scale(1)}}
 .rowmore{
   flex:none;color:var(--ink-3);font-size:1.05rem;line-height:1;
   padding:.05rem .3rem;
@@ -437,7 +449,17 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 
 /* ───────── progress ───────── */
+.pgroup{
+  margin:1.6rem 1.25rem .1rem;padding-bottom:.35rem;border-bottom:1px solid var(--line);
+  font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);
+  display:flex;align-items:baseline;justify-content:space-between;gap:.8rem;
+}
+.pgroup small{
+  font-size:.62rem;font-weight:400;letter-spacing:.02em;text-transform:none;
+  color:var(--ink-3);font-style:italic;text-align:right;
+}
 .plist{list-style:none;margin:0 1.25rem}
+.plist>li{animation:rise .5s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*40ms)}
 .plist>li{border-bottom:1px solid var(--line-soft)}
 .prow{
   width:100%;display:flex;align-items:baseline;gap:1rem;
@@ -452,7 +474,12 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .chart{width:100%;height:auto;display:block}
 .chart text{font-family:var(--serif);font-size:10.5px;fill:var(--ink-2)}
 .chart .grid{stroke:var(--line-soft);stroke-width:1}
-.chart .ln{stroke:var(--ink);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.chart .ln{
+  stroke:var(--ink);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:1;stroke-dashoffset:1;
+  animation:drawln .8s ease-out .1s forwards;
+}
+@keyframes drawln{to{stroke-dashoffset:0}}
 .chart .pt{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
 .chart .pt.last{fill:var(--hanko);stroke:var(--hanko)}
 .pentries{list-style:none;margin-top:.6rem}
@@ -580,6 +607,10 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .tab.active{color:var(--ink)}
 .tab .tickdot{width:4px;height:4px;border-radius:50%;background:transparent;margin-top:.1rem}
 .tab.active .tickdot{background:var(--hanko)}
+
+.tabfade{animation:rise .35s cubic-bezier(.16,1,.3,1)}
+.stampbtn{transition:border-color .25s,color .25s,transform .15s ease}
+.stampbtn:active{transform:scale(.97)}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -803,6 +834,13 @@ NAMES["mat-pilates"] = "Mat Pilates";
 NAMES["light-walk"] = "Light walk";
 const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "bulgarian-split-squat":"contralateral DB" };
 
+/* the lifts where progressive overload matters most, in priority order — these lead the Progress tab */
+const KEY_LIFTS = [
+  "hip-thrust","rdl","bulgarian-split-squat","sumo-squat","leg-press",
+  "assisted-pullup","db-shoulder-press","one-arm-row","seated-cable-row","lat-pulldown",
+  "db-bench","step-up","tricep-dip","seated-ham-curl","back-extension","hip-abduction"
+];
+
 /* Exercise Library — generated from the vault's Exercise Library.md by sync-library.py.
    Do not edit by hand; re-run the script instead. */
 /*__LIBRARY_START__*/
@@ -875,8 +913,8 @@ const KEY = "keiko-v1";
 function seed(){
   /* hip-thrust history carried over from the vault's Exercise Library */
   return { settings:{express:false}, workouts:{
-    "2026-05-31": {day:"mon", stamped:true, entries:{"hip-thrust":{weight:35}}, note:"from vault notes"},
-    "2026-06-08": {day:"mon", stamped:true, entries:{"hip-thrust":{weight:45, reps:"9–10"}}, note:"from vault notes"}
+    "2026-05-31": {day:"mon", stamped:true, entries:{"hip-thrust":{weight:35, done:true}}, note:"from vault notes"},
+    "2026-06-08": {day:"mon", stamped:true, entries:{"hip-thrust":{weight:45, reps:"9–10", done:true}}, note:"from vault notes"}
   }};
 }
 let db;
@@ -890,6 +928,19 @@ db.seen = db.seen || {};
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(db)); }
   catch(e){ alert("Storage is full — that image may be too large. Try a smaller one."); }
+}
+/* one-time: logging used to count any weight on a stamped day; now only done-tapped
+   entries count. Bless entries from already-stamped days so old history survives. */
+if (!db.migrStrictLog){
+  for (const w of Object.values(db.workouts)){
+    if (!w || !w.stamped || !w.entries) continue;
+    for (const e of Object.values(w.entries)){
+      if (e && !e.done && !(e.sets||[]).some(Boolean) &&
+          ((e.weight!=null && e.weight!=="") || e.reps || e.mins)) e.done = true;
+    }
+  }
+  db.migrStrictLog = 1;
+  save();
 }
 
 /* ══════════════════ helpers ══════════════════ */
@@ -1008,9 +1059,10 @@ function isBW(it, cid){
   if (it.choices){ const c = it.choices.find(c=>c.id===cid); return !!(c && c.bw); }
   return !!it.bw;
 }
-/* an entry only "counts" (record, progress, hints) if it was marked done or its day was completed */
+/* an entry only "counts" (record, progress, hints) if its done button was actually tapped —
+   finishing the day no longer sweeps in stray weights that were typed but never confirmed */
 function countsEntry(w, e){
-  return !!(e && (e.done || (e.sets||[]).some(Boolean) || w.stamped));
+  return !!(e && (e.done || (e.sets||[]).some(Boolean)));
 }
 function gcDay(dk){
   const w = db.workouts[dk];
@@ -1207,7 +1259,7 @@ function extrasHTML(r, dk, startIdx){
         <button class="rowmore" data-act="rowmore" data-key="x:${id}" aria-label="exercise options" style="margin-left:auto">⋯</button>
       </div>
       <div class="logrow">
-        <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${id}" aria-pressed="${done}">
+        <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${id}" ${last&&last.reps?`data-reps="${esc(last.reps)}"`:""} aria-pressed="${done}">
           <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
         </button>
         <div class="wt">
@@ -1216,7 +1268,7 @@ function extrasHTML(r, dk, startIdx){
           <span class="unit">lb</span>
           <button data-act="winc" data-ex="${id}">＋</button>
         </div>
-        <input class="repsin" inputmode="numeric" data-ex="${id}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="reps" aria-label="reps">
+        <input class="repsin" inputmode="numeric" data-ex="${id}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${last&&last.reps?esc(last.reps):'reps'}" aria-label="reps">
       </div>
       ${last?`<div class="lasthint">last · <b>${last.w} lb</b>${last.when?` · ${fmtShort(last.when)}`:""}</div>`:""}
       </div>
@@ -1388,8 +1440,9 @@ function renderToday(){
         </div>
       </div>`;
     } else {
+      const repHint = (last && last.reps) ? last.reps : sc.reps;
       h += `<div class="logrow">
-        <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${cid}" aria-pressed="${done}">
+        <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${cid}" data-reps="${esc(repHint)}" aria-pressed="${done}">
           <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
         </button>`;
       if (!bw){
@@ -1399,9 +1452,9 @@ function renderToday(){
           <span class="unit">lb</span>
           <button data-act="winc" data-ex="${cid}">＋</button>
         </div>
-        <input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="reps" aria-label="reps">`;
+        <input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${esc(repHint)}" aria-label="reps">`;
       } else {
-        h += `<input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="reps" aria-label="reps" style="margin-left:auto">`;
+        h += `<input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${esc(repHint)}" aria-label="reps" style="margin-left:auto">`;
       }
       h += `</div>`;
       if (!bw && last) h += `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${last.when?` · ${fmtShort(last.when)}`:" · from the plan"}</div>`;
@@ -1543,7 +1596,7 @@ function chartSVG(pts){
   s += `<text x="${padL-6}" y="${Y(yTop)+3.5}" text-anchor="end">${yTop}</text>`;
   if (yBot!==yTop) s += `<text x="${padL-6}" y="${Y(yBot)+3.5}" text-anchor="end">${yBot}</text>`;
   if (pts.length>1){
-    s += `<polyline class="ln" points="${pts.map((p,i)=>X(i)+","+Y(p.w)).join(" ")}"/>`;
+    s += `<polyline class="ln" pathLength="1" points="${pts.map((p,i)=>X(i)+","+Y(p.w)).join(" ")}"/>`;
   }
   pts.forEach((p,i)=>{
     s += `<circle class="pt ${i===pts.length-1?'last':''}" cx="${X(i)}" cy="${Y(p.w)}" r="3.4"/>`;
@@ -1553,44 +1606,56 @@ function chartSVG(pts){
   s += `</svg>`;
   return s;
 }
+function progRowHTML(id, i){
+  const pts = series(id);
+  const first = pts[0].w, latest = pts[pts.length-1].w;
+  const delta = latest - first;
+  const dTxt = pts.length===1 ? "first entry" : (delta>0?`＋${delta} lb since ${fmtShort(pts[0].dk)}`:delta<0?`−${Math.abs(delta)} lb`: "holding steady");
+  const open = ui.progOpen===id;
+  let h = `<li style="--i:${i}">
+    <button class="prow" data-act="prog" data-ex="${id}" aria-expanded="${open}">
+      <span class="lft">
+        <span class="nm">${esc(nameOf(id))}</span>
+        <span class="delta ${delta===0&&pts.length>1?'zero':''}">${dTxt}</span>
+      </span>
+      <span class="latest">${latest} lb${DETAILS[id]?`<small style="font-family:var(--sans);font-weight:400;font-size:.62rem;color:var(--ink-2)"> ${DETAILS[id]}</small>`:''}</span>
+    </button>`;
+  if (open){
+    h += `<div class="pbody">${chartSVG(pts)}<ul class="pentries">`;
+    for (const p of [...pts].reverse()){
+      h += `<li><span>${fmtShort(p.dk)}</span><span class="r">${p.w} lb${p.reps?`<small>× ${esc(p.reps)}</small>`:''}</span></li>`;
+    }
+    h += `</ul></div>`;
+  }
+  return h + `</li>`;
+}
 function renderProgress(){
-  const exIds = [...new Set([...Object.keys(NAMES), ...Object.keys(LIBNAMES), ...Object.keys(db.customNames)])]
-    .filter(id=>series(id).length>0)
-    .sort((a,b)=>series(b).length - series(a).length);
+  const all = new Set([...Object.keys(NAMES), ...Object.keys(LIBNAMES), ...Object.keys(db.customNames)]);
+  for (const e of db.customLib) all.add(e.id);
+  const tracked = [...all].filter(id=>series(id).length>0);
   let h = `<div class="pagehead"><h2>Progress</h2>
     <p>Weight over time, one lift at a time.</p></div>`;
-  if (!exIds.length){
+  if (!tracked.length){
     h += `<div class="pempty">
       <img class="bunnygif" src="assets/ui/bunny.gif" alt="a patient bunny">
-      <p>Nothing here yet — weights you write down on the Today page gather into charts here. The first entry is the hardest one.</p></div>`;
+      <p>Nothing here yet — weights you mark done on the Today page gather into charts here. The first entry is the hardest one.</p></div>`;
     $("#view-progress").innerHTML = h;
     return;
   }
-  h += `<ul class="plist">`;
-  for (const id of exIds){
-    const pts = series(id);
-    const first = pts[0].w, latest = pts[pts.length-1].w;
-    const delta = latest - first;
-    const dTxt = pts.length===1 ? "first entry" : (delta>0?`＋${delta} lb since ${fmtShort(pts[0].dk)}`:delta<0?`−${Math.abs(delta)} lb`: "holding steady");
-    const open = ui.progOpen===id;
-    h += `<li>
-      <button class="prow" data-act="prog" data-ex="${id}" aria-expanded="${open}">
-        <span class="lft">
-          <span class="nm">${esc(nameOf(id))}</span>
-          <span class="delta ${delta===0&&pts.length>1?'zero':''}">${dTxt}</span>
-        </span>
-        <span class="latest">${latest} lb${DETAILS[id]?`<small style="font-family:var(--sans);font-weight:400;font-size:.62rem;color:var(--ink-2)"> ${DETAILS[id]}</small>`:''}</span>
-      </button>`;
-    if (open){
-      h += `<div class="pbody">${chartSVG(pts)}<ul class="pentries">`;
-      for (const p of [...pts].reverse()){
-        h += `<li><span>${fmtShort(p.dk)}</span><span class="r">${p.w} lb${p.reps?`<small>× ${esc(p.reps)}</small>`:''}</span></li>`;
-      }
-      h += `</ul></div>`;
-    }
-    h += `</li>`;
+  const keys = KEY_LIFTS.filter(id=>tracked.includes(id));
+  const lastDk = id => { const p = series(id); return p[p.length-1].dk; };
+  const rest = tracked.filter(id=>!KEY_LIFTS.includes(id)).sort((a,b)=>lastDk(b).localeCompare(lastDk(a)));
+  let i = 0;
+  if (keys.length){
+    h += `<div class="pgroup">Key lifts<small>where adding weight matters most</small></div><ul class="plist">`;
+    for (const id of keys) h += progRowHTML(id, i++);
+    h += `</ul>`;
   }
-  h += `</ul>`;
+  if (rest.length){
+    h += `<div class="pgroup">${keys.length?"Accessories &amp; extras":"Tracked"}<small>most recent first</small></div><ul class="plist">`;
+    for (const id of rest) h += progRowHTML(id, i++);
+    h += `</ul>`;
+  }
   $("#view-progress").innerHTML = h;
 }
 
@@ -1698,7 +1763,12 @@ document.addEventListener("click", e=>{
   if (!t) return;
 
   if (t.id==="expressBtn"){ db.settings.express=!db.settings.express; save(); render(); return; }
-  if (t.dataset.tab){ ui.tab=t.dataset.tab; render(); window.scrollTo(0,0); return; }
+  if (t.dataset.tab){
+    ui.tab=t.dataset.tab; render(); window.scrollTo(0,0);
+    const v = $("#view-"+ui.tab);
+    if (v){ v.classList.remove("tabfade"); void v.offsetWidth; v.classList.add("tabfade"); }
+    return;
+  }
 
   const act = t.dataset.act;
   if (act==="daynav"){
@@ -1733,10 +1803,18 @@ document.addEventListener("click", e=>{
       /* "same as last time" is one tap — inherit unless she typed something */
       const last = lastWeight(ex, ui.viewDate);
       if (last && (entry.weight == null || entry.weight === "")) entry.weight = last.w;
-      if (last && last.reps && !entry.reps) entry.reps = last.reps;
+      if (!entry.reps){
+        const rr = (last && last.reps) || t.dataset.reps;
+        if (rr) entry.reps = rr;
+      }
       heartBurst(t, 6);
     }
-    save(); renderToday(); return;
+    save(); renderToday();
+    if (!cur){
+      const ring = document.querySelector(`.donebtn[data-ex="${ex}"] .ring`);
+      if (ring) ring.classList.add("pop");
+    }
+    return;
   }
   if (act==="swap"){
     ui.swapping = t.dataset.key;
@@ -2036,7 +2114,10 @@ document.addEventListener("touchmove", e=>{
   if (!touchS.horiz) return;
   const tray = parseFloat(getComputedStyle(touchS.row).getPropertyValue("--tray")) || 212;
   const base = touchS.row.classList.contains("open") ? -tray : 0;
-  const off = Math.max(-tray-18, Math.min(6, base+dx));
+  let off = base + dx;
+  if (off < -tray) off = -tray + (off + tray)/3; /* rubber-band resistance past the tray */
+  if (off > 0) off = off/3;                      /* …and when pulling the wrong way */
+  off = Math.max(-tray-30, Math.min(12, off));
   touchS.slide.classList.add("dragging");
   touchS.slide.style.transform = `translateX(${off}px)`;
 }, {passive:true});
