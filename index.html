@@ -6,7 +6,10 @@
 <meta name="theme-color" content="#fefcfd">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Keiko">
 <meta name="description" content="Keiko — a quiet training log">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/ui/icon-180.png">
 <title>Keiko — Training Log</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21C8 18 3 13.6 3 8.8 3 5.6 5.4 3 8.4 3c1.5 0 2.9.7 3.6 1.9C12.7 3.7 14.1 3 15.6 3 18.6 3 21 5.6 21 8.8c0 4.8-5 9.2-9 12.2z' fill='%23e0578a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -204,6 +207,25 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .choice small{font-size:.62rem;color:var(--ink-3);margin-left:.35em}
 .choice.sel{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:500}
 .choice.sel small{color:color-mix(in srgb,var(--paper) 70%,transparent)}
+.choice.ghost{border-style:dashed;color:var(--ink-3)}
+
+/* form cue, revealed by tapping the exercise name */
+.exname{cursor:pointer}
+.exname.hascue{
+  text-decoration:underline dotted var(--ink-3);
+  text-decoration-thickness:1px;text-underline-offset:3px;
+}
+.cuebox{
+  margin-top:.55rem;padding:.6rem .8rem;
+  background:var(--paper-2);border-radius:.6rem;
+  font-size:.78rem;color:var(--ink-2);line-height:1.55;
+  animation:rise .35s cubic-bezier(.16,1,.3,1) both;
+}
+.cuebox .toguide{
+  display:inline-block;margin-top:.35rem;
+  font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--hanko);
+}
 
 /* log controls */
 .logrow{display:flex;align-items:center;gap:1rem;margin-top:.75rem}
@@ -340,8 +362,21 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   padding:.44rem .3rem;outline:none;color:var(--ink);
 }
 .repsin::placeholder{color:var(--ink-3);font-family:var(--sans);font-size:.66rem;letter-spacing:.05em;font-weight:400}
-.lasthint{font-size:.68rem;color:var(--ink-3);margin-top:.45rem;text-align:right}
+/* set pips + last-time hint share a footer row */
+.rowfoot{display:flex;align-items:center;gap:.3rem .8rem;margin-top:.35rem;min-height:1.5rem;flex-wrap:wrap}
+.setpips{display:flex;align-items:center;gap:.05rem;margin-left:-.35rem}
+.setpips .pip{width:1.6rem;height:1.6rem;display:grid;place-items:center;border-radius:50%}
+.setpips .pip::before{
+  content:"";width:.6rem;height:.6rem;border-radius:50%;
+  border:1.5px solid var(--ink-3);
+  transition:background .15s,border-color .15s,transform .15s;
+}
+.setpips .pip.on::before{background:var(--hanko);border-color:var(--hanko)}
+.setpips .pip:active::before{transform:scale(.8)}
+.setpips .piplabel{font-size:.58rem;color:var(--ink-3);letter-spacing:.14em;text-transform:uppercase;margin-left:.3rem}
+.lasthint{font-size:.68rem;color:var(--ink-3);margin-left:auto;text-align:right}
 .lasthint b{color:var(--ink-2);font-weight:500}
+.lasthint .nudge{color:var(--hanko);font-weight:600}
 .skipnote{font-size:.72rem;color:var(--ink-3);font-style:italic;padding:.8rem 0;text-align:center}
 
 .finishline{
@@ -832,7 +867,32 @@ for (const d of Object.values(PLAN)) {
 }
 NAMES["mat-pilates"] = "Mat Pilates";
 NAMES["light-walk"] = "Light walk";
-const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "bulgarian-split-squat":"contralateral DB" };
+const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "bulgarian-split-squat":"contralateral DB",
+  "assisted-pullup":"assist", "tricep-dip":"assist" };
+
+/* lifts where the logged weight is machine ASSISTANCE — less weight = stronger */
+const ASSISTED = { "assisted-pullup":1, "tricep-dip":1 };
+
+/* plan ids whose Library entry lives under a different id */
+const LIB_LINK = {
+  "rdl":"romanian-deadlift", "sumo-squat":"sumo-db-squat", "assisted-pullup":"assisted-pull-up",
+  "one-arm-row":"one-arm-db-row", "lateral-raise":"db-lateral-raise", "db-bench":"db-bench-press",
+  "seated-ham-curl":"seated-hamstring-curl", "back-extension":"45-back-extension",
+  "banded-kickback":"banded-standing-glute-kickback", "hip-abduction":"hip-abduction-machine",
+  "cc-straight-leg":"captain-s-chair-straight-leg-raise", "serratus-slide":"serratus-wall-slide"
+};
+function libEntry(id){
+  const lid = LIB_LINK[id] || id;
+  return LIBRARY.find(e=>e.id===lid) || db.customLib.find(e=>e.id===lid) || null;
+}
+
+/* pull numbers out of rep strings like "8–10", "12 / leg", "max / 12" */
+const repNums = s => (String(s).match(/\d+(\.\d+)?/g)||[]).map(Number);
+function repTop(s){ const n = repNums(s); return n.length ? Math.max(...n) : null; }
+function repLow(s){ const n = repNums(s); return n.length ? Math.min(...n) : null; }
+
+/* dumbbell-friendly steps: small lifts move in 2.5s, big ones in 5s */
+function wStep(w){ return (w < 25) ? 2.5 : 5; }
 
 /* the lifts where progressive overload matters most, in priority order — these lead the Progress tab */
 const KEY_LIFTS = [
@@ -1083,6 +1143,15 @@ function lastWeight(exId, beforeKey){
   if (HINTS[exId] != null) return {w:HINTS[exId], when:null};
   return null;
 }
+/* "same as last time" — fill weight & reps unless she already typed something */
+function inheritInto(entry, exId, repsFallback){
+  const last = lastWeight(exId, ui.viewDate);
+  if (last && (entry.weight == null || entry.weight === "")) entry.weight = last.w;
+  if (!entry.reps){
+    const rr = (last && last.reps) || repsFallback;
+    if (rr) entry.reps = rr;
+  }
+}
 function hankoSVG(cls){
   return pix(HEART_GRID, HEART_PAL, "pixheart "+(cls||""), "completed");
 }
@@ -1237,7 +1306,7 @@ function heartBurst(anchor, count){
 }
 
 /* ══════════════════ state ══════════════════ */
-let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null, adding:false, libq:"", libOpen:null, dance:false, rowOpen:null, editing:null };
+let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null, adding:false, libq:"", libOpen:null, dance:false, rowOpen:null, editing:null, cueOpen:null, slotPick:null };
 { const t=new Date(); ui.calMonth = [t.getFullYear(), t.getMonth()]; ui.calSel = key(t); }
 
 /* ══════════════════ render: today ══════════════════ */
@@ -1249,15 +1318,18 @@ function extrasHTML(r, dk, startIdx){
     const done = !!(entry && entry.done);
     const last = lastWeight(id, dk);
     const wVal = entry && entry.weight != null ? entry.weight : "";
+    const le = libEntry(id);
+    const cueText = (le && (le.cues||[])[0]) || "";
     h += `<li class="exrow ${ui.rowOpen==="x:"+id?'open':''}" data-rowkey="x:${id}" style="--i:${startIdx+n};--tray:100px">
       <div class="rowslide">
       <div class="exhead">
         <div>
-          <div class="exname">${esc(nameOf(id))}</div>
+          <div class="exname${le?' hascue':''}" data-act="cue" data-key="x:${id}">${esc(nameOf(id))}</div>
           <div class="exdetail">extra</div>
         </div>
         <button class="rowmore" data-act="rowmore" data-key="x:${id}" aria-label="exercise options" style="margin-left:auto">⋯</button>
       </div>
+      ${ui.cueOpen==="x:"+id && le ? `<div class="cuebox">${esc(cueText)}${cueText?'<br>':''}<button class="toguide" data-act="openlib" data-id="${le.id}">form guide ＋ demo →</button></div>` : ""}
       <div class="logrow">
         <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${id}" ${last&&last.reps?`data-reps="${esc(last.reps)}"`:""} aria-pressed="${done}">
           <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
@@ -1270,7 +1342,7 @@ function extrasHTML(r, dk, startIdx){
         </div>
         <input class="repsin" inputmode="numeric" data-ex="${id}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${last&&last.reps?esc(last.reps):'reps'}" aria-label="reps">
       </div>
-      ${last?`<div class="lasthint">last · <b>${last.w} lb</b>${last.when?` · ${fmtShort(last.when)}`:""}</div>`:""}
+      ${last?`<div class="rowfoot"><div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${last.when?` · ${fmtShort(last.when)}`:""}</div></div>`:""}
       </div>
       <div class="rowactions"><button class="warn" data-act="rmex" data-id="${id}"><span>remove</span><small>today</small></button></div>
     </li>`;
@@ -1393,7 +1465,7 @@ function renderToday(){
     const cid = sub ? sub.id : (permId || chosenId(it, r));
     const entry = r && r.entries && r.entries[cid];
     const bw = (sub || permId) ? false : isBW(it, cid);
-    const done = !!(entry && (entry.done || (entry.sets||[]).some(Boolean)));
+    const done = !!(entry && entry.done);
     const last = lastWeight(cid, dk);
     const wVal = entry && entry.weight != null ? entry.weight : "";
     const origName = it.choices ? it.label : it.name;
@@ -1402,12 +1474,15 @@ function renderToday(){
       ? {sets: o.sets || it.sets, reps: o.reps || it.reps}
       : ((express && it.ex) ? it.ex : {sets:it.sets, reps:it.reps});
     const editing = ui.editing===ikey;
+    const le = libEntry(cid);
+    const cueText = (!sub && !permId && it.cue) ? it.cue : ((le && (le.cues||[])[0]) || "");
+    const hasCue = !!(cueText || le);
 
     h += `<li class="exrow ${ui.rowOpen===ikey?'open':''}" data-rowkey="${ikey}" style="--i:${i}">
       <div class="rowslide">
       <div class="exhead">
         <div>
-          <div class="exname">${esc(dispName)}</div>
+          <div class="exname${hasCue?' hascue':''}" data-act="cue" data-key="${ikey}">${esc(dispName)}</div>
           ${sub?`<div class="exdetail subnote">in place of ${esc(origName).toLowerCase()}</div>`
             :permId?`<div class="exdetail subnote">edited · was ${esc(origName).toLowerCase()}</div>`
             :it.detail?`<div class="exdetail">${esc(it.detail)}</div>`:''}
@@ -1415,12 +1490,22 @@ function renderToday(){
         <div class="scheme">${sc.sets} × ${esc(sc.reps)}</div>
         <button class="rowmore" data-act="rowmore" data-key="${ikey}" aria-label="exercise options">⋯</button>
       </div>`;
+    if (ui.cueOpen===ikey && hasCue){
+      h += `<div class="cuebox">${esc(cueText)}${le?`${cueText?'<br>':''}<button class="toguide" data-act="openlib" data-id="${le.id}">form guide ＋ demo →</button>`:""}</div>`;
+    }
     if (!sub && !permId && it.choices){
       h += `<div class="choices">`;
-      it.choices.forEach(c=>{
-        h += `<button class="choice ${c.id===cid?'sel':''}" data-act="choose" data-slot="${it.slot}" data-cid="${c.id}">
-          ${esc(c.name)}${c.tag?`<small>${esc(c.tag)}</small>`:''}</button>`;
-      });
+      if (ui.slotPick===it.slot){
+        it.choices.forEach(c=>{
+          h += `<button class="choice ${c.id===cid?'sel':''}" data-act="choose" data-slot="${it.slot}" data-cid="${c.id}">
+            ${esc(c.name)}${c.tag?`<small>${esc(c.tag)}</small>`:''}</button>`;
+        });
+      } else {
+        /* once a choice is made it stays put — the alternatives live one tap away */
+        const c = it.choices.find(c=>c.id===cid) || it.choices[0];
+        h += `<button class="choice sel" data-act="slotpick" data-slot="${it.slot}">${esc(c.name)}${c.tag?`<small>${esc(c.tag)}</small>`:''}</button>
+          <button class="choice ghost" data-act="slotpick" data-slot="${it.slot}">change</button>`;
+      }
       h += `</div>`;
     }
     if (ui.swapping===ikey){
@@ -1457,7 +1542,30 @@ function renderToday(){
         h += `<input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${esc(repHint)}" aria-label="reps" style="margin-left:auto">`;
       }
       h += `</div>`;
-      if (!bw && last) h += `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${last.when?` · ${fmtShort(last.when)}`:" · from the plan"}</div>`;
+
+      /* footer: set pips on the left, last-time hint (and overload nudge) on the right */
+      const setsN = parseInt(sc.sets, 10) || 0;
+      let pips = "";
+      if (setsN > 1){
+        pips = `<div class="setpips" aria-label="sets">`;
+        for (let si=0; si<setsN; si++){
+          const on = !!(entry && (entry.done || (entry.sets && entry.sets[si])));
+          pips += `<button class="pip ${on?'on':''}" data-act="pip" data-ex="${cid}" data-si="${si}" data-n="${setsN}" aria-label="set ${si+1} of ${setsN}" aria-pressed="${on}"></button>`;
+        }
+        pips += `<span class="piplabel">sets</span></div>`;
+      }
+      let nudge = "";
+      if (!done && !bw && last && last.reps && last.w != null){
+        const top = repTop(sc.reps), got = repLow(last.reps), lw = parseFloat(last.w);
+        if (top && got && got >= top && !isNaN(lw)){
+          nudge = ASSISTED[cid]
+            ? ` · <span class="nudge">top of range — try ${Math.max(0, lw - wStep(lw - 0.1))} lb assist?</span>`
+            : ` · <span class="nudge">top of range — try ${lw + wStep(lw)}?</span>`;
+        }
+      }
+      const hint = (!bw && last)
+        ? `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${last.when?` · ${fmtShort(last.when)}`:" · from the plan"}${nudge}</div>` : "";
+      if (pips || hint) h += `<div class="rowfoot">${pips}${hint}</div>`;
     }
     h += `</div>
       <div class="rowactions">
@@ -1606,17 +1714,35 @@ function chartSVG(pts){
   s += `</svg>`;
   return s;
 }
+/* reps climbing at the same weight is progress too — double progression made visible */
+function repTrend(pts){
+  const a = pts[0], b = pts[pts.length-1];
+  if (!a.reps || !b.reps) return null;
+  const r0 = repLow(a.reps), r1 = repLow(b.reps);
+  if (r0 && r1 && r1 > r0) return `reps climbing · ${esc(a.reps)} → ${esc(b.reps)} at ${b.w} lb`;
+  return null;
+}
 function progRowHTML(id, i){
   const pts = series(id);
   const first = pts[0].w, latest = pts[pts.length-1].w;
   const delta = latest - first;
-  const dTxt = pts.length===1 ? "first entry" : (delta>0?`＋${delta} lb since ${fmtShort(pts[0].dk)}`:delta<0?`−${Math.abs(delta)} lb`: "holding steady");
+  let dTxt, dCls = "";
+  if (pts.length===1) dTxt = "first entry";
+  else if (ASSISTED[id]){
+    /* logged weight is assistance — down is the win */
+    if (delta<0) dTxt = `−${Math.abs(delta)} lb assist since ${fmtShort(pts[0].dk)} · stronger`;
+    else if (delta>0){ dTxt = `＋${delta} lb assist`; dCls = "zero"; }
+    else { const rt = repTrend(pts); dTxt = rt || "holding steady"; if (!rt) dCls = "zero"; }
+  }
+  else if (delta>0) dTxt = `＋${delta} lb since ${fmtShort(pts[0].dk)}`;
+  else if (delta<0) dTxt = `−${Math.abs(delta)} lb`;
+  else { const rt = repTrend(pts); dTxt = rt || "holding steady"; if (!rt) dCls = "zero"; }
   const open = ui.progOpen===id;
   let h = `<li style="--i:${i}">
     <button class="prow" data-act="prog" data-ex="${id}" aria-expanded="${open}">
       <span class="lft">
         <span class="nm">${esc(nameOf(id))}</span>
-        <span class="delta ${delta===0&&pts.length>1?'zero':''}">${dTxt}</span>
+        <span class="delta ${dCls}">${dTxt}</span>
       </span>
       <span class="latest">${latest} lb${DETAILS[id]?`<small style="font-family:var(--sans);font-weight:400;font-size:.62rem;color:var(--ink-2)"> ${DETAILS[id]}</small>`:''}</span>
     </button>`;
@@ -1791,26 +1917,64 @@ document.addEventListener("click", e=>{
   if (act==="choose"){
     const r = rec(ui.viewDate, true);
     r.choices[t.dataset.slot] = t.dataset.cid;
+    ui.slotPick = null;
     save(); renderToday(); return;
+  }
+  if (act==="slotpick"){
+    ui.slotPick = ui.slotPick===t.dataset.slot ? null : t.dataset.slot;
+    renderToday(); return;
+  }
+  if (act==="cue"){
+    ui.cueOpen = ui.cueOpen===t.dataset.key ? null : t.dataset.key;
+    renderToday(); return;
+  }
+  if (act==="openlib"){
+    ui.tab = "library"; ui.libOpen = t.dataset.id; ui.libq = "";
+    render(); window.scrollTo(0,0);
+    const row = document.querySelector(`[data-act="lib"][data-id="${t.dataset.id}"]`);
+    if (row) row.scrollIntoView({block:"center"});
+    return;
   }
   if (act==="done"){
     const r = rec(ui.viewDate, true);
     const ex = t.dataset.ex;
     const entry = r.entries[ex] = r.entries[ex] || {};
-    const cur = !!(entry.done || (entry.sets||[]).some(Boolean));
-    entry.done = !cur; delete entry.sets;
+    const cur = !!entry.done;
+    entry.done = !cur; delete entry.sets; /* done outranks partial pips: it means all sets */
     if (!cur){
-      /* "same as last time" is one tap — inherit unless she typed something */
-      const last = lastWeight(ex, ui.viewDate);
-      if (last && (entry.weight == null || entry.weight === "")) entry.weight = last.w;
-      if (!entry.reps){
-        const rr = (last && last.reps) || t.dataset.reps;
-        if (rr) entry.reps = rr;
-      }
+      inheritInto(entry, ex, t.dataset.reps);
       heartBurst(t, 6);
     }
     save(); renderToday();
     if (!cur){
+      const ring = document.querySelector(`.donebtn[data-ex="${ex}"] .ring`);
+      if (ring) ring.classList.add("pop");
+    }
+    return;
+  }
+  if (act==="pip"){
+    const r = rec(ui.viewDate, true);
+    const ex = t.dataset.ex, si = Number(t.dataset.si), n = Number(t.dataset.n);
+    const entry = r.entries[ex] = r.entries[ex] || {};
+    if (entry.done){
+      /* un-tapping one set from a fully-done exercise */
+      entry.sets = Array.from({length:n}, ()=>true);
+      entry.sets[si] = false;
+      delete entry.done;
+    } else {
+      entry.sets = entry.sets || [];
+      const hadAny = entry.sets.some(Boolean);
+      entry.sets[si] = !entry.sets[si];
+      if (!hadAny && entry.sets[si]){
+        const dbtn = t.closest(".rowslide").querySelector(".donebtn");
+        inheritInto(entry, ex, dbtn ? dbtn.dataset.reps : null);
+      }
+      let all = true;
+      for (let k=0;k<n;k++) if (!entry.sets[k]) all = false;
+      if (all){ entry.done = true; delete entry.sets; heartBurst(t, 6); }
+    }
+    save(); renderToday();
+    if (entry.done){
       const ring = document.querySelector(`.donebtn[data-ex="${ex}"] .ring`);
       if (ring) ring.classList.add("pop");
     }
@@ -1947,12 +2111,23 @@ document.addEventListener("click", e=>{
     const entry = r.entries[ex] = r.entries[ex] || {};
     let w = parseFloat(entry.weight);
     if (isNaN(w)){ const lh = lastWeight(ex, ui.viewDate); w = lh?parseFloat(lh.w):0; if(isNaN(w)) w=0; }
-    w += (act==="winc"?5:-5);
+    /* light dumbbells move in 2.5s; heavier lifts in 5s */
+    w += (act==="winc") ? wStep(w) : -wStep(w - 0.1);
     entry.weight = Math.max(0, w);
     save(); renderToday(); return;
   }
   if (act==="stamp"){
     const r = rec(t.dataset.dk, true);
+    /* numbers written down but never marked done would be silently dropped — offer to keep them */
+    const stray = Object.entries(r.entries||{}).filter(([,e])=>
+      e && !e.done && !(e.sets||[]).some(Boolean) &&
+      ((e.weight!=null && e.weight!=="") || e.reps || e.mins));
+    if (stray.length){
+      const names = stray.map(([id])=>nameOf(id)).join(", ");
+      if (confirm(`${names} ${stray.length===1?"has numbers written down but wasn't":"have numbers written down but weren't"} marked done. Log ${stray.length===1?"it":"them"} too?`)){
+        for (const [,e] of stray) e.done = true;
+      }
+    }
     r.stamped = true; r.stampedAt = new Date().toISOString();
     save();
     heartBurst(t, 10);
@@ -2148,6 +2323,12 @@ document.addEventListener("touchend", e=>{
 
 buildDatalist();
 render();
+
+/* offline shell + durable storage — months of logs shouldn't hinge on a cache sweep */
+if ("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+}
 </script>
 </body>
 </html>
