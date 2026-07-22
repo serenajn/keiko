@@ -362,6 +362,35 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   padding:.44rem .3rem;outline:none;color:var(--ink);
 }
 .repsin::placeholder{color:var(--ink-3);font-family:var(--sans);font-size:.66rem;letter-spacing:.05em;font-weight:400}
+
+/* session note */
+.notewrap{margin:1.1rem 1.25rem 0}
+.daydetail .notewrap{margin:.8rem 0 0}
+.addnote{font-size:.78rem;color:var(--ink-3);font-style:italic;padding:.2rem 0}
+.sessnote{
+  display:block;width:100%;text-align:left;
+  background:var(--paper-2);border-radius:.6rem;
+  padding:.6rem .85rem;font-size:.8rem;color:var(--ink);line-height:1.55;font-style:italic;
+}
+.notelbl{display:block;font-style:normal;font-size:.6rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:.15rem}
+.notein{
+  width:100%;background:var(--paper-2);border:none;border-radius:.6rem;
+  padding:.6rem .85rem;font:inherit;font-size:.85rem;font-style:italic;color:var(--ink);
+  outline:none;resize:none;line-height:1.55;display:block;
+}
+.notein::placeholder{color:var(--ink-3)}
+
+/* record-tab entry editor */
+.lerow{flex:1;display:flex;align-items:baseline;gap:.7rem;min-width:0;text-align:left;padding:0}
+.lerow .r{margin-left:auto}
+.daydetail li.ledit{display:flex;flex-direction:column;align-items:stretch;gap:.5rem}
+.lename{font-size:.85rem;font-weight:500}
+.ledrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.lew,.ler{
+  width:3.6rem;text-align:center;background:var(--paper-2);border:none;border-radius:999px;
+  padding:.42rem .3rem;font-family:var(--serif);font-size:.95rem;font-weight:600;outline:none;color:var(--ink);
+}
+.lew::placeholder,.ler::placeholder{color:var(--ink-3);font-family:var(--sans);font-size:.66rem;font-weight:400;letter-spacing:.05em}
 /* set pips + last-time hint share a footer row */
 .rowfoot{display:flex;align-items:center;gap:.3rem .8rem;margin-top:.35rem;min-height:1.5rem;flex-wrap:wrap}
 .setpips{display:flex;align-items:center;gap:.05rem;margin-left:-.35rem}
@@ -646,6 +675,10 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .tabfade{animation:rise .35s cubic-bezier(.16,1,.3,1)}
 .stampbtn{transition:border-color .25s,color .25s,transform .15s ease}
 .stampbtn:active{transform:scale(.97)}
+
+/* keyboard focus — inputs otherwise strip the outline */
+input:focus-visible,textarea:focus-visible,select:focus-visible{box-shadow:0 0 0 1.5px rgba(224,87,138,.5)}
+button:focus-visible{outline:1.5px solid rgba(224,87,138,.5);outline-offset:2px}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -1127,7 +1160,7 @@ function countsEntry(w, e){
 function gcDay(dk){
   const w = db.workouts[dk];
   if (!w) return;
-  const hasStuff = w.stamped || Object.keys(w.entries||{}).length || (w.extras||[]).length ||
+  const hasStuff = w.stamped || w.note || Object.keys(w.entries||{}).length || (w.extras||[]).length ||
     Object.keys(w.checks||{}).length || Object.keys(w.subs||{}).length ||
     Object.keys(w.choices||{}).length || w.session || w.wedMode;
   if (!hasStuff) delete db.workouts[dk];
@@ -1151,6 +1184,24 @@ function inheritInto(entry, exId, repsFallback){
     const rr = (last && last.reps) || repsFallback;
     if (rr) entry.reps = rr;
   }
+}
+/* pips for the Record-tab editor — same look as Today's, but scoped to a date */
+function editPipsHTML(ex, total, filled, dk){
+  let h = `<div class="setpips" aria-label="sets">`;
+  for (let si=0; si<total; si++){
+    h += `<button class="pip ${si<filled?'on':''}" data-act="pip" data-ex="${ex}" data-si="${si}" data-n="${total}" data-dk="${dk}" aria-label="set ${si+1} of ${total}" aria-pressed="${si<filled}"></button>`;
+  }
+  return h+`</div>`;
+}
+/* a little note for the day — shown on Today and in the Record detail */
+function noteHTML(r, dk){
+  if (ui.noting===dk){
+    return `<div class="notewrap"><textarea class="notein" data-dk="${dk}" rows="2" placeholder="A little note — how it felt, what to remember…" aria-label="session note">${esc((r&&r.note)||"")}</textarea></div>`;
+  }
+  if (r && r.note){
+    return `<div class="notewrap"><button class="sessnote" data-act="notedit" data-dk="${dk}"><span class="notelbl">note</span>${esc(r.note)}</button></div>`;
+  }
+  return `<div class="notewrap"><button class="addnote" data-act="notedit" data-dk="${dk}">＋ a little note</button></div>`;
 }
 function hankoSVG(cls){
   return pix(HEART_GRID, HEART_PAL, "pixheart "+(cls||""), "completed");
@@ -1306,7 +1357,7 @@ function heartBurst(anchor, count){
 }
 
 /* ══════════════════ state ══════════════════ */
-let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null, adding:false, libq:"", libOpen:null, dance:false, rowOpen:null, editing:null, cueOpen:null, slotPick:null };
+let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null, adding:false, libq:"", libOpen:null, dance:false, rowOpen:null, editing:null, cueOpen:null, slotPick:null, noting:null, logEdit:null };
 { const t=new Date(); ui.calMonth = [t.getFullYear(), t.getMonth()]; ui.calSel = key(t); }
 
 /* ══════════════════ render: today ══════════════════ */
@@ -1349,7 +1400,7 @@ function extrasHTML(r, dk, startIdx){
   });
   h += `<li style="--i:${startIdx+list.length}">
     <button class="addex" data-act="addex"><span>＋</span>add an exercise</button>
-    ${ui.adding?`<input class="swapin" list="exlist" data-adding="1" placeholder="What did you do? Start typing…" aria-label="extra exercise">`:""}
+    ${ui.adding?`<input class="swapin" list="exlist" data-adding="1" placeholder="What did you do? Start typing…" aria-label="extra exercise"><div class="choices swapsugg"></div>`:""}
   </li>`;
   return h;
 }
@@ -1388,6 +1439,7 @@ function renderToday(){
       <p>${esc(day.line)}</p>
     </div>`;
     h += extrasBlock(r, dk);
+    h += noteHTML(r, dk);
     if ((r && r.stamped) || (r && r.extras && r.extras.length)) h += stampZone(r, dk);
     $("#view-today").innerHTML = h;
     return;
@@ -1433,6 +1485,7 @@ function renderToday(){
       </li></ol></div>`;
     }
     h += extrasBlock(r, dk);
+    h += noteHTML(r, dk);
     h += stampZone(r, dk);
     $("#view-today").innerHTML = h;
     return;
@@ -1457,6 +1510,7 @@ function renderToday(){
   const hiddenN = allRows.length - visible.length;
   h += `<div class="workwrap">
     <div class="workkicker"><span>Main work</span>${express?'<em>express · ~25 min</em>':''}</div>
+    ${!db.seen.rowhint?`<div class="skipnote">tap ⋯ on a lift to swap it just for today, or edit it for good</div>`:""}
     <ol class="work">`;
   items.forEach((x,i)=>{
     const it = x.it, ikey = x.ikey, o = x.o;
@@ -1509,7 +1563,7 @@ function renderToday(){
       h += `</div>`;
     }
     if (ui.swapping===ikey){
-      h += `<input class="swapin" list="exlist" data-key="${ikey}" placeholder="What are you doing instead?" aria-label="replacement exercise">`;
+      h += `<input class="swapin" list="exlist" data-key="${ikey}" placeholder="What are you doing instead?" aria-label="replacement exercise"><div class="choices swapsugg"></div>`;
     }
     if (editing){
       h += `<div class="editform">
@@ -1583,6 +1637,7 @@ function renderToday(){
   h += `</div>`;
 
   if (day.finish) h += `<p class="finishline"><b>Finish</b>${esc(day.finish)}</p>`;
+  h += noteHTML(r, dk);
   h += stampZone(r, dk);
   $("#view-today").innerHTML = h;
 }
@@ -1653,14 +1708,31 @@ function renderLog(){
     if (entries.length){
       h += `<ul>`;
       for (const [ex,e] of entries){
+        if (ui.logEdit && ui.logEdit.dk===sel && ui.logEdit.ex===ex){
+          const isMins = e.mins!=null || ex==="mat-pilates" || ex==="light-walk";
+          h += `<li class="ledit">
+            <span class="lename">${esc(nameOf(ex))}</span>
+            <div class="ledrow">
+              ${e.sets&&e.sets.length?editPipsHTML(ex, e.sets.length, e.sets.filter(Boolean).length, sel):""}
+              ${isMins
+                ?`<input class="ler" inputmode="numeric" data-mins="1" value="${e.mins?esc(e.mins):""}" placeholder="min" aria-label="minutes">`
+                :`<input class="lew" inputmode="decimal" value="${e.weight!=null&&e.weight!==""?esc(e.weight):""}" placeholder="lb" aria-label="weight"><input class="ler" value="${e.reps?esc(e.reps):""}" placeholder="reps" aria-label="reps">`}
+              <button class="choice sel" data-act="logeditsave" data-dk="${sel}" data-ex="${ex}">save</button>
+              <button class="choice" data-act="logeditcancel">cancel</button>
+            </div>
+          </li>`;
+          continue;
+        }
         const done = e.done || (e.sets||[]).some(Boolean);
+        const st = e.sets && e.sets.length && e.sets.filter(Boolean).length < e.sets.length ? `${e.sets.filter(Boolean).length}/${e.sets.length}` : "";
         const right = (e.weight!=null&&e.weight!=="") ? `${e.weight} lb${e.reps?`<small>× ${esc(e.reps)}</small>`:''}` : e.mins ? `${esc(e.mins)} min` : (e.reps?`× ${esc(e.reps)}`:'—');
-        h += `<li><span>${esc(nameOf(ex))}${done?' <span style="color:var(--hanko)">✓</span>':''}</span><span class="r">${right}</span><button class="delentry" data-act="delentry" data-dk="${sel}" data-ex="${ex}" aria-label="delete this entry">×</button></li>`;
+        h += `<li><button class="lerow" data-act="logedit" data-dk="${sel}" data-ex="${ex}" aria-label="edit ${esc(nameOf(ex))}"><span>${esc(nameOf(ex))}${done?' <span style="color:var(--hanko)">✓</span>':''}</span><span class="r">${right}${st?`<small> · ${st} sets</small>`:''}</span></button><button class="delentry" data-act="delentry" data-dk="${sel}" data-ex="${ex}" aria-label="delete this entry">×</button></li>`;
       }
       h += `</ul>`;
     } else {
       h += `<p class="empty">${w&&w.stamped ? "Complete, nothing written down — some days are like that." : "Nothing logged."}</p>`;
     }
+    h += noteHTML(w, sel);
     if (w && (w.stamped || entries.length)){
       h += `<button class="cleardaylink" data-act="clearday" data-dk="${sel}">Clear this day…</button>`;
     }
@@ -1953,27 +2025,26 @@ document.addEventListener("click", e=>{
     return;
   }
   if (act==="pip"){
-    const r = rec(ui.viewDate, true);
+    /* fill-to-point: tapping pip N fills 1..N; tapping the last filled pip steps back one */
+    const dk = t.dataset.dk || ui.viewDate;
+    const r = rec(dk, true);
     const ex = t.dataset.ex, si = Number(t.dataset.si), n = Number(t.dataset.n);
     const entry = r.entries[ex] = r.entries[ex] || {};
-    if (entry.done){
-      /* un-tapping one set from a fully-done exercise */
-      entry.sets = Array.from({length:n}, ()=>true);
-      entry.sets[si] = false;
-      delete entry.done;
-    } else {
-      entry.sets = entry.sets || [];
-      const hadAny = entry.sets.some(Boolean);
-      entry.sets[si] = !entry.sets[si];
-      if (!hadAny && entry.sets[si]){
-        const dbtn = t.closest(".rowslide").querySelector(".donebtn");
-        inheritInto(entry, ex, dbtn ? dbtn.dataset.reps : null);
-      }
-      let all = true;
-      for (let k=0;k<n;k++) if (!entry.sets[k]) all = false;
-      if (all){ entry.done = true; delete entry.sets; heartBurst(t, 6); }
+    const cur = entry.done ? n : Math.min((entry.sets||[]).filter(Boolean).length, n);
+    const tapped = si + 1;
+    const next = cur===tapped ? tapped-1 : tapped;
+    delete entry.done;
+    if (next<=0) delete entry.sets;
+    else if (next>=n){ entry.done = true; delete entry.sets; }
+    else entry.sets = Array.from({length:n},(_,k)=>k<next);
+    if (cur===0 && next>0 && !t.dataset.dk){
+      const slide = t.closest(".rowslide");
+      const dbtn = slide && slide.querySelector(".donebtn");
+      inheritInto(entry, ex, dbtn ? dbtn.dataset.reps : null);
     }
-    save(); renderToday();
+    if (entry.done) heartBurst(t, 6);
+    save();
+    if (ui.tab==="log") renderLog(); else renderToday();
     if (entry.done){
       const ring = document.querySelector(`.donebtn[data-ex="${ex}"] .ring`);
       if (ring) ring.classList.add("pop");
@@ -1997,7 +2068,38 @@ document.addEventListener("click", e=>{
   if (act==="rowmore"){
     const k = t.dataset.key;
     ui.rowOpen = ui.rowOpen===k ? null : k;
+    if (!db.seen.rowhint){ db.seen.rowhint = 1; save(); }
     renderToday(); return;
+  }
+  if (act==="notedit"){
+    ui.noting = t.dataset.dk;
+    if (ui.tab==="log") renderLog(); else renderToday();
+    const ta = document.querySelector(".notein");
+    if (ta){ ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+    return;
+  }
+  if (act==="logedit"){
+    ui.logEdit = {dk:t.dataset.dk, ex:t.dataset.ex};
+    renderLog();
+    const inp = document.querySelector(".lew") || document.querySelector(".ler");
+    if (inp) inp.focus();
+    return;
+  }
+  if (act==="logeditcancel"){ ui.logEdit = null; renderLog(); return; }
+  if (act==="logeditsave"){
+    const li = t.closest("li");
+    const w = db.workouts[t.dataset.dk];
+    const e2 = w && w.entries && w.entries[t.dataset.ex];
+    if (li && e2){
+      const lew = li.querySelector(".lew"), ler = li.querySelector(".ler");
+      if (ler && ler.dataset.mins) e2.mins = ler.value.trim();
+      else {
+        if (lew){ const v = parseFloat(lew.value); e2.weight = isNaN(v) ? "" : v; }
+        if (ler) e2.reps = ler.value.trim();
+      }
+    }
+    ui.logEdit = null;
+    save(); renderLog(); return;
   }
   if (act==="rowedit"){
     ui.editing = t.dataset.key;
@@ -2214,28 +2316,38 @@ document.addEventListener("change", e=>{
     if (el.value===def) delete r.session; else r.session = el.value;
     save(); renderToday();
   }
-  if (el.classList.contains("swapin")){
-    const name = el.value.trim();
-    if (el.dataset.adding){
-      ui.adding = false;
-      if (name){
-        const id = resolveExId(name);
-        const r = rec(ui.viewDate, true);
-        if (!r.extras.includes(id)) r.extras.push(id);
-        save();
-      }
-    } else {
-      const key = el.dataset.key;
-      ui.swapping = null;
-      if (name){
-        const id = resolveExId(name);
-        const r = rec(ui.viewDate, true);
-        r.subs[key] = {id, name: nameOf(id)};
-        save();
-      }
+  if (el.classList.contains("swapin")) commitSwapInput(el);
+});
+/* shared by the swap/add input's change event and the suggestion chips */
+function commitSwapInput(el, forcedName){
+  const name = (forcedName != null ? forcedName : el.value).trim();
+  if (el.dataset.adding){
+    ui.adding = false;
+    if (name){
+      const id = resolveExId(name);
+      const r = rec(ui.viewDate, true);
+      if (!r.extras.includes(id)) r.extras.push(id);
+      save();
     }
-    renderToday();
+  } else if (el.dataset.key){
+    const key = el.dataset.key;
+    ui.swapping = null;
+    if (name){
+      const id = resolveExId(name);
+      const r = rec(ui.viewDate, true);
+      r.subs[key] = {id, name: nameOf(id)};
+      save();
+    }
   }
+  renderToday();
+}
+/* suggestion chips commit on pointerdown — before the input blurs away */
+document.addEventListener("pointerdown", e=>{
+  const b = e.target.closest('[data-act="suggpick"]');
+  if (!b) return;
+  e.preventDefault();
+  const inp = document.querySelector(".swapin");
+  if (inp) commitSwapInput(inp, b.dataset.name);
 });
 document.addEventListener("input", e=>{
   if (e.target.id==="libq"){
@@ -2243,11 +2355,30 @@ document.addEventListener("input", e=>{
     const rows = document.getElementById("librows");
     if (rows) rows.innerHTML = libRowsHTML();
   }
+  if (e.target.classList && e.target.classList.contains("swapin")){
+    const box = document.querySelector(".swapsugg");
+    if (!box) return;
+    const q = e.target.value.trim().toLowerCase();
+    box.innerHTML = q
+      ? allExNames().filter(n=>n.toLowerCase().includes(q)).slice(0,6)
+          .map(n=>`<button class="choice" data-act="suggpick" data-name="${esc(n)}">${esc(n)}</button>`).join("")
+      : "";
+  }
 });
 document.addEventListener("focusout", e=>{
   const el = e.target;
   if (el.classList && el.classList.contains("swapin") && (ui.swapping || ui.adding) && !el.value.trim()){
     ui.swapping = null; ui.adding = false; renderToday();
+  }
+  if (el.classList && el.classList.contains("notein")){
+    const dk = el.dataset.dk;
+    const v = el.value.trim();
+    const r = rec(dk, true);
+    if (v) r.note = v; else delete r.note;
+    ui.noting = null;
+    gcDay(dk);
+    save();
+    if (ui.tab==="log") renderLog(); else renderToday();
   }
 });
 $("#importFile").addEventListener("change", e=>{
@@ -2316,6 +2447,7 @@ document.addEventListener("touchend", e=>{
     if (shouldOpen){
       touchS.row.classList.add("open");
       ui.rowOpen = touchS.row.dataset.rowkey;
+      if (!db.seen.rowhint){ db.seen.rowhint = 1; save(); }
     }
   }
   touchS = null;
