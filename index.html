@@ -21,8 +21,8 @@
   --paper:#fefcfd;
   --paper-2:#f5f1f5;
   --ink:#342e34;
-  --ink-2:#7e747c;
-  --ink-3:#b8acb4;
+  --ink-2:#6f666d;
+  --ink-3:#9b8f97;
   --line:rgba(52,46,52,.14);
   --line-soft:rgba(52,46,52,.08);
   --hanko:#e0578a;
@@ -96,10 +96,10 @@ input{font:inherit;color:inherit}
 .dayhead[data-day="sun"]{--wash:#f5eff3}
 .datebar{display:flex;align-items:center;gap:.4rem;margin-bottom:.55rem}
 .dnav{
-  width:2rem;height:2rem;border-radius:50%;
+  width:2.75rem;height:2.75rem;border-radius:50%;
   display:grid;place-items:center;
   color:var(--ink-2);font-size:1.15rem;line-height:1;
-  margin:-.35rem 0;
+  margin:-.6rem 0;
 }
 .dnav:first-child{margin-left:-.6rem}
 .dateline{
@@ -139,9 +139,9 @@ input{font:inherit;color:inherit}
 .msbody p{font-size:.78rem;color:var(--ink-2);line-height:1.55;margin-top:.15rem}
 .msstat{font-weight:600;color:#6f63a0 !important;font-size:.74rem !important}
 .msdismiss{
-  flex:none;width:1.7rem;height:1.7rem;border-radius:50%;
+  flex:none;width:2.2rem;height:2.2rem;border-radius:50%;
   display:grid;place-items:center;color:var(--ink-3);font-size:1.05rem;
-  margin:-.3rem -.4rem 0 0;
+  margin:-.45rem -.55rem 0 0;
 }
 
 /* ───────── warm-up ───────── */
@@ -199,7 +199,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .choices{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.65rem;align-items:center}
 .choice{
   font-size:.76rem;color:var(--ink-2);
-  padding:.34rem .85rem;
+  padding:.42rem .9rem;
   border:1px solid var(--line);border-radius:999px;
   transition:background .18s,color .18s,border-color .18s,transform .15s ease;
 }
@@ -316,7 +316,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 @keyframes traypop{from{transform:scale(.82)}to{transform:scale(1)}}
 .rowmore{
   flex:none;color:var(--ink-3);font-size:1.05rem;line-height:1;
-  padding:.05rem .3rem;
+  padding:.55rem .5rem;margin:-.5rem -.2rem -.5rem 0;
 }
 
 /* inline routine editor */
@@ -342,7 +342,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   background:var(--paper-2);border-radius:999px;padding:.18rem .3rem;
 }
 .wt button{
-  width:1.8rem;height:1.8rem;border-radius:50%;
+  width:2.2rem;height:2.2rem;border-radius:50%;
   color:var(--ink-2);font-size:1rem;
   display:grid;place-items:center;
 }
@@ -394,7 +394,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 /* set pips + last-time hint share a footer row */
 .rowfoot{display:flex;align-items:center;gap:.3rem .8rem;margin-top:.35rem;min-height:1.5rem;flex-wrap:wrap}
 .setpips{display:flex;align-items:center;gap:.05rem;margin-left:-.35rem}
-.setpips .pip{width:1.6rem;height:1.6rem;display:grid;place-items:center;border-radius:50%}
+.setpips .pip{width:2rem;height:2rem;display:grid;place-items:center;border-radius:50%}
 .setpips .pip::before{
   content:"";width:.6rem;height:.6rem;border-radius:50%;
   border:1.5px solid var(--ink-3);
@@ -430,7 +430,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
 }
 .stamped-line .ham{margin-bottom:.2rem}
-.unstamp{font-size:.62rem;color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;padding:.3rem .6rem}
+.unstamp{font-size:.62rem;color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;padding:.55rem .8rem}
 
 /* rest day */
 .restcard{margin:3rem 2rem;text-align:center}
@@ -461,7 +461,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 .calhead h3{font-family:var(--serif);font-weight:600;font-size:1.05rem}
 .calhead .mnav{margin-left:auto;display:flex;gap:.2rem}
-.calhead .mnav button{width:2.1rem;height:2.1rem;color:var(--ink-2);font-size:1.1rem}
+.calhead .mnav button{width:2.6rem;height:2.6rem;color:var(--ink-2);font-size:1.1rem}
 .calgrid{display:grid;grid-template-columns:repeat(7,1fr);margin:0 1.05rem;padding-top:.5rem}
 .dow{font-size:.6rem;letter-spacing:.1em;color:var(--ink-3);text-align:center;padding:.35rem 0;text-transform:uppercase}
 .cal-cell{aspect-ratio:1;display:grid;place-items:center;position:relative}
@@ -491,9 +491,9 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .daydetail li .r small{color:var(--ink-2);font-family:var(--sans);font-weight:400;font-size:.68rem;margin-left:.4em}
 .daydetail .empty{font-size:.8rem;color:var(--ink-3);font-style:italic;margin-top:.5rem}
 .daydetail li .delentry{
-  flex:none;width:1.6rem;height:1.6rem;border-radius:50%;
+  flex:none;width:2.05rem;height:2.05rem;border-radius:50%;
   display:grid;place-items:center;color:var(--ink-3);font-size:1rem;line-height:1;
-  margin:-.2rem -.3rem -.2rem .1rem;
+  margin:-.4rem -.5rem -.4rem .1rem;
 }
 .daydetail li .delentry:active{background:var(--hanko-soft);color:var(--hanko)}
 .cleardaylink{
@@ -586,6 +586,11 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   background:var(--paper-2);
 }
 .libcues{padding:0 0 1.1rem 1.15rem;font-size:.82rem;color:var(--ink-2);line-height:1.55}
+.libplan{margin:.2rem 0 1rem}
+.libplanhead{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:.45rem}
+.libslots{display:flex;flex-wrap:wrap;gap:.45rem}
+.libslot{font-size:.76rem;color:var(--ink);background:var(--paper-2);border-radius:999px;padding:.42rem .9rem}
+.libslot small{color:var(--ink-2);font-size:.62rem;margin-left:.4em}
 .libcues li{margin:.35rem 0;list-style:disc}
 .libnone{padding:2rem 0;text-align:center;font-size:.85rem;color:var(--ink-3);font-style:italic}
 .minetag{
@@ -698,11 +703,11 @@ button:focus-visible{outline:1.5px solid rgba(224,87,138,.5);outline-offset:2px}
     <section id="view-library" hidden></section>
   </main>
 </div>
-<nav class="tabbar" aria-label="views">
-  <button class="tab active" data-tab="today"><span class="e">Today</span><span class="tickdot"></span></button>
-  <button class="tab" data-tab="log"><span class="e">Record</span><span class="tickdot"></span></button>
-  <button class="tab" data-tab="progress"><span class="e">Progress</span><span class="tickdot"></span></button>
-  <button class="tab" data-tab="library"><span class="e">Library</span><span class="tickdot"></span></button>
+<nav class="tabbar" role="tablist" aria-label="views">
+  <button class="tab active" role="tab" aria-selected="true" data-tab="today"><span class="e">Today</span><span class="tickdot"></span></button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="log"><span class="e">Record</span><span class="tickdot"></span></button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="progress"><span class="e">Progress</span><span class="tickdot"></span></button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="library"><span class="e">Library</span><span class="tickdot"></span></button>
 </nav>
 <input type="file" id="importFile" accept="application/json" hidden>
 <datalist id="exlist"></datalist>
@@ -1858,6 +1863,55 @@ function renderProgress(){
 }
 
 /* ══════════════════ render: library ══════════════════ */
+/* where a library exercise appears in the weekly plan — plan ids ≠ library ids, so match by name too */
+function normEx(s){ return s.toLowerCase().replace(/\(.*?\)/g,"").replace(/[^a-z0-9]+/g," ").trim(); }
+function exMatches(libEntry, planId){
+  if (libEntry.id === planId) return true;
+  const a = normEx(libEntry.name), b = normEx(nameOf(planId));
+  return !!a && !!b && (a===b || a.startsWith(b) || b.startsWith(a));
+}
+function planSpots(libEntry){
+  const spots = [];
+  for (const dk of DAYKEYS){
+    const day = PLAN[dk];
+    if (!day || !day.main) continue;
+    const dov = (db.planOv && db.planOv[dk]) || {};
+    for (const it of day.main){
+      const k = it.slot || it.id;
+      const o = dov[k] || {};
+      if (o.hidden) continue;
+      const hit = o.id ? exMatches(libEntry, o.id)
+        : it.choices ? it.choices.some(c=>exMatches(libEntry, c.id))
+        : exMatches(libEntry, it.id);
+      if (hit) spots.push({day:dk, key:k, sets:o.sets||it.sets, reps:o.reps||it.reps, slotLabel: it.choices?it.label:null});
+    }
+  }
+  return spots;
+}
+function libPlanHTML(e){
+  const spots = planSpots(e);
+  if (!spots.length) return "";
+  let h = `<div class="libplan"><div class="libplanhead">in your plan</div><div class="libslots">`;
+  for (const s of spots){
+    const editing = ui.libSpot && ui.libSpot.day===s.day && ui.libSpot.key===s.key;
+    if (editing){
+      h += `</div><div class="editform" style="margin:.4rem 0 .6rem">
+        <div class="ef-row">
+          <label>sets<input class="ef-sets" inputmode="numeric" value="${s.sets}"></label>
+          <label>reps<input class="ef-reps" value="${esc(s.reps)}"></label>
+        </div>
+        <div class="ef-note">applies to every ${WDAYS[DAYKEYS.indexOf(s.day)]}</div>
+        <div class="ef-btns">
+          <button class="choice sel" data-act="libslotsave" data-day="${s.day}" data-key="${s.key}">save</button>
+          <button class="choice" data-act="libslotcancel">cancel</button>
+        </div>
+      </div><div class="libslots">`;
+    } else {
+      h += `<button class="libslot" data-act="libslot" data-day="${s.day}" data-key="${s.key}">${WDAYS[DAYKEYS.indexOf(s.day)].slice(0,3)} · ${s.sets} × ${esc(s.reps)}${s.slotLabel?`<small>${esc(s.slotLabel).toLowerCase()}</small>`:""}</button>`;
+    }
+  }
+  return h + `</div></div>`;
+}
 function libRowsHTML(){
   const q = ui.libq.trim().toLowerCase();
   const groups = new Map();
@@ -1879,24 +1933,27 @@ function libRowsHTML(){
         </button>
         ${open && e.img ? `<img class="libgif" src="${esc(e.img)}" loading="lazy" alt="${esc(e.name)} demonstration">`:""}
         ${open && (e.cues||[]).length ? `<ul class="libcues">${e.cues.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:""}
-        ${open && e.mine ? `<button class="libdel" data-act="libdel" data-id="${e.id}">Remove from library…</button>`:""}
+        ${open ? libPlanHTML(e) : ""}
+        ${open && e.mine ? `<button class="libdel" data-act="libedit" data-id="${e.id}">Edit details…</button><button class="libdel" data-act="libdel" data-id="${e.id}">Remove from library…</button>`:""}
       </div>`;
     }
   }
   return h;
 }
 function libFormHTML(){
-  if (!ui.libAdding){
+  const ed = ui.libEditId ? db.customLib.find(x=>x.id===ui.libEditId) : null;
+  if (!ui.libAdding && !ed){
     return `<button class="addex" data-act="libadd" style="margin-top:.4rem"><span>＋</span>add your own exercise</button>`;
   }
+  const cats = ["Lower body","Upper body","Core","Stretches & Mobility"];
   return `<div class="libform">
-    <input class="ef-name" id="clName" placeholder="Exercise name" aria-label="exercise name">
+    <input class="ef-name" id="clName" value="${ed?esc(ed.name):""}" placeholder="Exercise name" aria-label="exercise name">
     <select class="clcat" id="clCat" aria-label="category">
-      <option>Lower body</option><option>Upper body</option><option>Core</option><option>Stretches &amp; Mobility</option>
+      ${cats.map(c=>`<option${ed&&ed.cat===c?" selected":""}>${esc(c)}</option>`).join("")}
     </select>
-    <textarea class="clnotes" id="clNotes" rows="2" placeholder="Notes or cues (optional)"></textarea>
+    <textarea class="clnotes" id="clNotes" rows="2" placeholder="Notes or cues (optional, one per line)">${ed?esc((ed.cues||[]).join("\n")):""}</textarea>
     <label class="clfile">＋ photo or gif<input type="file" id="clImg" accept="image/*" hidden></label>
-    ${ui.libImg ? `<img class="libgif" src="${ui.libImg}" alt="preview">` : ""}
+    ${ui.libImg ? `<img class="libgif" src="${ui.libImg}" alt="preview">` : (ed && ed.img ? `<img class="libgif" src="${esc(ed.img)}" alt="current image">` : "")}
     <div class="ef-btns">
       <button class="choice sel" data-act="libsave">save</button>
       <button class="choice" data-act="libcancel">cancel</button>
@@ -1941,7 +1998,11 @@ function render(){
   $("#view-log").hidden = ui.tab!=="log";
   $("#view-progress").hidden = ui.tab!=="progress";
   $("#view-library").hidden = ui.tab!=="library";
-  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===ui.tab));
+  document.querySelectorAll(".tab").forEach(t=>{
+    const on = t.dataset.tab===ui.tab;
+    t.classList.toggle("active", on);
+    t.setAttribute("aria-selected", on);
+  });
   const eb = $("#expressBtn");
   eb.classList.toggle("on", db.settings.express);
   eb.setAttribute("aria-pressed", db.settings.express);
@@ -2172,23 +2233,76 @@ document.addEventListener("click", e=>{
     return;
   }
   if (act==="libadd"){
-    ui.libAdding = true; ui.libImg = null;
+    ui.libAdding = true; ui.libEditId = null; ui.libImg = null;
     renderLibrary();
     const inp = document.getElementById("clName");
     if (inp) inp.focus();
     return;
   }
-  if (act==="libcancel"){ ui.libAdding = false; ui.libImg = null; renderLibrary(); return; }
+  if (act==="libedit"){
+    ui.libEditId = t.dataset.id; ui.libAdding = false; ui.libImg = null;
+    renderLibrary();
+    window.scrollTo(0,0);
+    const inp = document.getElementById("clName");
+    if (inp) inp.focus();
+    return;
+  }
+  if (act==="libcancel"){ ui.libAdding = false; ui.libEditId = null; ui.libImg = null; renderLibrary(); return; }
   if (act==="libsave"){
     const name = (document.getElementById("clName").value||"").trim();
     if (!name){ document.getElementById("clName").focus(); return; }
     const cat = document.getElementById("clCat").value;
     const notes = (document.getElementById("clNotes").value||"").trim();
-    let id = "my-"+name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
-    while (NAMES[id] || LIBNAMES[id] || db.customLib.some(e=>e.id===id)) id += "-2";
-    db.customLib.push({id, name, cat, hits:"", cues: notes ? [notes] : [], img: ui.libImg || undefined, mine:true});
-    ui.libAdding = false; ui.libImg = null; ui.libOpen = id;
+    const cues = notes ? notes.split("\n").map(s=>s.trim()).filter(Boolean) : [];
+    const ed = ui.libEditId ? db.customLib.find(x=>x.id===ui.libEditId) : null;
+    if (ed){
+      ed.name = name; ed.cat = cat; ed.cues = cues;
+      if (ui.libImg) ed.img = ui.libImg;
+      ui.libOpen = ed.id;
+    } else {
+      let id = "my-"+name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+      while (NAMES[id] || LIBNAMES[id] || db.customLib.some(e=>e.id===id)) id += "-2";
+      db.customLib.push({id, name, cat, hits:"", cues, img: ui.libImg || undefined, mine:true});
+      ui.libOpen = id;
+    }
+    ui.libAdding = false; ui.libEditId = null; ui.libImg = null;
     save(); buildDatalist(); renderLibrary(); return;
+  }
+  if (act==="libslot"){
+    const cur = ui.libSpot;
+    ui.libSpot = (cur && cur.day===t.dataset.day && cur.key===t.dataset.key) ? null : {day:t.dataset.day, key:t.dataset.key};
+    const rows = document.getElementById("librows");
+    if (rows) rows.innerHTML = libRowsHTML();
+    const inp = document.querySelector(".libplan ~ .editform .ef-sets") || document.querySelector("#librows .ef-sets");
+    if (inp) inp.focus();
+    return;
+  }
+  if (act==="libslotcancel"){
+    ui.libSpot = null;
+    const rows = document.getElementById("librows");
+    if (rows) rows.innerHTML = libRowsHTML();
+    return;
+  }
+  if (act==="libslotsave"){
+    const day = t.dataset.day, k = t.dataset.key;
+    const it = (PLAN[day].main||[]).find(m=>(m.slot||m.id)===k);
+    const wrap = t.closest(".editform");
+    if (it && wrap){
+      const sets = parseInt(wrap.querySelector(".ef-sets").value, 10);
+      const reps = wrap.querySelector(".ef-reps").value.trim();
+      db.planOv = db.planOv || {};
+      const dov = db.planOv[day] = db.planOv[day] || {};
+      const o = dov[k] = dov[k] || {};
+      if (sets > 0 && sets < 10 && sets !== it.sets) o.sets = sets; else delete o.sets;
+      if (reps && reps !== it.reps) o.reps = reps; else delete o.reps;
+      if (!Object.keys(o).length) delete dov[k];
+      if (!Object.keys(dov).length) delete db.planOv[day];
+      save();
+    }
+    ui.libSpot = null;
+    const rows = document.getElementById("librows");
+    if (rows) rows.innerHTML = libRowsHTML();
+    return;
   }
   if (act==="libdel"){
     if (!confirm("Remove this exercise from your library? Logged history keeps its name.")) return;
