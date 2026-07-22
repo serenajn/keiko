@@ -1393,7 +1393,7 @@ function extrasHTML(r, dk, startIdx){
         </div>
         <input class="repsin" inputmode="numeric" data-ex="${id}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${last&&last.reps?esc(last.reps):'reps'}" aria-label="reps">
       </div>
-      ${last?`<div class="rowfoot"><div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${last.when?` · ${fmtShort(last.when)}`:""}</div></div>`:""}
+      ${last?`<div class="rowfoot"><div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b></div></div>`:""}
       </div>
       <div class="rowactions"><button class="warn" data-act="rmex" data-id="${id}"><span>remove</span><small>today</small></button></div>
     </li>`;
@@ -1613,12 +1613,12 @@ function renderToday(){
         const top = repTop(sc.reps), got = repLow(last.reps), lw = parseFloat(last.w);
         if (top && got && got >= top && !isNaN(lw)){
           nudge = ASSISTED[cid]
-            ? ` · <span class="nudge">top of range — try ${Math.max(0, lw - wStep(lw - 0.1))} lb assist?</span>`
-            : ` · <span class="nudge">top of range — try ${lw + wStep(lw)}?</span>`;
+            ? ` · <span class="nudge">try ${Math.max(0, lw - wStep(lw - 0.1))} lb assist?</span>`
+            : ` · <span class="nudge">try ${lw + wStep(lw)}?</span>`;
         }
       }
       const hint = (!bw && last)
-        ? `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${last.when?` · ${fmtShort(last.when)}`:" · from the plan"}${nudge}</div>` : "";
+        ? `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${nudge}</div>` : "";
       if (pips || hint) h += `<div class="rowfoot">${pips}${hint}</div>`;
     }
     h += `</div>
