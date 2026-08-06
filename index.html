@@ -290,29 +290,33 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   transition:transform .28s cubic-bezier(.22,1,.36,1);
 }
 .exrow.open .rowslide{
-  transform:translateX(calc(-1*var(--tray,212px)));
+  transform:translateX(calc(-1*var(--tray,224px)));
   transition:transform .55s cubic-bezier(.3,1.4,.45,1); /* springy settle when the tray opens */
 }
 .rowslide.dragging{transition:none}
 .rowactions{
-  position:absolute;top:0;bottom:0;right:0;z-index:1;
-  display:flex;align-items:center;gap:.4rem;padding:0 .1rem 0 .5rem;
+  position:absolute;top:0;bottom:0;right:0;z-index:1;width:var(--tray,224px);
+  display:flex;align-items:center;justify-content:center;gap:.55rem;padding:0 .1rem 0 .5rem;
 }
+/* the two scopes live in separate huts so it's never a guess which one sticks */
+.trayzone{display:flex;flex-direction:column;align-items:center;gap:.25rem}
+.trayzone + .trayzone{border-left:1px solid var(--line);padding-left:.55rem}
+.zonelbl{
+  font-size:.5rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);white-space:nowrap;
+}
+.zonebtns{display:flex;gap:.3rem}
 .rowactions button{
-  display:flex;flex-direction:column;align-items:center;gap:.1rem;
-  font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  padding:.45rem .6rem;border-radius:.7rem;line-height:1.15;
+  font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:.5rem .55rem;border-radius:.7rem;line-height:1.15;white-space:nowrap;
   background:#f0ebee;color:#6b6169;
   transition:transform .15s ease;
 }
 .rowactions button:active{transform:scale(.93)}
-.rowactions button small{
-  font-size:.5rem;font-weight:500;letter-spacing:.03em;text-transform:none;opacity:.75;
-}
 .rowactions button.warn{background:rgba(224,87,138,.12);color:#c0497a}
 .exrow.open .rowactions button{animation:traypop .4s cubic-bezier(.34,1.56,.64,1) both}
-.exrow.open .rowactions button:nth-child(2){animation-delay:.05s}
-.exrow.open .rowactions button:nth-child(3){animation-delay:.1s}
+.exrow.open .trayzone:nth-child(2) button{animation-delay:.05s}
+.exrow.open .zonebtns button:nth-child(2){animation-delay:.1s}
 @keyframes traypop{from{transform:scale(.82)}to{transform:scale(1)}}
 .rowmore{
   flex:none;color:var(--ink-3);font-size:1.05rem;line-height:1;
@@ -731,8 +735,13 @@ const PLAN = {
         cue:"Tuck the pelvis at the top, two-second squeeze. Chin stays neutral."},
       {id:"rdl", name:"Romanian deadlift", detail:"dumbbells · weight per hand", sets:3, reps:"10", ex:{sets:3,reps:"10"},
         cue:"Soft knees, hinge at the hips. Feel the hamstring stretch before pulling back up."},
-      {id:"bulgarian-split-squat", name:"Bulgarian split squat", detail:"contralateral dumbbell", sets:3, reps:"8 / leg",
-        cue:"Lean slightly forward to bias the glutes. Front shin mostly vertical."},
+      {slot:"mon-uni", label:"Unilateral glute", sets:3, reps:"8–10 / leg",
+        cue:"Hip-dominant on purpose — hinge back rather than dropping straight down. The front knee barely travels.",
+        choices:[
+          {id:"b-stance-rdl", name:"B-stance RDL", tag:"kickstand"},
+          {id:"single-leg-hip-thrust", name:"Single-leg hip thrust", tag:"no quad"},
+          {id:"bulgarian-split-squat", name:"Bulgarian split squat", tag:"more quad"}
+        ]},
       {slot:"mon-iso", label:"Glute isolation", sets:2, reps:"12–15", ex:{sets:2,reps:"12"},
         cue:"Squeeze and hold the top for a second. Don't arch the lower back.",
         choices:[
@@ -740,12 +749,12 @@ const PLAN = {
           {id:"banded-kickback", name:"Banded kickback", tag:"home"},
           {id:"frog-pump", name:"Frog pump", tag:"anywhere"}
         ]},
-      {slot:"mon-ham", label:"Hamstring accessory", sets:2, reps:"10–12",
-        cue:"Slow three-second lowers — the negative is most of the work.",
+      {slot:"mon-med", label:"Glute medius · width", sets:3, reps:"12–15", ex:{sets:2,reps:"15"},
+        cue:"The shelf and the hip width come from here. Lean forward 30–45° on the machine — that lean is most of the exercise.",
         choices:[
-          {id:"seated-ham-curl", name:"Seated hamstring curl", tag:"gym"},
-          {id:"back-extension", name:"45° back extension", tag:"glute focus"},
-          {id:"single-leg-rdl", name:"Single-leg RDL", tag:"home"}
+          {id:"hip-abduction", name:"Hip abduction machine", tag:"lean forward"},
+          {id:"banded-lateral-walk", name:"Banded lateral walk", tag:"home"},
+          {id:"curtsy-lunge", name:"Curtsy lunge", tag:""}
         ]}
     ],
     finish:"Stair walking 5–10 min — drive entirely through the heel."
@@ -758,20 +767,31 @@ const PLAN = {
     main:[
       {id:"assisted-pullup", name:"Assisted pull-up", detail:"machine · assist weight", sets:3, reps:"8–10", ex:{sets:3,reps:"8"},
         cue:"Pull the shoulder blades down first. Full hang at the bottom."},
-      {id:"tricep-dip", name:"Tricep dip", detail:"assisted · same machine", sets:3, reps:"8–10", ex:{sets:2,reps:"8–10"},
-        cue:"Elbows track back, not flared. Stop at 90°."},
-      {id:"cc-straight-leg", name:"Captain's chair — straight-leg raise", sets:3, reps:"10", bw:true,
-        cue:"Three-second lower. No swinging."},
+      {slot:"tue-tri", label:"Tricep · long head", sets:3, reps:"12–15", ex:{sets:2,reps:"12–15"},
+        cue:"Elbows stay pointed forward and tucked. Light weight, full stretch at the bottom — this is a shaping lift, not a strength lift.",
+        choices:[
+          {id:"overhead-tricep-extension", name:"Overhead tricep extension", tag:"long head"},
+          {id:"tricep-rope-pushdown", name:"Rope pushdown", tag:"gym"},
+          {id:"db-tricep-kickback", name:"DB kickback", tag:"home"}
+        ]},
       {id:"db-shoulder-press", name:"DB shoulder press", detail:"seated · the width lever", sets:3, reps:"8–10", ex:{sets:2,reps:"8–10"},
         cue:"Ribs down, press up and slightly in. Don't arch the lower back."},
       {id:"lateral-raise", name:"DB lateral raise", detail:"highest value for taper", sets:3, reps:"12–15", ex:{sets:2,reps:"12–15"},
         cue:"Lead with the elbow, stay at or below shoulder height. Stop if the shoulder shrugs up."},
       {id:"one-arm-row", name:"One-arm DB row", sets:3, reps:"10 / side", ex:{sets:3,reps:"10 / side"},
         cue:"Pull toward the hip, not the chest. Squeeze the lat at the top."},
-      {id:"face-pull", name:"Face pull", sets:3, reps:"15",
+      {id:"hammer-curl", name:"Hammer curl", detail:"neutral grip · weight per hand", sets:2, reps:"12",
+        cue:"Elbows pinned at the sides, palms facing each other the whole set. Two sets is a shaping dose — it fills the gap between bicep and tricep so the arm reads narrower from the side."},
+      {id:"face-pull", name:"Face pull", sets:3, reps:"15", ex:{sets:2,reps:"15"},
         cue:"Pull to forehead height, hands outside the ears. Squeeze the rear delts."},
-      {id:"serratus-slide", name:"Serratus wall slide", sets:2, reps:"10", ex:{sets:1,reps:"10"}, bw:true,
-        cue:"Full forearm contact with the wall. Reach long at the top."}
+      {id:"prone-y-raise", name:"Prone Y-raise", detail:"lower trap · bodyweight or 2–5 lb", sets:2, reps:"12",
+        cue:"Face down, thumbs up, lift into a Y. This is the muscle that holds the shoulder blade down — the whole open-neck line runs through it."},
+      {id:"serratus-slide", name:"Serratus wall slide", sets:2, reps:"10", bw:true,
+        cue:"Full forearm contact with the wall. Reach long at the top."},
+      {id:"chin-tuck", name:"Chin tuck", detail:"3s hold each", sets:2, reps:"10", bw:true, ex:{sets:1,reps:"10"},
+        cue:"Slide the chin straight back — a level glide, not a nod. Hold three seconds. This is the forward-head fix, and it takes a minute."},
+      {id:"doorway-pec-stretch", name:"Doorway pec stretch", sets:2, reps:"30s / side", bw:true,
+        cue:"Forearm on the frame at shoulder height, step through until the chest opens. Rounded shoulders are short pecs as much as a weak back."}
     ],
     finish:"Dead bug × 10 / side, then a 30s plank — shoulder blades broad and flat."
   },
@@ -783,6 +803,7 @@ const PLAN = {
         "Upper trap stretch × 30s / side — light hand assist, no pulling",
         "Levator scapulae stretch × 30s / side — nose toward armpit",
         "Trap ball release on the wall × 60–90s / side",
+        "Chin tuck × 10, 3s hold — level glide back, not a nod",
         "Diaphragmatic breathing — 6–8 breaths, shoulders melt on each exhale"
       ]},
       {name:"Thoracic & scapular", time:"5–6 min", items:[
@@ -820,11 +841,16 @@ const PLAN = {
     main:[
       {id:"hip-thrust", name:"Hip thrust", detail:"weight per side", sets:3, reps:"10", ex:{sets:3,reps:"10"},
         cue:"Tuck the pelvis at the top, two-second squeeze."},
-      {id:"leg-press", name:"Leg press", sets:3, reps:"10",
-        cue:"Feet high and wide on the platform to bias the glutes. Don't lock the knees."},
+      {slot:"thu-hinge", label:"Hip extension", sets:3, reps:"10–12",
+        cue:"All hip, no knee. Drive the hips forward and stop at a straight body line — don't arch past it.",
+        choices:[
+          {id:"cable-pull-through", name:"Cable pull-through", tag:"gym"},
+          {id:"back-extension", name:"45° back extension", tag:"glute focus"},
+          {id:"frog-pump", name:"Frog pump", tag:"home"}
+        ]},
       {id:"sumo-squat", name:"Sumo DB squat", detail:"kettlebell or DB", sets:3, reps:"10", ex:{sets:3,reps:"10"},
         cue:"Toes turned out ~45°. Sit straight down between the heels."},
-      {slot:"thu-med", label:"Glute medius · width", sets:2, reps:"12–15",
+      {slot:"thu-med", label:"Glute medius · width", sets:3, reps:"12–15", ex:{sets:2,reps:"15"},
         cue:"Slow and controlled — feel the outer glute working.",
         choices:[
           {id:"hip-abduction", name:"Hip abduction machine", tag:"lean forward"},
@@ -905,6 +931,12 @@ for (const d of Object.values(PLAN)) {
 }
 NAMES["mat-pilates"] = "Mat Pilates";
 NAMES["light-walk"] = "Light walk";
+/* retired from the plan — kept resolvable so old logs still read properly */
+NAMES["leg-press"] = "Leg press";
+NAMES["tricep-dip"] = "Tricep dip";
+NAMES["cc-straight-leg"] = "Captain's chair — straight-leg raise";
+NAMES["seated-ham-curl"] = "Seated hamstring curl";
+NAMES["single-leg-rdl"] = "Single-leg RDL";
 const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "bulgarian-split-squat":"contralateral DB",
   "assisted-pullup":"assist", "tricep-dip":"assist" };
 
@@ -960,6 +992,11 @@ const LIBRARY = [
 {"id": "reverse-lunge", "name": "Reverse lunge", "cat": "Lower body", "hits": "glutes, quads, hamstrings. Easier on the knees than forward or walking lunges.", "cues": ["Step straight back, drop the back knee toward the floor.", "Keep the weight in the front heel, drive through the front foot to return to standing.", "Slight forward torso lean biases the glutes."], "img": "assets/lib/reverse-lunge.gif"},
 {"id": "sumo-db-squat", "name": "Sumo DB squat", "cat": "Lower body", "hits": "glutes, quads, adductors (inner thigh).", "cues": ["Sit straight down between the hips, knees track out over the toes, chest up.", "Drive through the heels, squeeze glutes at the top."], "img": "assets/lib/sumo-db-squat.gif"},
 {"id": "curtsy-lunge", "name": "Curtsy lunge", "cat": "Lower body", "hits": "gluteus medius (upper/side glute, the \"shelf\"), quads.", "cues": ["Step one leg diagonally back behind the other (like a curtsy), lower until the front thigh is near parallel.", "Drive back up through the front heel. Controlled — this is a stability movement, not a heavy lift."], "img": "assets/lib/curtsy-lunge.gif"},
+{"id": "b-stance-rdl", "name": "B-stance RDL (kickstand)", "cat": "Lower body", "hits": "glutes and hamstrings of the front leg. Nearly all the glute of a single-leg RDL with none of the balance fuss, and almost no quad.", "cues": ["Set the back foot a half-step behind, toes down, heel up — it is a kickstand for balance only, not a working leg.", "Roughly 80% of the weight stays in the front leg.", "Hinge back from the hip, dumbbells tracing the front shin, until the front hamstring stretches.", "Drive the front hip forward to stand, squeeze that glute at the top.", "Hips stay square — don't let the back hip rotate open."], "img": ""},
+{"id": "single-leg-hip-thrust", "name": "Single-leg hip thrust", "cat": "Lower body", "hits": "glutes, one side at a time. Pure hip extension — no quad involvement at all.", "cues": ["Shoulders on the bench, one foot planted, the other knee pulled toward the chest to stop it helping.", "Drive through the heel of the working foot, tuck the pelvis at the top, hold one second.", "Keep the hips level — the free side will want to drop.", "Bodyweight is plenty at first; add a dumbbell across the hip once 12 reps feel easy."], "img": ""},
+{"id": "cable-pull-through", "name": "Cable pull-through", "cat": "Lower body", "hits": "glutes (primary), hamstrings. A hinge with the load line pulling you backward, so the glutes work hardest at the top where they lock out.", "cues": ["Face away from a low cable, rope between the legs, walk out until there's tension.", "Hinge back, let the rope travel between the legs, feel the hamstrings stretch.", "Snap the hips forward to stand and squeeze the glutes — the arms do nothing, they're just hooks.", "Stop at a straight body line. Don't lean back past it."], "img": ""},
+{"id": "chin-tuck", "name": "Chin tuck", "cat": "Stretches & Mobility", "hits": "deep neck flexors. The direct fix for forward-head posture, and the cheapest thing in the program for how the neck reads.", "cues": ["Slide the chin straight back, keeping the eyes level — a horizontal glide, not a downward nod.", "You should feel a mild stretch at the base of the skull and the front of the throat switch on.", "Hold three seconds, release slowly.", "Can be done standing against a wall, lying down, or at a desk. Do it often."], "img": ""},
+{"id": "doorway-pec-stretch", "name": "Doorway pec stretch", "cat": "Stretches & Mobility", "hits": "pecs and front delts. Rounded shoulders are short pecs as much as a weak back — this is the length half of the fix.", "cues": ["Forearm flat on the door frame, elbow at about shoulder height.", "Step through with the same-side foot and turn the chest away until the front of the shoulder opens.", "Ribs stay down and shoulder stays dropped — don't arch the lower back to feel more.", "Easy stretch, 30 seconds, breathe. Never force it."], "img": ""},
 {"id": "banded-lateral-walk", "name": "Banded lateral walk (home option)", "cat": "Lower body", "hits": "gluteus medius. Home substitute for the hip abduction machine.", "cues": ["Stay low the whole set, step sideways keeping constant tension on the band.", "Don't let the feet click together. Toes forward, hips level."], "img": "assets/lib/banded-lateral-walk.gif"},
 {"id": "tricep-dip", "name": "Tricep dip", "cat": "Upper body", "hits": "", "cues": [], "img": "assets/lib/tricep-dip.gif"},
 {"id": "db-bench-press", "name": "DB bench press (or incline DB press)", "cat": "Upper body", "hits": "chest (primary), front delts, triceps.", "cues": ["Pinch shoulder blades down and together against the bench, keep them there the whole set.", "Lower the dumbbells under control until they're just outside the lower chest.", "Slight pause at the bottom, then press up and slightly together (not straight up).", "Don't lock the elbows out hard at the top."], "img": "assets/lib/db-bench-press.gif"},
@@ -1161,6 +1198,30 @@ function isBW(it, cid){
    finishing the day no longer sweeps in stray weights that were typed but never confirmed */
 function countsEntry(w, e){
   return !!(e && (e.done || (e.sets||[]).some(Boolean)));
+}
+/* how many sets are logged. A sets array is the record when it exists; a bare "done"
+   means she finished all of them. done + a partial array = finished early, on purpose. */
+function setsDone(e, n){
+  if (!e) return 0;
+  if (e.sets) return Math.min(e.sets.filter(Boolean).length, n);
+  return e.done ? n : 0;
+}
+/* how many sets the plan asked for — lets the Record editor show pips for a lift
+   that was marked done outright, so a past day can be dialled back too */
+function plannedSets(dayKey, exId){
+  const day = PLAN[dayKey];
+  if (!day) return 0;
+  for (const it of (day.main||[])){
+    const k = it.slot || it.id;
+    const o = (db.planOv && db.planOv[dayKey] && db.planOv[dayKey][k]) || null;
+    const ids = it.choices ? it.choices.map(c=>c.id) : [it.id];
+    if (o && o.id) ids.push(o.id);
+    if (!ids.includes(exId)) continue;
+    const n = (o && (o.sets || o.reps)) ? (o.sets || it.sets)
+      : ((db.settings.express && it.ex) ? it.ex.sets : it.sets);
+    return parseInt(n, 10) || 0;
+  }
+  return 0;
 }
 function gcDay(dk){
   const w = db.workouts[dk];
@@ -1376,7 +1437,7 @@ function extrasHTML(r, dk, startIdx){
     const wVal = entry && entry.weight != null ? entry.weight : "";
     const le = libEntry(id);
     const cueText = (le && (le.cues||[])[0]) || "";
-    h += `<li class="exrow ${ui.rowOpen==="x:"+id?'open':''}" data-rowkey="x:${id}" style="--i:${startIdx+n};--tray:100px">
+    h += `<li class="exrow ${ui.rowOpen==="x:"+id?'open':''}" data-rowkey="x:${id}" style="--i:${startIdx+n};--tray:112px">
       <div class="rowslide">
       <div class="exhead">
         <div>
@@ -1400,7 +1461,7 @@ function extrasHTML(r, dk, startIdx){
       </div>
       ${last?`<div class="rowfoot"><div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b></div></div>`:""}
       </div>
-      <div class="rowactions"><button class="warn" data-act="rmex" data-id="${id}"><span>remove</span><small>today</small></button></div>
+      <div class="rowactions"><div class="trayzone"><span class="zonelbl">today only</span><button class="warn" data-act="rmex" data-id="${id}">remove</button></div></div>
     </li>`;
   });
   h += `<li style="--i:${startIdx+list.length}">
@@ -1507,6 +1568,7 @@ function renderToday(){
 
   /* main work — plan + her saved routine edits */
   const express = db.settings.express;
+  const weekdayName = WDAYS[DAYKEYS.indexOf(sessKey)];
   const dov = (db.planOv && db.planOv[sessKey]) || {};
   const allRows = day.main.map(it=>{ const k = it.slot||it.id; return {it, ikey:k, o:dov[k]||null}; });
   const visible = allRows.filter(x=>!(x.o && x.o.hidden));
@@ -1515,7 +1577,7 @@ function renderToday(){
   const hiddenN = allRows.length - visible.length;
   h += `<div class="workwrap">
     <div class="workkicker"><span>Main work</span>${express?'<em>express · ~25 min</em>':''}</div>
-    ${!db.seen.rowhint?`<div class="skipnote">tap ⋯ on a lift to swap it just for today, or edit it for good</div>`:""}
+    ${!db.seen.sethint?`<div class="skipnote">new · tap the set dots to log fewer sets than planned${db.seen.rowhint?"":" · tap ⋯ for today-only swaps and every-week changes"}</div>`:""}
     <ol class="work">`;
   items.forEach((x,i)=>{
     const it = x.it, ikey = x.ikey, o = x.o;
@@ -1568,7 +1630,7 @@ function renderToday(){
       h += `</div>`;
     }
     if (ui.swapping===ikey){
-      h += `<input class="swapin" list="exlist" data-key="${ikey}" placeholder="What are you doing instead?" aria-label="replacement exercise"><div class="choices swapsugg"></div>`;
+      h += `<input class="swapin" list="exlist" data-key="${ikey}" placeholder="What are you doing instead — just today?" aria-label="replacement exercise"><div class="choices swapsugg"></div>`;
     }
     if (editing){
       h += `<div class="editform">
@@ -1606,12 +1668,13 @@ function renderToday(){
       const setsN = parseInt(sc.sets, 10) || 0;
       let pips = "";
       if (setsN > 1){
+        const filled = setsDone(entry, setsN);
         pips = `<div class="setpips" aria-label="sets">`;
         for (let si=0; si<setsN; si++){
-          const on = !!(entry && (entry.done || (entry.sets && entry.sets[si])));
+          const on = si < filled;
           pips += `<button class="pip ${on?'on':''}" data-act="pip" data-ex="${cid}" data-si="${si}" data-n="${setsN}" aria-label="set ${si+1} of ${setsN}" aria-pressed="${on}"></button>`;
         }
-        pips += `<span class="piplabel">sets</span></div>`;
+        pips += `<span class="piplabel">${filled && filled<setsN ? `${filled} of ${setsN} sets` : "sets"}</span></div>`;
       }
       let nudge = "";
       if (!done && !bw && last && last.reps && last.w != null){
@@ -1628,10 +1691,18 @@ function renderToday(){
     }
     h += `</div>
       <div class="rowactions">
-        ${sub?`<button data-act="unswap" data-key="${ikey}"><span>undo</span><small>today</small></button>`
-             :`<button data-act="swap" data-key="${ikey}"><span>swap</span><small>just today</small></button>`}
-        <button data-act="rowedit" data-key="${ikey}"><span>edit</span><small>every week</small></button>
-        <button class="warn" data-act="rowremove" data-key="${ikey}"><span>remove</span><small>every week</small></button>
+        <div class="trayzone">
+          <span class="zonelbl">today only</span>
+          ${sub?`<button data-act="unswap" data-key="${ikey}">put back</button>`
+               :`<button data-act="swap" data-key="${ikey}">swap</button>`}
+        </div>
+        <div class="trayzone">
+          <span class="zonelbl">every ${esc(weekdayName)}</span>
+          <div class="zonebtns">
+            <button data-act="rowedit" data-key="${ikey}">edit</button>
+            <button class="warn" data-act="rowremove" data-key="${ikey}">remove</button>
+          </div>
+        </div>
       </div>
     </li>`;
   });
@@ -1713,12 +1784,14 @@ function renderLog(){
     if (entries.length){
       h += `<ul>`;
       for (const [ex,e] of entries){
+        const pn = (e.sets && e.sets.length) || plannedSets(dayKey, ex);
+        const pf = setsDone(e, pn);
         if (ui.logEdit && ui.logEdit.dk===sel && ui.logEdit.ex===ex){
           const isMins = e.mins!=null || ex==="mat-pilates" || ex==="light-walk";
           h += `<li class="ledit">
             <span class="lename">${esc(nameOf(ex))}</span>
             <div class="ledrow">
-              ${e.sets&&e.sets.length?editPipsHTML(ex, e.sets.length, e.sets.filter(Boolean).length, sel):""}
+              ${pn>1?editPipsHTML(ex, pn, pf, sel):""}
               ${isMins
                 ?`<input class="ler" inputmode="numeric" data-mins="1" value="${e.mins?esc(e.mins):""}" placeholder="min" aria-label="minutes">`
                 :`<input class="lew" inputmode="decimal" value="${e.weight!=null&&e.weight!==""?esc(e.weight):""}" placeholder="lb" aria-label="weight"><input class="ler" value="${e.reps?esc(e.reps):""}" placeholder="reps" aria-label="reps">`}
@@ -1729,7 +1802,7 @@ function renderLog(){
           continue;
         }
         const done = e.done || (e.sets||[]).some(Boolean);
-        const st = e.sets && e.sets.length && e.sets.filter(Boolean).length < e.sets.length ? `${e.sets.filter(Boolean).length}/${e.sets.length}` : "";
+        const st = pn>1 && pf>0 && pf<pn ? `${pf}/${pn}` : "";
         const right = (e.weight!=null&&e.weight!=="") ? `${e.weight} lb${e.reps?`<small>× ${esc(e.reps)}</small>`:''}` : e.mins ? `${esc(e.mins)} min` : (e.reps?`× ${esc(e.reps)}`:'—');
         h += `<li><button class="lerow" data-act="logedit" data-dk="${sel}" data-ex="${ex}" aria-label="edit ${esc(nameOf(ex))}"><span>${esc(nameOf(ex))}${done?' <span style="color:var(--hanko)">✓</span>':''}</span><span class="r">${right}${st?`<small> · ${st} sets</small>`:''}</span></button><button class="delentry" data-act="delentry" data-dk="${sel}" data-ex="${ex}" aria-label="delete this entry">×</button></li>`;
       }
@@ -2073,8 +2146,12 @@ document.addEventListener("click", e=>{
     const ex = t.dataset.ex;
     const entry = r.entries[ex] = r.entries[ex] || {};
     const cur = !!entry.done;
-    entry.done = !cur; delete entry.sets; /* done outranks partial pips: it means all sets */
-    if (!cur){
+    /* "done" means finished with this lift, not necessarily all the planned sets —
+       a partial pip count stands, so stopping at 2 of 3 logs as 2 of 3. */
+    if (cur) delete entry.done;
+    else {
+      entry.done = true;
+      if (entry.sets && !entry.sets.some(s=>!s)) delete entry.sets;
       inheritInto(entry, ex, t.dataset.reps);
       heartBurst(t, 6);
     }
@@ -2091,22 +2168,29 @@ document.addEventListener("click", e=>{
     const r = rec(dk, true);
     const ex = t.dataset.ex, si = Number(t.dataset.si), n = Number(t.dataset.n);
     const entry = r.entries[ex] = r.entries[ex] || {};
-    const cur = entry.done ? n : Math.min((entry.sets||[]).filter(Boolean).length, n);
+    const wasDone = !!entry.done;
+    if (!db.seen.sethint) db.seen.sethint = 1;
+    const cur = setsDone(entry, n);
     const tapped = si + 1;
     const next = cur===tapped ? tapped-1 : tapped;
-    delete entry.done;
-    if (next<=0) delete entry.sets;
+    if (next<=0){ delete entry.sets; delete entry.done; }
     else if (next>=n){ entry.done = true; delete entry.sets; }
-    else entry.sets = Array.from({length:n},(_,k)=>k<next);
+    else {
+      /* short of the plan — keep it marked done if it already was, so she can
+         dial a finished lift down to the sets she actually did */
+      entry.sets = Array.from({length:n},(_,k)=>k<next);
+      if (!wasDone) delete entry.done;
+    }
     if (cur===0 && next>0 && !t.dataset.dk){
       const slide = t.closest(".rowslide");
       const dbtn = slide && slide.querySelector(".donebtn");
       inheritInto(entry, ex, dbtn ? dbtn.dataset.reps : null);
     }
-    if (entry.done) heartBurst(t, 6);
+    const justFinished = entry.done && !wasDone;
+    if (justFinished) heartBurst(t, 6);
     save();
     if (ui.tab==="log") renderLog(); else renderToday();
-    if (entry.done){
+    if (justFinished){
       const ring = document.querySelector(`.donebtn[data-ex="${ex}"] .ring`);
       if (ring) ring.classList.add("pop");
     }
@@ -2129,7 +2213,7 @@ document.addEventListener("click", e=>{
   if (act==="rowmore"){
     const k = t.dataset.key;
     ui.rowOpen = ui.rowOpen===k ? null : k;
-    if (!db.seen.rowhint){ db.seen.rowhint = 1; save(); }
+    if (!db.seen.rowhint || !db.seen.sethint){ db.seen.rowhint = 1; db.seen.sethint = 1; save(); }
     renderToday(); return;
   }
   if (act==="notedit"){
@@ -2561,7 +2645,7 @@ document.addEventListener("touchend", e=>{
     if (shouldOpen){
       touchS.row.classList.add("open");
       ui.rowOpen = touchS.row.dataset.rowkey;
-      if (!db.seen.rowhint){ db.seen.rowhint = 1; save(); }
+      if (!db.seen.rowhint || !db.seen.sethint){ db.seen.rowhint = 1; db.seen.sethint = 1; save(); }
     }
   }
   touchS = null;
