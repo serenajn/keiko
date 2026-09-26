@@ -1,5 +1,5 @@
 /* Keiko service worker — offline-first shell, fresh-when-online content */
-const CACHE = "keiko-sw-1";
+const CACHE = "keiko-sw-2"; // bump whenever an asset file changes (cache-first would keep the old one)
 const CORE = [
   "./",
   "index.html",
