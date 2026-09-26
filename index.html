@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#fefcfd">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fefcfd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b171b" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Keiko">
@@ -30,8 +32,38 @@
   --gold:#f2c94c;
   --lav:#b9a8e8;
   --wash:#f5eff3;
+  --chip:#f0ebee;
+  --chip-ink:#6b6169;
+  --warn-ink:#c0497a;
+  --ms-stat:#6f63a0;
+  --check:#fff;
+  --w-mon:#fae0ea; --w-tue:#e3e9f8; --w-wed:#e0f0e4; --w-thu:#fdf0d8;
+  --w-fri:#f5eff3; --w-sat:#ecdff7; --w-sun:#f5eff3;
   --serif:'Instrument Sans',-apple-system,'Helvetica Neue',sans-serif;
   --sans:'Instrument Sans',-apple-system,'Helvetica Neue',sans-serif;
+}
+/* night mode — follows the iPhone's Appearance setting automatically */
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --paper:#1b171b;
+    --paper-2:#29232a;
+    --ink:#f4edf2;
+    --ink-2:#bcb1b9;
+    --ink-3:#8d8189;
+    --line:rgba(244,237,242,.16);
+    --line-soft:rgba(244,237,242,.08);
+    --hanko:#f27ba8;
+    --hanko-soft:rgba(242,123,168,.15);
+    --wash:#2b242b;
+    --chip:#332b33;
+    --chip-ink:#d2c7cf;
+    --warn-ink:#f59bbd;
+    --ms-stat:#c3b6f0;
+    --w-mon:#3d2331; --w-tue:#232b40; --w-wed:#1f3328; --w-thu:#3a2f1c;
+    --w-fri:#2b242b; --w-sat:#302544; --w-sun:#2b242b;
+  }
+  .libgif{background:#fff}
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{font-size:16px}
@@ -87,13 +119,13 @@ input{font:inherit;color:inherit}
   padding:1.15rem 1.3rem 1.35rem;
   overflow:hidden;
 }
-.dayhead[data-day="mon"]{--wash:#fae0ea}
-.dayhead[data-day="tue"]{--wash:#e3e9f8}
-.dayhead[data-day="wed"]{--wash:#e0f0e4}
-.dayhead[data-day="thu"]{--wash:#fdf0d8}
-.dayhead[data-day="fri"]{--wash:#f5eff3}
-.dayhead[data-day="sat"]{--wash:#ecdff7}
-.dayhead[data-day="sun"]{--wash:#f5eff3}
+.dayhead[data-day="mon"]{--wash:var(--w-mon)}
+.dayhead[data-day="tue"]{--wash:var(--w-tue)}
+.dayhead[data-day="wed"]{--wash:var(--w-wed)}
+.dayhead[data-day="thu"]{--wash:var(--w-thu)}
+.dayhead[data-day="fri"]{--wash:var(--w-fri)}
+.dayhead[data-day="sat"]{--wash:var(--w-sat)}
+.dayhead[data-day="sun"]{--wash:var(--w-sun)}
 .datebar{display:flex;align-items:center;gap:.4rem;margin-bottom:.55rem}
 .dnav{
   width:2.75rem;height:2.75rem;border-radius:50%;
@@ -137,7 +169,7 @@ input{font:inherit;color:inherit}
 .msheart svg{width:100%;height:auto;display:block}
 .msbody b{font-size:.8rem;font-weight:600}
 .msbody p{font-size:.78rem;color:var(--ink-2);line-height:1.55;margin-top:.15rem}
-.msstat{font-weight:600;color:#6f63a0 !important;font-size:.74rem !important}
+.msstat{font-weight:600;color:var(--ms-stat) !important;font-size:.74rem !important}
 .msdismiss{
   flex:none;width:2.2rem;height:2.2rem;border-radius:50%;
   display:grid;place-items:center;color:var(--ink-3);font-size:1.05rem;
@@ -240,7 +272,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   display:grid;place-items:center;
   transition:background .18s,border-color .18s;
 }
-.donebtn .ring svg{width:.95rem;height:.95rem;opacity:0;transition:opacity .18s;stroke:var(--paper);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.donebtn .ring svg{width:.95rem;height:.95rem;opacity:0;transition:opacity .18s;stroke:var(--check);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .donebtn.on .ring{background:var(--hanko);border-color:var(--hanko)}
 .donebtn.on .ring svg{opacity:1}
 .donebtn.on{color:var(--hanko)}
@@ -254,7 +286,7 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 .sessswap select{
   appearance:none;-webkit-appearance:none;
-  border:1px solid rgba(38,39,35,.2);border-radius:999px;
+  border:1px solid var(--line);border-radius:999px;
   padding:.34rem 1.6rem .34rem .9rem;
   font:inherit;font-weight:600;color:var(--ink);letter-spacing:.08em;text-transform:uppercase;
   background-color:color-mix(in srgb,var(--paper) 55%,transparent);
@@ -309,11 +341,11 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .rowactions button{
   font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
   padding:.5rem .55rem;border-radius:.7rem;line-height:1.15;white-space:nowrap;
-  background:#f0ebee;color:#6b6169;
+  background:var(--chip);color:var(--chip-ink);
   transition:transform .15s ease;
 }
 .rowactions button:active{transform:scale(.93)}
-.rowactions button.warn{background:rgba(224,87,138,.12);color:#c0497a}
+.rowactions button.warn{background:var(--hanko-soft);color:var(--warn-ink)}
 .exrow.open .rowactions button{animation:traypop .4s cubic-bezier(.34,1.56,.64,1) both}
 .exrow.open .trayzone:nth-child(2) button{animation-delay:.05s}
 .exrow.open .zonebtns button:nth-child(2){animation-delay:.1s}
@@ -557,6 +589,60 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .pempty{margin:3rem 1.5rem;text-align:center}
 .pempty p{font-size:.85rem;color:var(--ink-2);font-style:italic;line-height:1.7}
 
+/* ───────── plan (weekly routine editor) ───────── */
+.kickr{display:flex;align-items:baseline;gap:.2rem}
+.kickedit{
+  font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--hanko);
+  padding:.45rem 0 .45rem .7rem;margin:-.45rem 0;
+}
+.plandays{display:flex;gap:.3rem;margin:0 .8rem .8rem}
+.planday{
+  flex:1;position:relative;height:2.75rem;border-radius:.75rem;
+  font-size:.64rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);
+  background:var(--pw,var(--paper-2));
+  transition:background .2s,color .2s,transform .15s ease;
+}
+.planday:active{transform:scale(.94)}
+.planday[data-day="mon"]{--pw:var(--w-mon)}
+.planday[data-day="tue"]{--pw:var(--w-tue)}
+.planday[data-day="wed"]{--pw:var(--w-wed)}
+.planday[data-day="thu"]{--pw:var(--w-thu)}
+.planday[data-day="sat"]{--pw:var(--w-sat)}
+.planday.on{background:var(--ink);color:var(--paper)}
+.planday i{position:absolute;top:.35rem;right:.35rem;width:5px;height:5px;border-radius:50%;background:var(--hanko)}
+.plancard{animation:rise .4s cubic-bezier(.16,1,.3,1) both}
+.plancard .datebar{margin-bottom:.35rem}
+.plandl{text-align:left}
+.plantitlein{font-size:1.15rem}
+.plannote{margin:1rem 1.25rem 0;font-size:.8rem;color:var(--ink-2);font-style:italic;line-height:1.6}
+.plansec{margin:1.3rem 1.25rem 0}
+.plancount{font-style:normal;color:var(--ink-3);letter-spacing:.1em;font-size:.62rem}
+.planlist{list-style:none}
+.planlist>li{border-bottom:1px solid var(--line-soft);animation:rise .45s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i,0)*35ms)}
+.planlist>li.planaddrow{border-bottom:none;padding-top:.5rem}
+.planrowbtn{width:100%;display:flex;align-items:baseline;gap:.7rem;padding:.9rem 0;text-align:left}
+.pnum{flex:none;width:1.1rem;font-size:.68rem;font-weight:600;color:var(--ink-3)}
+.pmain{flex:1;min-width:0}
+.pname{display:block;font-weight:600;font-size:.98rem;line-height:1.3}
+.pdet{display:block;font-size:.7rem;color:var(--ink-2);margin-top:.12rem;line-height:1.45}
+.pdet.edited,.pdet.mine{color:var(--hanko)}
+.planedit .editform{padding:.2rem 0 1rem}
+.plansugg:empty{display:none}
+.plansugg{margin-top:-.2rem}
+.ef-move{margin-left:auto;display:flex;gap:.3rem}
+.ef-move .choice{padding:.42rem .8rem}
+.choice:disabled{opacity:.3}
+.plandel{font-size:.72rem;color:var(--ink-3);padding:.35rem 0;margin-right:1rem}
+.plandel:active{color:var(--hanko)}
+.planwarm{list-style:none;padding:.3rem 0 0}
+.planwarm li{font-size:.85rem;padding:.32rem 0;display:flex;gap:.6rem;line-height:1.5}
+.planwarm li::before{content:"";flex:none;width:.35rem;height:.35rem;border-radius:50%;background:var(--ink-3);margin-top:.55em}
+.planfin{font-size:.85rem;padding:.55rem 0 0;line-height:1.55;color:var(--ink)}
+.plannone{font-size:.8rem;color:var(--ink-3);font-style:italic;padding:.55rem 0 0}
+.planfoot{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-top:1.8rem;margin-bottom:1rem}
+.planfoot .kickedit{padding-left:0}
+.planfoot .cleardaylink{margin:0}
+
 /* ───────── extras ───────── */
 .addex{
   display:flex;align-items:center;width:100%;text-align:left;
@@ -662,21 +748,44 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   margin-left:.5rem;vertical-align:baseline;transform:translateY(6px);
 }
 
+/* finish-workout celebrations */
+.fx{position:fixed;left:0;top:0;z-index:60;pointer-events:none;will-change:transform,opacity}
+.fx svg{width:100%;height:auto;display:block}
+.partybtn{cursor:pointer;display:flex;justify-content:center}
+.partybtn.fresh{animation:celpop .65s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes celpop{from{transform:scale(.55) translateY(12px);opacity:0}}
+.celline{font-size:.72rem;letter-spacing:.02em;text-transform:none;color:var(--ink-3);font-style:italic;margin-top:-.35rem}
+.cel-parade{display:flex;align-items:flex-end;gap:.1rem}
+.cel-parade .dgif{width:66px;animation:hop 1.1s ease-in-out infinite;animation-delay:calc(var(--n)*.17s)}
+@keyframes hop{0%,55%,100%{transform:translateY(0)}28%{transform:translateY(-11px)}}
+.cel-rise{position:relative;padding:0 1.6rem}
+.cel-rise .up{position:absolute;bottom:35%;width:12px;opacity:0;animation:riseup 2.4s ease-out infinite}
+.cel-rise .up svg{width:100%;height:auto;display:block}
+@keyframes riseup{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:1}100%{transform:translateY(-78px) scale(1.05);opacity:0}}
+.celbongo{width:104px}
+.celbunny{width:92px;animation:hop 1s ease-in-out infinite}
+.cel-orbit{position:relative;width:140px;height:112px;display:grid;place-items:center}
+.cel-orbit .orb{position:absolute;inset:0;animation:spin 7s linear infinite}
+.cel-orbit .orb span{position:absolute;left:50%;top:50%;width:12px;margin:-6px;transform:rotate(var(--a)) translateY(-54px)}
+.cel-orbit .orb svg{width:100%;height:auto;display:block;animation:twinkle 2.2s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.duo .bobheart{align-self:center}
+
 /* ───────── tab bar ───────── */
 .tabbar{
   position:fixed;bottom:0;left:0;right:0;z-index:10;
   background:color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   border-top:1px solid var(--line-soft);
-  display:flex;justify-content:center;gap:1.4rem;
-  padding:.55rem 0 calc(.6rem + env(safe-area-inset-bottom));
+  display:flex;justify-content:center;gap:.35rem;
+  padding:.55rem .4rem calc(.6rem + env(safe-area-inset-bottom));
 }
 .tab{
   display:flex;flex-direction:column;align-items:center;gap:.15rem;
-  color:var(--ink-3);min-width:3.6rem;padding:.5rem 0 .15rem;
+  color:var(--ink-3);min-width:3.6rem;padding:.5rem .45rem .15rem;
   transition:color .2s;
 }
-.tab .e{font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.tab .e{font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
 .tab.active{color:var(--ink)}
 .tab .tickdot{width:4px;height:4px;border-radius:50%;background:transparent;margin-top:.1rem}
 .tab.active .tickdot{background:var(--hanko)}
@@ -702,6 +811,7 @@ button:focus-visible{outline:1.5px solid rgba(224,87,138,.5);outline-offset:2px}
   </header>
   <main>
     <section id="view-today"></section>
+    <section id="view-plan" hidden></section>
     <section id="view-log" hidden></section>
     <section id="view-progress" hidden></section>
     <section id="view-library" hidden></section>
@@ -709,6 +819,7 @@ button:focus-visible{outline:1.5px solid rgba(224,87,138,.5);outline-offset:2px}
 </div>
 <nav class="tabbar" role="tablist" aria-label="views">
   <button class="tab active" role="tab" aria-selected="true" data-tab="today"><span class="e">Today</span><span class="tickdot"></span></button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="plan"><span class="e">Plan</span><span class="tickdot"></span></button>
   <button class="tab" role="tab" aria-selected="false" data-tab="log"><span class="e">Record</span><span class="tickdot"></span></button>
   <button class="tab" role="tab" aria-selected="false" data-tab="progress"><span class="e">Progress</span><span class="tickdot"></span></button>
   <button class="tab" role="tab" aria-selected="false" data-tab="library"><span class="e">Library</span><span class="tickdot"></span></button>
@@ -1194,6 +1305,118 @@ function isBW(it, cid){
   if (it.choices){ const c = it.choices.find(c=>c.id===cid); return !!(c && c.bw); }
   return !!it.bw;
 }
+
+/* ══════════════════ the weekly routine: plan + her saved edits ══════════════════
+   PLAN itself never changes. Edits to a planned lift live in db.planOv[day][key]
+   ({id, sets, reps, hidden}); the rest of what she shapes per weekday lives in
+   db.routine[day] = {title, warmup:[…], finish, add:[{key,id,sets,reps}], order:[keys]} */
+function dayRt(k){ return (db.routine && db.routine[k]) || {}; }
+function dayRtMake(k){ db.routine = db.routine || {}; return db.routine[k] = db.routine[k] || {}; }
+function dayRtTidy(k){
+  const rt = db.routine && db.routine[k];
+  if (!rt) return;
+  if (rt.add && !rt.add.length) delete rt.add;
+  if (rt.order && !rt.order.length) delete rt.order;
+  if (!Object.keys(rt).length) delete db.routine[k];
+}
+function dayTitle(k){ return dayRt(k).title || PLAN[k].title; }
+function dayWarmup(k){ return dayRt(k).warmup || PLAN[k].warmup || []; }
+function dayFinish(k){ const rt = dayRt(k); return ("finish" in rt) ? rt.finish : (PLAN[k].finish || ""); }
+function dayEdited(k){ return !!((db.planOv && db.planOv[k]) || (db.routine && db.routine[k])); }
+function origName(it){ return it.choices ? it.label : it.name; }
+/* every row of a weekday's main work, in her order — removed ones included, flagged via o.hidden */
+function routineRows(k){
+  const dov = (db.planOv && db.planOv[k]) || {};
+  const rt = dayRt(k);
+  const rows = (PLAN[k].main||[]).map(it=>{ const key = it.slot||it.id; return {it, ikey:key, o:dov[key]||null}; });
+  for (const a of (rt.add||[])){
+    rows.push({it:{id:a.id, name:nameOf(a.id), sets:a.sets, reps:a.reps, added:true}, ikey:a.key, o:null});
+  }
+  if (rt.order && rt.order.length){
+    const pos = x => { const i = rt.order.indexOf(x.ikey); return i<0 ? 1e6 : i; };
+    rows.forEach((x,i)=>x.n=i);
+    rows.sort((a,b)=>(pos(a)-pos(b)) || (a.n-b.n));
+  }
+  return rows;
+}
+function isHidden(x){ return !!(x.o && x.o.hidden); }
+function rowName(x){ return (x.o && x.o.id) ? nameOf(x.o.id) : origName(x.it); }
+function rowScheme(x, express){
+  const it = x.it, o = x.o;
+  if (o && (o.sets || o.reps)) return {sets: o.sets || it.sets, reps: o.reps || it.reps};
+  return (express && it.ex) ? it.ex : {sets:it.sets, reps:it.reps};
+}
+/* one save path for a routine row — Today's tray, the Library and the Plan tab all use it.
+   name === undefined leaves the exercise alone; an empty or original name reverts it. */
+function saveRoutineItem(k, key, f){
+  const x = routineRows(k).find(r=>r.ikey===key);
+  if (!x) return;
+  const sets = parseInt(f.sets, 10);
+  const okSets = sets > 0 && sets <= 20;
+  const reps = f.reps == null ? "" : String(f.reps).trim();
+  if (x.it.added){
+    const a = dayRt(k).add.find(a=>a.key===key);
+    if (f.name) a.id = resolveExId(f.name);
+    if (okSets) a.sets = sets;
+    if (reps) a.reps = reps;
+    return;
+  }
+  const it = x.it;
+  db.planOv = db.planOv || {};
+  const dov = db.planOv[k] = db.planOv[k] || {};
+  const o = dov[key] = dov[key] || {};
+  if (f.name !== undefined){
+    const name = String(f.name).trim();
+    if (name && name.toLowerCase() !== origName(it).toLowerCase()) o.id = resolveExId(name); else delete o.id;
+  }
+  if (okSets && sets !== it.sets) o.sets = sets; else delete o.sets;
+  if (reps && reps !== it.reps) o.reps = reps; else delete o.reps;
+  if (!Object.keys(o).length) delete dov[key];
+  if (!Object.keys(dov).length) delete db.planOv[k];
+}
+function removeRoutineItem(k, key){
+  const x = routineRows(k).find(r=>r.ikey===key);
+  if (!x) return;
+  if (x.it.added){
+    const rt = dayRt(k);
+    rt.add = rt.add.filter(a=>a.key!==key);
+    if (rt.order) rt.order = rt.order.filter(q=>q!==key);
+    dayRtTidy(k);
+  } else {
+    db.planOv = db.planOv || {};
+    const dov = db.planOv[k] = db.planOv[k] || {};
+    dov[key] = Object.assign(dov[key]||{}, {hidden:true});
+  }
+}
+function restoreHidden(k){
+  const dov = db.planOv && db.planOv[k];
+  if (!dov) return;
+  for (const q of Object.keys(dov)){
+    delete dov[q].hidden;
+    if (!Object.keys(dov[q]).length) delete dov[q];
+  }
+  if (!Object.keys(dov).length) delete db.planOv[k];
+}
+function addRoutineItem(k, name, sets, reps){
+  const rt = dayRtMake(k);
+  const key = "add-"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  const n = parseInt(sets, 10);
+  rt.add = rt.add || [];
+  rt.add.push({key, id:resolveExId(name), sets:(n>0 && n<=20) ? n : 3, reps:String(reps||"").trim() || "10"});
+  if (rt.order) rt.order.push(key);
+  return key;
+}
+/* swap with the nearest visible neighbour; removed rows keep their spot */
+function moveRoutineItem(k, key, dir){
+  const rows = routineRows(k);
+  const vis = rows.filter(x=>!isHidden(x));
+  const i = vis.findIndex(x=>x.ikey===key), j = i + dir;
+  if (i<0 || j<0 || j>=vis.length) return;
+  const order = rows.map(x=>x.ikey);
+  const a = order.indexOf(vis[i].ikey), b = order.indexOf(vis[j].ikey);
+  [order[a], order[b]] = [order[b], order[a]];
+  dayRtMake(k).order = order;
+}
 /* an entry only "counts" (record, progress, hints) if its done button was actually tapped —
    finishing the day no longer sweeps in stray weights that were typed but never confirmed */
 function countsEntry(w, e){
@@ -1209,17 +1432,13 @@ function setsDone(e, n){
 /* how many sets the plan asked for — lets the Record editor show pips for a lift
    that was marked done outright, so a past day can be dialled back too */
 function plannedSets(dayKey, exId){
-  const day = PLAN[dayKey];
-  if (!day) return 0;
-  for (const it of (day.main||[])){
-    const k = it.slot || it.id;
-    const o = (db.planOv && db.planOv[dayKey] && db.planOv[dayKey][k]) || null;
+  if (!PLAN[dayKey]) return 0;
+  for (const x of routineRows(dayKey)){
+    const it = x.it, o = x.o;
     const ids = it.choices ? it.choices.map(c=>c.id) : [it.id];
     if (o && o.id) ids.push(o.id);
     if (!ids.includes(exId)) continue;
-    const n = (o && (o.sets || o.reps)) ? (o.sets || it.sets)
-      : ((db.settings.express && it.ex) ? it.ex.sets : it.sets);
-    return parseInt(n, 10) || 0;
+    return parseInt(rowScheme(x, db.settings.express).sets, 10) || 0;
   }
   return 0;
 }
@@ -1422,9 +1641,157 @@ function heartBurst(anchor, count){
   }
 }
 
+/* ══════════════════ finish-workout celebrations ══════════════════
+   Seven of them — every weekday gets a different one, and the lineup reshuffles each week. */
+const NOTE_GRID = [".NNNN",".N..N",".N..N",".N..N","NN.NN","NN.NN"];
+const NOTE = p => pix(NOTE_GRID,{N:p},"","");
+const FX_COLORS = ["#ee6fa4","#f48fb8","#f2c94c","#b9a8e8","#8fd0c8","#f6a8c8"];
+const rnd = (a,b) => a + Math.random()*(b-a);
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const XY = (x,y,s,r) => `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${s||1}) rotate(${(r||0).toFixed(0)}deg)`;
+function reducedMotion(){ return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+/* one particle, fixed to the viewport so scroll position never matters */
+function fx(x, y, size, kind, frames, opts){
+  const el = document.createElement("div");
+  el.className = "fx";
+  const c = pick(FX_COLORS);
+  if (kind==="confetti"){
+    el.style.width = size+"px"; el.style.height = (size*.55)+"px";
+    el.style.background = c; el.style.borderRadius = "1px";
+  } else {
+    el.style.width = size+"px";
+    el.innerHTML = kind==="heart" ? MINIHEART(c) : kind==="spark" ? SPARK(c) : kind==="note" ? NOTE(c)
+      : (Math.random()<.5 ? MINIHEART(c) : SPARK(c));
+  }
+  el.style.left = (x - size/2)+"px"; el.style.top = (y - size/2)+"px";
+  document.body.appendChild(el);
+  const o = Object.assign({fill:"forwards", easing:"cubic-bezier(.22,1,.36,1)"}, opts);
+  const kill = ()=>el.remove();
+  if (el.animate){ el.animate(frames, o).onfinish = kill; }
+  setTimeout(kill, (o.duration||900) + (o.delay||0) + 300);
+}
+const BURSTS = {
+  /* the classic: a ring of hearts and sparkles */
+  hearts(x, y){
+    const n = 16;
+    for (let i=0;i<n;i++){
+      const a = Math.PI*2*i/n + rnd(-.3,.3), d = rnd(45,100);
+      fx(x, y, rnd(11,17), "mix",
+        [{transform:XY(0,0,.4), opacity:1}, {transform:XY(Math.cos(a)*d, Math.sin(a)*d-16, 1.1), opacity:0}],
+        {duration:rnd(700,950)});
+    }
+  },
+  /* three little shells popping across the top of the screen */
+  fireworks(){
+    const W = innerWidth, H = innerHeight;
+    for (let s=0;s<3;s++){
+      const cx = rnd(.2,.8)*W, cy = rnd(.14,.42)*H, delay = s*340;
+      const n = 14;
+      for (let i=0;i<n;i++){
+        const a = Math.PI*2*i/n, d = rnd(48,82);
+        const dx = Math.cos(a)*d, dy = Math.sin(a)*d;
+        fx(cx, cy, rnd(9,14), s===1?"heart":"spark",
+          [{transform:XY(0,0,.3), opacity:1}, {transform:XY(dx,dy,1), opacity:1, offset:.6}, {transform:XY(dx,dy+30,.7), opacity:0}],
+          {duration:1150, delay});
+      }
+    }
+  },
+  /* hearts drifting down the whole screen */
+  rain(){
+    const W = innerWidth, H = innerHeight;
+    for (let i=0;i<30;i++){
+      fx(rnd(0,W), -20, rnd(10,17), "mix",
+        [{transform:XY(0,0,1,0), opacity:1}, {transform:XY(rnd(-40,40), H+50, 1, rnd(-120,120)), opacity:.9}],
+        {duration:rnd(1800,2700), delay:rnd(0,1000), easing:"cubic-bezier(.45,.05,.55,.95)"});
+    }
+  },
+  /* shoots up from the button, then falls with gravity */
+  fountain(x, y){
+    for (let i=0;i<24;i++){
+      const dx = rnd(-140,140), peak = rnd(-250,-150);
+      fx(x, y, rnd(10,16), "mix", [
+        {transform:XY(0,0,.4), opacity:1, easing:"cubic-bezier(.2,.7,.4,1)"},
+        {transform:XY(dx*.55,peak,1), opacity:1, offset:.42, easing:"cubic-bezier(.5,0,.85,.4)"},
+        {transform:XY(dx,peak+300,.9), opacity:0}
+      ], {duration:rnd(1400,1800), delay:i*16, easing:"linear"});
+    }
+  },
+  /* a twirl of sparkles unwinding outward */
+  spiral(x, y){
+    const n = 20;
+    for (let i=0;i<n;i++){
+      const a0 = Math.PI*2*i/n, frames = [];
+      for (let t=0;t<=1.001;t+=.125){
+        const a = a0 + t*Math.PI*2.2, r = t*125;
+        frames.push({transform:XY(Math.cos(a)*r, Math.sin(a)*r, .4+t*.8, t*180), opacity:1-t*t*t});
+      }
+      fx(x, y, rnd(10,15), i%2?"spark":"heart", frames, {duration:1500, delay:i*22, easing:"ease-out"});
+    }
+  },
+  /* hearts floating up like bubbles */
+  float(){
+    const W = innerWidth, H = innerHeight;
+    for (let i=0;i<18;i++){
+      const sway = rnd(-35,35);
+      fx(rnd(.08,.92)*W, H+15, rnd(12,20), "heart", [
+        {transform:XY(0,0,.7), opacity:0},
+        {transform:XY(sway,-H*.3,1), opacity:1, offset:.2},
+        {transform:XY(-sway,-H*.95,1.15), opacity:0}
+      ], {duration:rnd(2700,3700), delay:rnd(0,1100), easing:"ease-out"});
+    }
+  },
+  /* paper confetti tossed up, tumbling down */
+  confetti(x, y){
+    for (let i=0;i<34;i++){
+      const a = rnd(-Math.PI*.95, -Math.PI*.05), v = rnd(90,200);
+      const dx = Math.cos(a)*v, dy = Math.sin(a)*v;
+      fx(x, y, rnd(7,11), "confetti", [
+        {transform:XY(0,0,1,0), opacity:1},
+        {transform:XY(dx,dy,1,rnd(180,540)), opacity:1, offset:.4},
+        {transform:XY(dx*1.3,dy+240,1,rnd(540,900)), opacity:0}
+      ], {duration:rnd(1500,2000), easing:"cubic-bezier(.25,.8,.5,1)"});
+    }
+  }
+};
+const up = (kind, n) => Array.from({length:n},(_,i)=>
+  `<span class="up" style="left:${[8,78,30,62,46][i%5]}%;animation-delay:${(i*.55).toFixed(2)}s">${kind==="note"?NOTE(pick(FX_COLORS)):MINIHEART(["#ee6fa4","#f6a8c8","#b9a8e8"][i%3])}</span>`).join("");
+const CELEBRATIONS = [
+  {id:"duo", burst:"hearts", line:"the dance duo approves",
+    party:()=>`<div class="duo"><img class="dgif" src="assets/ui/dance-cat.gif" alt="a cat, celebrating you"><img class="dgif ham2" src="assets/ui/dance-ham.gif" alt="a hamster, celebrating you"></div>`},
+  {id:"bongo", burst:"fireworks", line:"bongo cat played you out",
+    party:()=>`<div class="cel-rise"><img class="dgif celbongo" src="assets/ui/bongo.gif" alt="a cat drumming for you">${up("note",4)}</div>`},
+  {id:"parade", burst:"fountain", line:"the whole crew showed up",
+    party:()=>`<div class="cel-parade">${[1,2,3].map(n=>`<img class="dgif" style="--n:${n}" src="assets/ui/buddy${n}.gif" alt="">`).join("")}</div>`},
+  {id:"bunny", burst:"rain", line:"bunny saw the whole thing",
+    party:()=>`<div class="cel-rise"><img class="dgif celbunny" src="assets/ui/bunny.gif" alt="a bunny, proud of you">${up("heart",4)}</div>`},
+  {id:"orbit", burst:"spiral", line:"a hamster-certified session",
+    party:()=>`<div class="cel-orbit"><div class="orb">${[0,1,2,3,4,5].map(i=>`<span style="--a:${i*60}deg">${i%2?MINIHEART("#f6a8c8"):SPARK(FX_COLORS[i%FX_COLORS.length])}</span>`).join("")}</div><img class="dgif ham2" src="assets/ui/dance-ham.gif" alt="a hamster, celebrating you"></div>`},
+  {id:"cat", burst:"float", line:"the cat is very impressed",
+    party:()=>`<div class="cel-rise"><img class="dgif" src="assets/ui/dance-cat.gif" alt="a cat, celebrating you">${up("heart",5)}</div>`},
+  {id:"pixel", burst:"confetti", line:"tiny pixel applause",
+    party:(fresh)=>`<div class="duo">${catSVG(fresh?"dance":"")}<span class="bobheart">${MINIHEART("#ee6fa4")}</span>${hamSVG(fresh?"dance":"")}</div>`}
+];
+/* which celebration a date gets: shuffle the seven with the week as the seed, index by weekday */
+function celFor(dk){
+  const d = fromKey(dk);
+  const sunday = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate() - d.getDay());
+  let a = (Math.round(sunday/864e5) * 2654435761) >>> 0;
+  const rand = ()=>{ a = (a + 0x6D2B79F5) >>> 0; let t = a;
+    t = Math.imul(t ^ t>>>15, t|1); t ^= t + Math.imul(t ^ t>>>7, t|61);
+    return ((t ^ t>>>14) >>> 0) / 4294967296; };
+  const idx = CELEBRATIONS.map((_,i)=>i);
+  for (let i=idx.length-1;i>0;i--){ const j = Math.floor(rand()*(i+1)); [idx[i],idx[j]] = [idx[j],idx[i]]; }
+  return CELEBRATIONS[idx[d.getDay()]];
+}
+function celebrate(anchor, dk){
+  if (reducedMotion()) return;
+  const r = anchor.getBoundingClientRect();
+  BURSTS[celFor(dk).burst](r.left + r.width/2, r.top + r.height/2);
+}
+
 /* ══════════════════ state ══════════════════ */
-let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null, adding:false, libq:"", libOpen:null, dance:false, rowOpen:null, editing:null, cueOpen:null, slotPick:null, noting:null, logEdit:null };
-{ const t=new Date(); ui.calMonth = [t.getFullYear(), t.getMonth()]; ui.calSel = key(t); }
+let ui = { tab:"today", viewDate:key(new Date()), calMonth:null, calSel:null, progOpen:null, swapping:null, adding:false, libq:"", libOpen:null, dance:false, rowOpen:null, editing:null, cueOpen:null, slotPick:null, noting:null, logEdit:null, planDay:null, planEdit:null, planAdding:false };
+{ const t=new Date(); ui.calMonth = [t.getFullYear(), t.getMonth()]; ui.calSel = key(t); ui.planDay = DAYKEYS[t.getDay()]; }
 
 /* ══════════════════ render: today ══════════════════ */
 function extrasHTML(r, dk, startIdx){
@@ -1482,9 +1849,11 @@ function renderToday(){
   const isToday = sameDay(d, new Date());
   const dateline = `${WDAYS[d.getDay()]} · ${MONTHS[d.getMonth()].slice(0,3)} ${d.getDate()}`;
   const opts = DAYKEYS.map((k,i)=>{
-    const label = `${WDAYS[i].slice(0,3)} · ${PLAN[k].title.replace(/\n/g," ")}`;
+    const label = `${WDAYS[i].slice(0,3)} · ${dayTitle(k).replace(/\n/g," ")}`;
     return `<option value="${k}" ${k===sessKey?"selected":""}>${esc(label)}</option>`;
   }).join("");
+  const allRows = routineRows(sessKey);
+  const visible = allRows.filter(x=>!isHidden(x));
 
   let h = `<div class="dayhead" data-day="${sessKey}">
     <div class="datebar">
@@ -1492,14 +1861,15 @@ function renderToday(){
       <div class="dateline">${dateline}${isToday?'<span class="today-tag">· today</span>':'<button class="today-jump" data-act="gotoday">today</button>'}</div>
       <button class="dnav" data-act="daynav" data-dir="1" aria-label="next day">›</button>
     </div>
-    <h1>${esc(day.title).replace(/\n/g,"<br>")}<img class="headbuddy" src="assets/ui/buddy${(d.getDate()+d.getMonth())%3+1}.gif" alt="" aria-hidden="true"></h1>
+    <h1>${esc(dayTitle(sessKey)).replace(/\n/g,"<br>")}<img class="headbuddy" src="assets/ui/buddy${(d.getDate()+d.getMonth())%3+1}.gif" alt="" aria-hidden="true"></h1>
     <label class="sessswap">Doing <select id="sessSel" aria-label="which session are you doing">${opts}</select></label>
     ${(r&&r.stamped)?hankoSVG("headstamp"):sparksFor(dk)}
   </div>`;
 
   if (isToday) h += milestoneHTML();
 
-  if (day.rest){
+  /* a rest day stays a rest day until she gives it exercises in the Plan tab */
+  if (day.rest && !visible.length){
     h += `<div class="restcard">
       <img class="restgif" src="assets/ui/sleep-ham.gif" alt="a hamster, resting hard">
       <p>${esc(day.line)}</p>
@@ -1550,7 +1920,10 @@ function renderToday(){
         </div>
       </li></ol></div>`;
     }
-    h += extrasBlock(r, dk);
+    /* anything she's added to Wednesday in the Plan tab sits under the recovery blocks */
+    h += `<div class="workwrap"><ol class="work">`;
+    visible.forEach((x,i)=>{ h += workRowHTML(x, i, r, dk, sessKey); });
+    h += extrasHTML(r, dk, visible.length) + `</ol></div>`;
     h += noteHTML(r, dk);
     h += stampZone(r, dk);
     $("#view-today").innerHTML = h;
@@ -1558,178 +1931,182 @@ function renderToday(){
   }
 
   /* warm-up */
-  h += `<details class="warm"><summary>Warm-up · ${esc(day.warmTime)}</summary><ul>`;
-  day.warmup.forEach((item,i)=>{
-    const cid = `warm-${i}`;
-    const done = r && r.checks && r.checks[cid];
-    h += `<li class="${done?'done':''}" data-act="check" data-cid="${cid}"><span class="c"></span><span>${esc(item)}</span></li>`;
-  });
-  h += `</ul></details>`;
+  const warm = dayWarmup(sessKey);
+  if (warm.length){
+    const wt = dayRt(sessKey).warmup ? "" : day.warmTime;
+    h += `<details class="warm"><summary>Warm-up${wt?` · ${esc(wt)}`:""}</summary><ul>`;
+    warm.forEach((item,i)=>{
+      const cid = `warm-${i}`;
+      const done = r && r.checks && r.checks[cid];
+      h += `<li class="${done?'done':''}" data-act="check" data-cid="${cid}"><span class="c"></span><span>${esc(item)}</span></li>`;
+    });
+    h += `</ul></details>`;
+  }
 
   /* main work — plan + her saved routine edits */
   const express = db.settings.express;
-  const weekdayName = WDAYS[DAYKEYS.indexOf(sessKey)];
-  const dov = (db.planOv && db.planOv[sessKey]) || {};
-  const allRows = day.main.map(it=>{ const k = it.slot||it.id; return {it, ikey:k, o:dov[k]||null}; });
-  const visible = allRows.filter(x=>!(x.o && x.o.hidden));
-  const items = express ? visible.filter(x=>(x.o && (x.o.sets||x.o.reps||x.o.id)) || x.it.ex) : visible;
+  const items = express ? visible.filter(x=>x.it.added || (x.o && (x.o.sets||x.o.reps||x.o.id)) || x.it.ex) : visible;
   const skipped = visible.length - items.length;
   const hiddenN = allRows.length - visible.length;
   h += `<div class="workwrap">
-    <div class="workkicker"><span>Main work</span>${express?'<em>express · ~25 min</em>':''}</div>
+    <div class="workkicker"><span>Main work</span><span class="kickr">${express?'<em>express · ~25 min</em>':''}<button class="kickedit" data-act="planjump" data-day="${sessKey}">edit routine</button></span></div>
     ${!db.seen.sethint?`<div class="skipnote">new · tap the set dots to log fewer sets than planned${db.seen.rowhint?"":" · tap ⋯ for today-only swaps and every-week changes"}</div>`:""}
     <ol class="work">`;
-  items.forEach((x,i)=>{
-    const it = x.it, ikey = x.ikey, o = x.o;
-    const sub = r && r.subs && r.subs[ikey];
-    const permId = o && o.id;
-    const cid = sub ? sub.id : (permId || chosenId(it, r));
-    const entry = r && r.entries && r.entries[cid];
-    const bw = (sub || permId) ? false : isBW(it, cid);
-    const done = !!(entry && entry.done);
-    const last = lastWeight(cid, dk);
-    const wVal = entry && entry.weight != null ? entry.weight : "";
-    const origName = it.choices ? it.label : it.name;
-    const dispName = sub ? sub.name : (permId ? nameOf(permId) : origName);
-    const sc = (o && (o.sets || o.reps))
-      ? {sets: o.sets || it.sets, reps: o.reps || it.reps}
-      : ((express && it.ex) ? it.ex : {sets:it.sets, reps:it.reps});
-    const editing = ui.editing===ikey;
-    const le = libEntry(cid);
-    const cueText = (!sub && !permId && it.cue) ? it.cue : ((le && (le.cues||[])[0]) || "");
-    const hasCue = !!(cueText || le);
-
-    h += `<li class="exrow ${ui.rowOpen===ikey?'open':''}" data-rowkey="${ikey}" style="--i:${i}">
-      <div class="rowslide">
-      <div class="exhead">
-        <div>
-          <div class="exname${hasCue?' hascue':''}" data-act="cue" data-key="${ikey}">${esc(dispName)}</div>
-          ${sub?`<div class="exdetail subnote">in place of ${esc(origName).toLowerCase()}</div>`
-            :permId?`<div class="exdetail subnote">edited · was ${esc(origName).toLowerCase()}</div>`
-            :it.detail?`<div class="exdetail">${esc(it.detail)}</div>`:''}
-        </div>
-        <div class="scheme">${sc.sets} × ${esc(sc.reps)}</div>
-        <button class="rowmore" data-act="rowmore" data-key="${ikey}" aria-label="exercise options">⋯</button>
-      </div>`;
-    if (ui.cueOpen===ikey && hasCue){
-      h += `<div class="cuebox">${esc(cueText)}${le?`${cueText?'<br>':''}<button class="toguide" data-act="openlib" data-id="${le.id}">form guide ＋ demo →</button>`:""}</div>`;
-    }
-    if (!sub && !permId && it.choices){
-      h += `<div class="choices">`;
-      if (ui.slotPick===it.slot){
-        it.choices.forEach(c=>{
-          h += `<button class="choice ${c.id===cid?'sel':''}" data-act="choose" data-slot="${it.slot}" data-cid="${c.id}">
-            ${esc(c.name)}${c.tag?`<small>${esc(c.tag)}</small>`:''}</button>`;
-        });
-      } else {
-        /* once a choice is made it stays put — the alternatives live one tap away */
-        const c = it.choices.find(c=>c.id===cid) || it.choices[0];
-        h += `<button class="choice sel" data-act="slotpick" data-slot="${it.slot}">${esc(c.name)}${c.tag?`<small>${esc(c.tag)}</small>`:''}</button>
-          <button class="choice ghost" data-act="slotpick" data-slot="${it.slot}">change</button>`;
-      }
-      h += `</div>`;
-    }
-    if (ui.swapping===ikey){
-      h += `<input class="swapin" list="exlist" data-key="${ikey}" placeholder="What are you doing instead — just today?" aria-label="replacement exercise"><div class="choices swapsugg"></div>`;
-    }
-    if (editing){
-      h += `<div class="editform">
-        <input class="ef-name" list="exlist" value="${esc(dispName)}" aria-label="exercise name">
-        <div class="ef-row">
-          <label>sets<input class="ef-sets" inputmode="numeric" value="${sc.sets}"></label>
-          <label>reps<input class="ef-reps" value="${esc(sc.reps)}"></label>
-        </div>
-        <div class="ef-note">applies to every ${WDAYS[DAYKEYS.indexOf(sessKey)]}</div>
-        <div class="ef-btns">
-          <button class="choice sel" data-act="editsave" data-key="${ikey}">save</button>
-          <button class="choice" data-act="editcancel">cancel</button>
-        </div>
-      </div>`;
-    } else {
-      const repHint = (last && last.reps) ? last.reps : sc.reps;
-      h += `<div class="logrow">
-        <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${cid}" data-reps="${esc(repHint)}" aria-pressed="${done}">
-          <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
-        </button>`;
-      if (!bw){
-        h += `<div class="wt">
-          <button data-act="wdec" data-ex="${cid}">−</button>
-          <input class="wtin" inputmode="decimal" data-ex="${cid}" value="${wVal!==""?esc(wVal):""}" placeholder="${last?last.w:'–'}" aria-label="weight">
-          <span class="unit">lb</span>
-          <button data-act="winc" data-ex="${cid}">＋</button>
-        </div>
-        <input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${esc(repHint)}" aria-label="reps">`;
-      } else {
-        h += `<input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${esc(repHint)}" aria-label="reps" style="margin-left:auto">`;
-      }
-      h += `</div>`;
-
-      /* footer: set pips on the left, last-time hint (and overload nudge) on the right */
-      const setsN = parseInt(sc.sets, 10) || 0;
-      let pips = "";
-      if (setsN > 1){
-        const filled = setsDone(entry, setsN);
-        pips = `<div class="setpips" aria-label="sets">`;
-        for (let si=0; si<setsN; si++){
-          const on = si < filled;
-          pips += `<button class="pip ${on?'on':''}" data-act="pip" data-ex="${cid}" data-si="${si}" data-n="${setsN}" aria-label="set ${si+1} of ${setsN}" aria-pressed="${on}"></button>`;
-        }
-        pips += `<span class="piplabel">${filled && filled<setsN ? `${filled} of ${setsN} sets` : "sets"}</span></div>`;
-      }
-      let nudge = "";
-      if (!done && !bw && last && last.reps && last.w != null){
-        const top = repTop(sc.reps), got = repLow(last.reps), lw = parseFloat(last.w);
-        if (top && got && got >= top && !isNaN(lw)){
-          nudge = ASSISTED[cid]
-            ? ` · <span class="nudge">try ${Math.max(0, lw - wStep(lw - 0.1))} lb assist?</span>`
-            : ` · <span class="nudge">try ${lw + wStep(lw)}?</span>`;
-        }
-      }
-      const hint = (!bw && last)
-        ? `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${nudge}</div>` : "";
-      if (pips || hint) h += `<div class="rowfoot">${pips}${hint}</div>`;
-    }
-    h += `</div>
-      <div class="rowactions">
-        <div class="trayzone">
-          <span class="zonelbl">today only</span>
-          ${sub?`<button data-act="unswap" data-key="${ikey}">put back</button>`
-               :`<button data-act="swap" data-key="${ikey}">swap</button>`}
-        </div>
-        <div class="trayzone">
-          <span class="zonelbl">every ${esc(weekdayName)}</span>
-          <div class="zonebtns">
-            <button data-act="rowedit" data-key="${ikey}">edit</button>
-            <button class="warn" data-act="rowremove" data-key="${ikey}">remove</button>
-          </div>
-        </div>
-      </div>
-    </li>`;
-  });
+  items.forEach((x,i)=>{ h += workRowHTML(x, i, r, dk, sessKey); });
   h += extrasHTML(r, dk, items.length);
   h += `</ol>`;
   if (skipped>0) h += `<div class="skipnote">${skipped} ${skipped===1?'lift rests':'lifts rest'} in express mode — the 3× rule keeps what matters.</div>`;
   if (hiddenN>0) h += `<div class="skipnote">${hiddenN} removed from this routine · <button class="restorelink" data-act="restorehidden">restore</button></div>`;
   h += `</div>`;
 
-  if (day.finish) h += `<p class="finishline"><b>Finish</b>${esc(day.finish)}</p>`;
+  const fin = dayFinish(sessKey);
+  if (fin) h += `<p class="finishline"><b>Finish</b>${esc(fin)}</p>`;
   h += noteHTML(r, dk);
   h += stampZone(r, dk);
   $("#view-today").innerHTML = h;
 }
 
+/* one lift on the Today page */
+function workRowHTML(x, i, r, dk, sessKey){
+  const express = db.settings.express;
+  const weekdayName = WDAYS[DAYKEYS.indexOf(sessKey)];
+  const it = x.it, ikey = x.ikey, o = x.o;
+  const sub = r && r.subs && r.subs[ikey];
+  const permId = o && o.id;
+  const cid = sub ? sub.id : (permId || chosenId(it, r));
+  const entry = r && r.entries && r.entries[cid];
+  const bw = (sub || permId) ? false : isBW(it, cid);
+  const done = !!(entry && entry.done);
+  const last = lastWeight(cid, dk);
+  const wVal = entry && entry.weight != null ? entry.weight : "";
+  const oName = origName(it);
+  const dispName = sub ? sub.name : (permId ? nameOf(permId) : oName);
+  const sc = rowScheme(x, express);
+  const editing = ui.editing===ikey;
+  const le = libEntry(cid);
+  const cueText = (!sub && !permId && it.cue) ? it.cue : ((le && (le.cues||[])[0]) || "");
+  const hasCue = !!(cueText || le);
+  let h = "";
+
+  h += `<li class="exrow ${ui.rowOpen===ikey?'open':''}" data-rowkey="${ikey}" style="--i:${i}">
+    <div class="rowslide">
+    <div class="exhead">
+      <div>
+        <div class="exname${hasCue?' hascue':''}" data-act="cue" data-key="${ikey}">${esc(dispName)}</div>
+        ${sub?`<div class="exdetail subnote">in place of ${esc(oName).toLowerCase()}</div>`
+          :permId?`<div class="exdetail subnote">edited · was ${esc(oName).toLowerCase()}</div>`
+          :it.detail?`<div class="exdetail">${esc(it.detail)}</div>`:''}
+      </div>
+      <div class="scheme">${sc.sets} × ${esc(sc.reps)}</div>
+      <button class="rowmore" data-act="rowmore" data-key="${ikey}" aria-label="exercise options">⋯</button>
+    </div>`;
+  if (ui.cueOpen===ikey && hasCue){
+    h += `<div class="cuebox">${esc(cueText)}${le?`${cueText?'<br>':''}<button class="toguide" data-act="openlib" data-id="${le.id}">form guide ＋ demo →</button>`:""}</div>`;
+  }
+  if (!sub && !permId && it.choices){
+    h += `<div class="choices">`;
+    if (ui.slotPick===it.slot){
+      it.choices.forEach(c=>{
+        h += `<button class="choice ${c.id===cid?'sel':''}" data-act="choose" data-slot="${it.slot}" data-cid="${c.id}">
+          ${esc(c.name)}${c.tag?`<small>${esc(c.tag)}</small>`:''}</button>`;
+      });
+    } else {
+      /* once a choice is made it stays put — the alternatives live one tap away */
+      const c = it.choices.find(c=>c.id===cid) || it.choices[0];
+      h += `<button class="choice sel" data-act="slotpick" data-slot="${it.slot}">${esc(c.name)}${c.tag?`<small>${esc(c.tag)}</small>`:''}</button>
+        <button class="choice ghost" data-act="slotpick" data-slot="${it.slot}">change</button>`;
+    }
+    h += `</div>`;
+  }
+  if (ui.swapping===ikey){
+    h += `<input class="swapin" list="exlist" data-key="${ikey}" placeholder="What are you doing instead — just today?" aria-label="replacement exercise"><div class="choices swapsugg"></div>`;
+  }
+  if (editing){
+    h += `<div class="editform">
+      <input class="ef-name" list="exlist" value="${esc(dispName)}" aria-label="exercise name">
+      <div class="ef-row">
+        <label>sets<input class="ef-sets" inputmode="numeric" value="${sc.sets}"></label>
+        <label>reps<input class="ef-reps" value="${esc(sc.reps)}"></label>
+      </div>
+      <div class="ef-note">applies to every ${WDAYS[DAYKEYS.indexOf(sessKey)]}</div>
+      <div class="ef-btns">
+        <button class="choice sel" data-act="editsave" data-key="${ikey}">save</button>
+        <button class="choice" data-act="editcancel">cancel</button>
+      </div>
+    </div>`;
+  } else {
+    const repHint = (last && last.reps) ? last.reps : sc.reps;
+    h += `<div class="logrow">
+      <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${cid}" data-reps="${esc(repHint)}" aria-pressed="${done}">
+        <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
+      </button>`;
+    if (!bw){
+      h += `<div class="wt">
+        <button data-act="wdec" data-ex="${cid}">−</button>
+        <input class="wtin" inputmode="decimal" data-ex="${cid}" value="${wVal!==""?esc(wVal):""}" placeholder="${last?last.w:'–'}" aria-label="weight">
+        <span class="unit">lb</span>
+        <button data-act="winc" data-ex="${cid}">＋</button>
+      </div>
+      <input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${esc(repHint)}" aria-label="reps">`;
+    } else {
+      h += `<input class="repsin" inputmode="numeric" data-ex="${cid}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${esc(repHint)}" aria-label="reps" style="margin-left:auto">`;
+    }
+    h += `</div>`;
+
+    /* footer: set pips on the left, last-time hint (and overload nudge) on the right */
+    const setsN = parseInt(sc.sets, 10) || 0;
+    let pips = "";
+    if (setsN > 1){
+      const filled = setsDone(entry, setsN);
+      pips = `<div class="setpips" aria-label="sets">`;
+      for (let si=0; si<setsN; si++){
+        const on = si < filled;
+        pips += `<button class="pip ${on?'on':''}" data-act="pip" data-ex="${cid}" data-si="${si}" data-n="${setsN}" aria-label="set ${si+1} of ${setsN}" aria-pressed="${on}"></button>`;
+      }
+      pips += `<span class="piplabel">${filled && filled<setsN ? `${filled} of ${setsN} sets` : "sets"}</span></div>`;
+    }
+    let nudge = "";
+    if (!done && !bw && last && last.reps && last.w != null){
+      const top = repTop(sc.reps), got = repLow(last.reps), lw = parseFloat(last.w);
+      if (top && got && got >= top && !isNaN(lw)){
+        nudge = ASSISTED[cid]
+          ? ` · <span class="nudge">try ${Math.max(0, lw - wStep(lw - 0.1))} lb assist?</span>`
+          : ` · <span class="nudge">try ${lw + wStep(lw)}?</span>`;
+      }
+    }
+    const hint = (!bw && last)
+      ? `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${nudge}</div>` : "";
+    if (pips || hint) h += `<div class="rowfoot">${pips}${hint}</div>`;
+  }
+  h += `</div>
+    <div class="rowactions">
+      <div class="trayzone">
+        <span class="zonelbl">today only</span>
+        ${sub?`<button data-act="unswap" data-key="${ikey}">put back</button>`
+             :`<button data-act="swap" data-key="${ikey}">swap</button>`}
+      </div>
+      <div class="trayzone">
+        <span class="zonelbl">every ${esc(weekdayName)}</span>
+        <div class="zonebtns">
+          <button data-act="rowedit" data-key="${ikey}">edit</button>
+          <button class="warn" data-act="rowremove" data-key="${ikey}">remove</button>
+        </div>
+      </div>
+    </div>
+  </li>`;
+  return h;
+}
+
 function stampZone(r, dk){
   if (r && r.stamped){
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const party = reduced
+    const cel = celFor(dk);
+    const party = reducedMotion()
       ? hankoSVG("")
-      : `<div class="duo">
-          <img class="dgif" src="assets/ui/dance-cat.gif" alt="a cat, celebrating you">
-          <img class="dgif ham2" src="assets/ui/dance-ham.gif" alt="a hamster, celebrating you">
-        </div>`;
+      : `<div class="partybtn ${ui.dance?'fresh':''}" data-act="celebrate" data-dk="${dk}" role="button" tabindex="0" aria-label="celebrate again">${cel.party(ui.dance)}</div>`;
     return `<div class="stampzone"><div class="stamped-line">
       ${party}
       <span>workout complete</span>
+      <small class="celline">${esc(cel.line)}</small>
       <button class="unstamp" data-act="unstamp" data-dk="${dk}">undo</button>
     </div></div>`;
   }
@@ -1738,6 +2115,152 @@ function stampZone(r, dk){
       <svg class="mini" viewBox="0 0 64 64"><circle cx="32" cy="32" r="25" fill="none" stroke="currentColor" stroke-width="5"/><path d="M21 33 L29 41 L44 24" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       finish workout
     </button></div>`;
+}
+
+/* ══════════════════ render: plan (the weekly routine editor) ══════════════════ */
+const WEEK_ORDER = ["mon","tue","wed","thu","fri","sat","sun"];
+function planNameInput(val, cls){
+  return `<input class="ef-name plannamein ${cls||""}" list="exlist" value="${esc(val||"")}" placeholder="Exercise — start typing…" aria-label="exercise name" autocomplete="off"><div class="choices plansugg"></div>`;
+}
+function planRowHTML(k, x, idx, n){
+  const it = x.it, o = x.o || {};
+  const sc = rowScheme(x, false);
+  const wd = WDAYS[DAYKEYS.indexOf(k)];
+  let det = "", detCls = "";
+  if (it.added){ det = "added by you"; detCls = "mine"; }
+  else if (o.id){ det = `edited · was ${origName(it).toLowerCase()}`; detCls = "edited"; }
+  else if (it.choices) det = "pick on the day: " + it.choices.map(c=>c.name).join(" · ");
+  else if (it.detail) det = it.detail;
+  if (ui.planEdit !== x.ikey){
+    return `<li style="--i:${idx}"><button class="planrowbtn" data-act="planedit" data-key="${x.ikey}" aria-label="edit ${esc(rowName(x))}">
+      <span class="pnum">${idx+1}</span>
+      <span class="pmain"><span class="pname">${esc(rowName(x))}</span>${det?`<span class="pdet ${detCls}">${esc(det)}</span>`:""}</span>
+      <span class="scheme">${esc(sc.sets)} × ${esc(sc.reps)}</span>
+    </button></li>`;
+  }
+  const custom = !it.added && (o.id || o.sets || o.reps);
+  return `<li class="planedit" style="--i:${idx}"><div class="editform">
+    ${planNameInput(rowName(x))}
+    ${it.choices && !o.id ? `<div class="ef-note">Keep “${esc(it.label)}” to choose on the day — or type one exercise to lock it in.</div>` : ""}
+    <div class="ef-row">
+      <label>sets<input class="ef-sets" inputmode="numeric" value="${esc(sc.sets)}"></label>
+      <label>reps<input class="ef-reps" value="${esc(sc.reps)}"></label>
+    </div>
+    <div class="ef-btns">
+      <button class="choice sel" data-act="plansave" data-key="${x.ikey}">save</button>
+      <button class="choice" data-act="planeditcancel">cancel</button>
+      <span class="ef-move">
+        <button class="choice" data-act="planmove" data-dir="-1" data-key="${x.ikey}" aria-label="move up" ${idx===0?"disabled":""}>↑</button>
+        <button class="choice" data-act="planmove" data-dir="1" data-key="${x.ikey}" aria-label="move down" ${idx===n-1?"disabled":""}>↓</button>
+      </span>
+    </div>
+    <div class="ef-btns">
+      <button class="plandel" data-act="planremove" data-key="${x.ikey}">remove from ${esc(wd)}s</button>
+      ${custom?`<button class="plandel" data-act="planrevert" data-key="${x.ikey}">back to the original</button>`:""}
+    </div>
+  </div></li>`;
+}
+function renderPlan(){
+  const k = ui.planDay, day = PLAN[k], rt = dayRt(k);
+  const wd = WDAYS[DAYKEYS.indexOf(k)];
+  const rows = routineRows(k);
+  const vis = rows.filter(x=>!isHidden(x));
+  const hiddenN = rows.length - vis.length;
+  const ed = ui.planEdit;
+
+  let h = `<div class="pagehead"><h2>Your week</h2>
+    <p>Shape what each day holds — changes carry into every week.</p></div>`;
+  h += `<div class="plandays" role="tablist" aria-label="weekday">` + WEEK_ORDER.map(d=>
+    `<button class="planday ${d===k?'on':''}" data-act="planday" data-day="${d}" role="tab" aria-selected="${d===k}">${WDAYS[DAYKEYS.indexOf(d)].slice(0,3)}${dayEdited(d)?'<i aria-label="edited"></i>':''}</button>`
+  ).join("") + `</div>`;
+
+  /* the day card — its name is editable too */
+  h += `<div class="dayhead plancard" data-day="${k}">
+    <div class="datebar"><div class="dateline plandl">every ${esc(wd)}</div>${ed!=="@title"?`<button class="kickedit" data-act="planfield" data-field="title">rename</button>`:""}</div>`;
+  if (ed==="@title"){
+    h += `<div class="editform" style="margin-top:0">
+      <input class="ef-name plantitlein" value="${esc(dayTitle(k).replace(/\n/g," "))}" aria-label="day name">
+      <div class="ef-btns">
+        <button class="choice sel" data-act="planfieldsave" data-field="title">save</button>
+        <button class="choice" data-act="planeditcancel">cancel</button>
+      </div></div>`;
+  } else {
+    h += `<h1>${esc(dayTitle(k)).replace(/\n/g,"<br>")}</h1>`;
+  }
+  const sub = day.sub || (day.rest ? (vis.length ? "rest day, turned training day" : "rest day") : "");
+  if (sub) h += `<div class="sub">${esc(sub)}</div>`;
+  h += `</div>`;
+
+  if (day.recovery) h += `<p class="plannote">The recovery blocks — posture, Pilates or a walk — stay as they are. Anything you add here shows up underneath them.</p>`;
+  else if (day.rest && !vis.length) h += `<p class="plannote">${esc(day.line)} Add an exercise below to turn it into a training day.</p>`;
+
+  /* warm-up */
+  const showExtras = !day.recovery && (!day.rest || vis.length);
+  if (showExtras){
+    const warm = dayWarmup(k);
+    h += `<div class="plansec"><div class="workkicker"><span>Warm-up</span>${ed!=="@warmup"?`<button class="kickedit" data-act="planfield" data-field="warmup">edit</button>`:""}</div>`;
+    if (ed==="@warmup"){
+      h += `<div class="editform">
+        <textarea class="clnotes planwarmin" rows="${Math.max(4, warm.length+1)}" placeholder="One move per line" aria-label="warm-up, one per line">${esc(warm.join("\n"))}</textarea>
+        <div class="ef-btns">
+          <button class="choice sel" data-act="planfieldsave" data-field="warmup">save</button>
+          <button class="choice" data-act="planeditcancel">cancel</button>
+          ${rt.warmup?`<button class="plandel" data-act="planfieldreset" data-field="warmup" style="margin-left:auto">original</button>`:""}
+        </div></div>`;
+    } else if (warm.length){
+      h += `<ul class="planwarm">${warm.map(w=>`<li>${esc(w)}</li>`).join("")}</ul>`;
+    } else {
+      h += `<p class="plannone">No warm-up.</p>`;
+    }
+    h += `</div>`;
+  }
+
+  /* main work */
+  h += `<div class="plansec"><div class="workkicker"><span>${day.recovery?"Added to recovery day":"Main work"}</span><em class="plancount">${vis.length} ${vis.length===1?"exercise":"exercises"}</em></div>
+    <ol class="planlist">`;
+  vis.forEach((x,i)=>{ h += planRowHTML(k, x, i, vis.length); });
+  h += `<li class="planaddrow">`;
+  if (ui.planAdding){
+    h += `<div class="editform">
+      ${planNameInput("", "planaddname")}
+      <div class="ef-row">
+        <label>sets<input class="ef-sets" inputmode="numeric" value="3"></label>
+        <label>reps<input class="ef-reps" value="10"></label>
+      </div>
+      <div class="ef-btns">
+        <button class="choice sel" data-act="planaddsave">add to ${esc(wd)}</button>
+        <button class="choice" data-act="planaddcancel">cancel</button>
+      </div></div>`;
+  } else {
+    h += `<button class="addex" data-act="planadd"><span>＋</span>add an exercise to every ${esc(wd)}</button>`;
+  }
+  h += `</li></ol>`;
+  if (hiddenN) h += `<div class="skipnote">${hiddenN} removed · <button class="restorelink" data-act="planrestore">restore</button></div>`;
+  h += `</div>`;
+
+  /* finisher */
+  if (showExtras){
+    const fin = dayFinish(k);
+    h += `<div class="plansec"><div class="workkicker"><span>Finish</span>${ed!=="@finish"?`<button class="kickedit" data-act="planfield" data-field="finish">edit</button>`:""}</div>`;
+    if (ed==="@finish"){
+      h += `<div class="editform">
+        <textarea class="clnotes planfinin" rows="2" placeholder="e.g. Stairmaster 10 min" aria-label="finisher">${esc(fin)}</textarea>
+        <div class="ef-btns">
+          <button class="choice sel" data-act="planfieldsave" data-field="finish">save</button>
+          <button class="choice" data-act="planeditcancel">cancel</button>
+          ${("finish" in rt)?`<button class="plandel" data-act="planfieldreset" data-field="finish" style="margin-left:auto">original</button>`:""}
+        </div></div>`;
+    } else {
+      h += fin ? `<p class="planfin">${esc(fin)}</p>` : `<p class="plannone">No finisher.</p>`;
+    }
+    h += `</div>`;
+  }
+
+  h += `<div class="plansec planfoot">
+    <button class="kickedit" data-act="plantoday" data-day="${k}">see it on Today →</button>
+    ${dayEdited(k)?`<button class="cleardaylink" data-act="planreset">Reset ${esc(wd)} to the original plan…</button>`:""}
+  </div>`;
+  $("#view-plan").innerHTML = h;
 }
 
 /* ══════════════════ render: history ══════════════════ */
@@ -1776,10 +2299,9 @@ function renderLog(){
     const d = fromKey(sel);
     const w = db.workouts[sel];
     const dayKey = (w && w.session) || DAYKEYS[d.getDay()];
-    const plan = PLAN[dayKey];
     h += `<div class="daydetail">
       <div class="dl-date">${WDAYS[d.getDay()]} · ${MONTHS[d.getMonth()]} ${d.getDate()}</div>
-      <h4>${esc(plan.title).replace(/\n/g," ")} ${w&&w.stamped?'<span style="color:var(--hanko);font-size:.72rem;font-family:var(--sans);font-weight:600;letter-spacing:.1em">✓ COMPLETE</span>':''}</h4>`;
+      <h4>${esc(dayTitle(dayKey)).replace(/\n/g," ")} ${w&&w.stamped?'<span style="color:var(--hanko);font-size:.72rem;font-family:var(--sans);font-weight:600;letter-spacing:.1em">✓ COMPLETE</span>':''}</h4>`;
     const entries = w ? Object.entries(w.entries||{}).filter(([,e])=>e && countsEntry(w,e) && (e.weight!=null&&e.weight!=="" || e.done || (e.sets||[]).some(Boolean) || e.reps || e.mins)) : [];
     if (entries.length){
       h += `<ul>`;
@@ -1946,17 +2468,14 @@ function exMatches(libEntry, planId){
 function planSpots(libEntry){
   const spots = [];
   for (const dk of DAYKEYS){
-    const day = PLAN[dk];
-    if (!day || !day.main) continue;
-    const dov = (db.planOv && db.planOv[dk]) || {};
-    for (const it of day.main){
-      const k = it.slot || it.id;
-      const o = dov[k] || {};
-      if (o.hidden) continue;
+    for (const x of routineRows(dk)){
+      if (isHidden(x)) continue;
+      const it = x.it, o = x.o || {};
       const hit = o.id ? exMatches(libEntry, o.id)
         : it.choices ? it.choices.some(c=>exMatches(libEntry, c.id))
         : exMatches(libEntry, it.id);
-      if (hit) spots.push({day:dk, key:k, sets:o.sets||it.sets, reps:o.reps||it.reps, slotLabel: it.choices?it.label:null});
+      const sc = rowScheme(x, false);
+      if (hit) spots.push({day:dk, key:x.ikey, sets:sc.sets, reps:sc.reps, slotLabel:(it.choices && !o.id)?it.label:null});
     }
   }
   return spots;
@@ -2068,6 +2587,7 @@ function processLibImage(file, cb){
 /* ══════════════════ render dispatch ══════════════════ */
 function render(){
   $("#view-today").hidden = ui.tab!=="today";
+  $("#view-plan").hidden = ui.tab!=="plan";
   $("#view-log").hidden = ui.tab!=="log";
   $("#view-progress").hidden = ui.tab!=="progress";
   $("#view-library").hidden = ui.tab!=="library";
@@ -2080,6 +2600,7 @@ function render(){
   eb.classList.toggle("on", db.settings.express);
   eb.setAttribute("aria-pressed", db.settings.express);
   if (ui.tab==="today") renderToday();
+  else if (ui.tab==="plan") renderPlan();
   else if (ui.tab==="log") renderLog();
   else if (ui.tab==="library") renderLibrary();
   else renderProgress();
@@ -2257,44 +2778,21 @@ document.addEventListener("click", e=>{
   if (act==="editcancel"){ ui.editing = null; renderToday(); return; }
   if (act==="editsave"){
     const li = t.closest("li.exrow");
-    const k = t.dataset.key;
-    const sk = sessOf(ui.viewDate);
-    const it = (PLAN[sk].main||[]).find(m=>(m.slot||m.id)===k);
-    if (!li || !it){ ui.editing = null; renderToday(); return; }
-    const name = li.querySelector(".ef-name").value.trim();
-    const sets = parseInt(li.querySelector(".ef-sets").value, 10);
-    const reps = li.querySelector(".ef-reps").value.trim();
-    db.planOv = db.planOv || {};
-    const dov = db.planOv[sk] = db.planOv[sk] || {};
-    const o = dov[k] = dov[k] || {};
-    const origName = it.choices ? it.label : it.name;
-    if (name && name.toLowerCase() !== origName.toLowerCase()) o.id = resolveExId(name); else delete o.id;
-    if (sets > 0 && sets < 10 && sets !== it.sets) o.sets = sets; else delete o.sets;
-    if (reps && reps !== it.reps) o.reps = reps; else delete o.reps;
-    if (!Object.keys(o).length) delete dov[k];
-    if (!Object.keys(dov).length) delete db.planOv[sk];
+    if (li) saveRoutineItem(sessOf(ui.viewDate), t.dataset.key, {
+      name: li.querySelector(".ef-name").value,
+      sets: li.querySelector(".ef-sets").value,
+      reps: li.querySelector(".ef-reps").value
+    });
     ui.editing = null;
     save(); renderToday(); return;
   }
   if (act==="edithide" || act==="rowremove"){
-    const k = t.dataset.key;
-    const sk = sessOf(ui.viewDate);
-    db.planOv = db.planOv || {};
-    const dov = db.planOv[sk] = db.planOv[sk] || {};
-    dov[k] = Object.assign(dov[k]||{}, {hidden:true});
+    removeRoutineItem(sessOf(ui.viewDate), t.dataset.key);
     ui.editing = null; ui.rowOpen = null;
     save(); renderToday(); return;
   }
   if (act==="restorehidden"){
-    const sk = sessOf(ui.viewDate);
-    const dov = db.planOv && db.planOv[sk];
-    if (dov){
-      for (const k of Object.keys(dov)){
-        delete dov[k].hidden;
-        if (!Object.keys(dov[k]).length) delete dov[k];
-      }
-      if (!Object.keys(dov).length) delete db.planOv[sk];
-    }
+    restoreHidden(sessOf(ui.viewDate));
     save(); renderToday(); return;
   }
   if (act==="addex"){
@@ -2368,19 +2866,12 @@ document.addEventListener("click", e=>{
     return;
   }
   if (act==="libslotsave"){
-    const day = t.dataset.day, k = t.dataset.key;
-    const it = (PLAN[day].main||[]).find(m=>(m.slot||m.id)===k);
     const wrap = t.closest(".editform");
-    if (it && wrap){
-      const sets = parseInt(wrap.querySelector(".ef-sets").value, 10);
-      const reps = wrap.querySelector(".ef-reps").value.trim();
-      db.planOv = db.planOv || {};
-      const dov = db.planOv[day] = db.planOv[day] || {};
-      const o = dov[k] = dov[k] || {};
-      if (sets > 0 && sets < 10 && sets !== it.sets) o.sets = sets; else delete o.sets;
-      if (reps && reps !== it.reps) o.reps = reps; else delete o.reps;
-      if (!Object.keys(o).length) delete dov[k];
-      if (!Object.keys(dov).length) delete db.planOv[day];
+    if (wrap){
+      saveRoutineItem(t.dataset.day, t.dataset.key, {
+        sets: wrap.querySelector(".ef-sets").value,
+        reps: wrap.querySelector(".ef-reps").value
+      });
       save();
     }
     ui.libSpot = null;
@@ -2395,10 +2886,114 @@ document.addEventListener("click", e=>{
     db.customLib = db.customLib.filter(x=>x.id!==t.dataset.id);
     save(); buildDatalist(); renderLibrary(); return;
   }
+  /* ── plan tab ── */
+  if (act==="planjump"){
+    ui.tab = "plan"; ui.planDay = t.dataset.day; ui.planEdit = null; ui.planAdding = false;
+    render(); window.scrollTo(0,0); return;
+  }
+  if (act==="plantoday"){
+    /* jump to the next time this weekday comes around (today counts) */
+    const d = new Date();
+    while (DAYKEYS[d.getDay()] !== t.dataset.day) d.setDate(d.getDate()+1);
+    ui.tab = "today"; ui.viewDate = key(d);
+    render(); window.scrollTo(0,0); return;
+  }
+  if (act==="planday"){
+    ui.planDay = t.dataset.day; ui.planEdit = null; ui.planAdding = false;
+    renderPlan(); return;
+  }
+  if (act==="planedit"){ ui.planEdit = t.dataset.key; ui.planAdding = false; renderPlan(); return; }
+  if (act==="planeditcancel"){ ui.planEdit = null; renderPlan(); return; }
+  if (act==="plansave"){
+    const f = t.closest(".editform");
+    if (f) saveRoutineItem(ui.planDay, t.dataset.key, {
+      name: f.querySelector(".plannamein").value,
+      sets: f.querySelector(".ef-sets").value,
+      reps: f.querySelector(".ef-reps").value
+    });
+    ui.planEdit = null;
+    save(); renderPlan(); return;
+  }
+  if (act==="planmove"){
+    /* the form re-renders in its new spot — carry over anything typed but not yet saved */
+    const f = t.closest(".editform");
+    const keep = f ? [...f.querySelectorAll("input")].map(i=>i.value) : null;
+    moveRoutineItem(ui.planDay, t.dataset.key, Number(t.dataset.dir));
+    save(); renderPlan();
+    const nf = document.querySelector(".planedit .editform");
+    if (nf && keep) nf.querySelectorAll("input").forEach((i,n)=>{ if (keep[n] != null) i.value = keep[n]; });
+    return;
+  }
+  if (act==="planremove"){
+    removeRoutineItem(ui.planDay, t.dataset.key);
+    ui.planEdit = null;
+    save(); renderPlan(); return;
+  }
+  if (act==="planrevert"){
+    const dov = db.planOv && db.planOv[ui.planDay];
+    if (dov){
+      delete dov[t.dataset.key];
+      if (!Object.keys(dov).length) delete db.planOv[ui.planDay];
+    }
+    ui.planEdit = null;
+    save(); renderPlan(); return;
+  }
+  if (act==="planrestore"){ restoreHidden(ui.planDay); save(); renderPlan(); return; }
+  if (act==="planadd"){
+    ui.planAdding = true; ui.planEdit = null;
+    renderPlan();
+    const inp = document.querySelector(".planaddname");
+    if (inp) inp.focus();
+    return;
+  }
+  if (act==="planaddcancel"){ ui.planAdding = false; renderPlan(); return; }
+  if (act==="planaddsave"){
+    const f = t.closest(".editform");
+    const nm = f.querySelector(".plannamein");
+    if (!nm.value.trim()){ nm.focus(); return; }
+    addRoutineItem(ui.planDay, nm.value.trim(), f.querySelector(".ef-sets").value, f.querySelector(".ef-reps").value);
+    ui.planAdding = false;
+    save(); renderPlan(); return;
+  }
+  if (act==="plansugg"){
+    const f = t.closest(".editform");
+    const inp = f && f.querySelector(".plannamein");
+    if (inp) inp.value = t.dataset.name;
+    t.parentNode.innerHTML = "";
+    return;
+  }
+  if (act==="planfield"){ ui.planEdit = "@"+t.dataset.field; ui.planAdding = false; renderPlan(); return; }
+  if (act==="planfieldsave" || act==="planfieldreset"){
+    const k = ui.planDay, field = t.dataset.field, rt = dayRtMake(k);
+    const f = t.closest(".editform");
+    if (act==="planfieldreset") delete rt[field];
+    else if (field==="title"){
+      const v = f.querySelector(".plantitlein").value.trim();
+      if (!v || v === PLAN[k].title.replace(/\n/g," ")) delete rt.title; else rt.title = v;
+    } else if (field==="warmup"){
+      const lines = f.querySelector(".planwarmin").value.split("\n").map(x=>x.trim()).filter(Boolean);
+      if (lines.join("\n") === (PLAN[k].warmup||[]).join("\n")) delete rt.warmup; else rt.warmup = lines;
+    } else if (field==="finish"){
+      const v = f.querySelector(".planfinin").value.trim();
+      if (v === (PLAN[k].finish||"")) delete rt.finish; else rt.finish = v;
+    }
+    dayRtTidy(k);
+    ui.planEdit = null;
+    save(); renderPlan(); return;
+  }
+  if (act==="planreset"){
+    const wd = WDAYS[DAYKEYS.indexOf(ui.planDay)];
+    if (!confirm(`Put ${wd} back to the original plan? Your logged workouts stay exactly as they are.`)) return;
+    if (db.planOv) delete db.planOv[ui.planDay];
+    if (db.routine) delete db.routine[ui.planDay];
+    ui.planEdit = null; ui.planAdding = false;
+    save(); renderPlan(); return;
+  }
   if (act==="msdismiss"){
     for (const id of t.dataset.ms.split(",")) db.seen[id] = 1;
     save(); renderToday(); return;
   }
+  if (act==="celebrate"){ celebrate(t, t.dataset.dk); return; }
   if (act==="dance"){
     t.classList.remove("dance");
     void t.getBoundingClientRect();
@@ -2430,7 +3025,7 @@ document.addEventListener("click", e=>{
     }
     r.stamped = true; r.stampedAt = new Date().toISOString();
     save();
-    heartBurst(t, 10);
+    celebrate(t, t.dataset.dk);
     ui.dance = true;
     renderToday();
     ui.dance = false;
@@ -2552,6 +3147,14 @@ document.addEventListener("input", e=>{
     ui.libq = e.target.value;
     const rows = document.getElementById("librows");
     if (rows) rows.innerHTML = libRowsHTML();
+  }
+  if (e.target.classList && e.target.classList.contains("plannamein")){
+    const box = e.target.parentNode.querySelector(".plansugg");
+    const q = e.target.value.trim().toLowerCase();
+    if (box) box.innerHTML = q
+      ? allExNames().filter(n=>n.toLowerCase().includes(q) && n.toLowerCase()!==q).slice(0,6)
+          .map(n=>`<button class="choice" data-act="plansugg" data-name="${esc(n)}">${esc(n)}</button>`).join("")
+      : "";
   }
   if (e.target.classList && e.target.classList.contains("swapin")){
     const box = document.querySelector(".swapsugg");
