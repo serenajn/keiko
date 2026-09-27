@@ -557,6 +557,46 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 .cleardaylink:active{color:var(--hanko)}
 
+/* monthly measurements */
+.bodywrap{margin:.8rem 1.25rem 0}
+.bodyintro{font-size:.82rem;color:var(--ink-2);line-height:1.6;margin-bottom:.7rem}
+.bodytop{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.bodylast{font-size:.74rem;color:var(--ink-3)}
+.bodyform{gap:.2rem}
+.bdatel{display:flex;align-items:center;gap:.6rem;font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.bdate{background:var(--paper-2);border:none;border-radius:999px;padding:.4rem .8rem;font:inherit;font-size:.85rem;color:var(--ink);letter-spacing:0;text-transform:none}
+.bodytip{font-size:.74rem;color:var(--ink-3);font-style:italic;line-height:1.5;margin:.3rem 0 .2rem}
+.brow{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.5rem 0;border-bottom:1px solid var(--line-soft)}
+.brow b{display:block;font-size:.88rem;font-weight:600}
+.brow small{display:block;font-size:.68rem;color:var(--ink-3);line-height:1.4}
+.bin-wrap{flex:none;display:flex;align-items:center;gap:.3rem;background:var(--paper-2);border-radius:999px;padding:0 .7rem 0 .3rem}
+.bin{width:3.6rem;text-align:center;background:transparent;border:none;outline:none;font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--ink);padding:.45rem 0}
+.bin:focus-visible{box-shadow:none}
+.bin-wrap:focus-within{box-shadow:0 0 0 1.5px rgba(224,87,138,.5)}
+.bin::placeholder{color:var(--ink-3);font-weight:400}
+.bin-wrap em{font-style:normal;font-size:.66rem;color:var(--ink-2)}
+.bphead{display:flex;align-items:baseline;gap:.6rem;font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:.9rem 0 .5rem}
+.bphead small{font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--ink-3);font-style:italic}
+.bpgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.bpslot{position:relative;aspect-ratio:3/4;border-radius:.8rem;overflow:hidden;background:var(--paper-2)}
+.bpadd{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;cursor:pointer;color:var(--ink-3);font-size:1.2rem;border:1.5px dashed var(--line);border-radius:.8rem}
+.bpadd span{font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.bpprev{width:100%;height:100%;object-fit:cover;display:block}
+.bpdel{position:absolute;top:.3rem;right:.3rem;width:1.9rem;height:1.9rem;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;font-size:1rem}
+.bnote{margin-top:.7rem}
+.bptabs{margin-left:auto;display:flex;gap:.3rem}
+.bptabs button{font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:.3rem .6rem;border-radius:999px}
+.bptabs button.on{background:var(--ink);color:var(--paper)}
+.bpcompare{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.bpcompare figure{margin:0}
+.bpcompare img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:.8rem;display:block;background:var(--paper-2)}
+.bpcompare figcaption{font-size:.66rem;color:var(--ink-3);text-align:center;margin-top:.3rem;letter-spacing:.04em}
+.bodyhist{margin-top:1rem}
+.bodyent{width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:.8rem;padding:.55rem 0;border-bottom:1px solid var(--line-soft);font-size:.8rem;text-align:left}
+.bodyent em{color:var(--ink-3)}
+.bodytoggle span:first-child{color:var(--ink-2)}
+.bodyent .r{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--hanko)}
+
 /* last-8-weeks rhythm strip */
 .rhythm{margin:0 1.25rem 1.4rem}
 .rhead{
@@ -931,42 +971,43 @@ const PLAN = {
     ],
     finish:"Stair walking 5–10 min — drive entirely through the heel."
   },
+  /* Tuesday was ~26 sets over 10 lifts — closer to an hour than 45 min. Now 22 sets over
+     9, ordered so the small lifts pair up (do one, then the other, then rest). Serratus
+     slides moved into the warm-up. Since Wednesday is optional, the posture work stays here. */
   tue: {
-    title:"Upper Body\n+ Posture", sub:"width + taper · 45 min",
-    note:"<b>Shoulders down and away from the ears</b> on every rep. The stop signal is the shrug — if a shoulder rides up and won't stay down, the weight is too heavy.",
-    warmup:["Arm circles","Band pull-aparts × 15","Cat-cow × 10","Doorway pec stretch × 30s / side","Chin tuck × 10, 3s hold — level glide, not a nod"],
-    warmTime:"6–7 min",
+    title:"Upper Body\n+ Posture", sub:"width + taper · ~45 min",
+    note:"<b>Shoulders down and away from the ears</b> on every rep. The stop signal is the shrug — if a shoulder rides up and won't stay down, the weight is too heavy.<br><b>Pairs save time:</b> lateral raise ↔ face pull, and tricep ↔ hammer curl — one set of each, then rest.",
+    warmup:["Arm circles","Band pull-aparts × 15","Cat-cow × 10","Serratus wall slide × 10 — full forearm contact, reach long","Doorway pec stretch × 30s / side","Chin tuck × 10, 3s hold — level glide, not a nod"],
+    warmTime:"7 min",
     main:[
       {id:"assisted-pullup", name:"Assisted pull-up", detail:"machine · assist weight", sets:3, reps:"8–10", ex:{sets:3,reps:"8"},
         cue:"Pull the shoulder blades down first. Full hang at the bottom."},
-      {slot:"tue-tri", label:"Tricep · long head", sets:3, reps:"12–15", ex:{sets:2,reps:"12–15"},
-        cue:"Elbows stay pointed forward and tucked. Light weight, full stretch at the bottom — this is a shaping lift, not a strength lift.",
+      {id:"db-shoulder-press", name:"DB shoulder press", detail:"seated · the width lever", sets:3, reps:"8–10", ex:{sets:2,reps:"8–10"},
+        cue:"Ribs down, press up and slightly in. Don't arch the lower back."},
+      {id:"one-arm-row", name:"One-arm DB row", sets:3, reps:"10 / side", ex:{sets:3,reps:"10 / side"},
+        cue:"Pull toward the hip, not the chest. Squeeze the lat at the top."},
+      {id:"lateral-raise", name:"DB lateral raise", detail:"pair with face pull · highest value for taper", sets:3, reps:"12–15", ex:{sets:2,reps:"12–15"},
+        cue:"Lead with the elbow, stay at or below shoulder height. Stop if the shoulder shrugs up."},
+      {id:"face-pull", name:"Face pull", detail:"pair with lateral raise", sets:2, reps:"15", ex:{sets:2,reps:"15"},
+        cue:"Pull to forehead height, hands outside the ears. Squeeze the rear delts."},
+      {slot:"tue-tri", label:"Tricep · long head", sets:2, reps:"12–15", ex:{sets:2,reps:"12–15"},
+        cue:"Elbows stay pointed forward and tucked. Light weight, full stretch at the bottom — this is a shaping lift, not a strength lift. Pair it with the hammer curl.",
         choices:[
           {id:"overhead-tricep-extension", name:"Overhead tricep extension", tag:"long head"},
           {id:"tricep-rope-pushdown", name:"Rope pushdown", tag:"gym"},
           {id:"db-tricep-kickback", name:"DB kickback", tag:"home"}
         ]},
-      {id:"db-shoulder-press", name:"DB shoulder press", detail:"seated · the width lever", sets:3, reps:"8–10", ex:{sets:2,reps:"8–10"},
-        cue:"Ribs down, press up and slightly in. Don't arch the lower back."},
-      {id:"lateral-raise", name:"DB lateral raise", detail:"highest value for taper", sets:3, reps:"12–15", ex:{sets:2,reps:"12–15"},
-        cue:"Lead with the elbow, stay at or below shoulder height. Stop if the shoulder shrugs up."},
-      {id:"one-arm-row", name:"One-arm DB row", sets:3, reps:"10 / side", ex:{sets:3,reps:"10 / side"},
-        cue:"Pull toward the hip, not the chest. Squeeze the lat at the top."},
-      {id:"hammer-curl", name:"Hammer curl", detail:"neutral grip · weight per hand", sets:2, reps:"12",
+      {id:"hammer-curl", name:"Hammer curl", detail:"pair with tricep · weight per hand", sets:2, reps:"12",
         cue:"Elbows pinned at the sides, palms facing each other the whole set. Two sets is a shaping dose — it fills the gap between bicep and tricep so the arm reads narrower from the side."},
-      {id:"face-pull", name:"Face pull", sets:3, reps:"15", ex:{sets:2,reps:"15"},
-        cue:"Pull to forehead height, hands outside the ears. Squeeze the rear delts."},
       {id:"prone-y-raise", name:"Prone Y-raise", detail:"lower trap · bodyweight or 2–5 lb", sets:2, reps:"12",
         cue:"Face down, thumbs up, lift into a Y. This is the muscle that holds the shoulder blade down — the whole open-neck line runs through it."},
-      {id:"serratus-slide", name:"Serratus wall slide", sets:2, reps:"10", bw:true,
-        cue:"Full forearm contact with the wall. Reach long at the top."},
       {id:"push-up", name:"Push-up", detail:"incline is fine · chest open", sets:2, reps:"max / 12", bw:true, ex:{sets:2,reps:"max / 12"},
         cue:"Shoulder blades set back and down, body one straight line. Use a bench or bar to incline it until you can get 8 clean reps."}
     ],
     finish:"Pallof press 2 × 10 / side, then dead bug × 10 / side — ribs down, shoulder blades flat."
   },
   wed: {
-    title:"Active Recovery\n& Posture", sub:"25–35 min · mobility & alignment", recovery:true,
+    title:"Active Recovery\n& Posture", sub:"optional · 25–35 min · mobility & alignment", recovery:true, optional:true,
     intro:"Pick one base — 20–30 min of mat Pilates, a relaxed outdoor walk, or light mobility and foam rolling — then keep whichever blocks fit today.",
     blocks:[
       {name:"Trap downregulation", time:"4–5 min", items:[
@@ -1069,6 +1110,7 @@ NAMES["tricep-dip"] = "Tricep dip";
 NAMES["cc-straight-leg"] = "Captain's chair — straight-leg raise";
 NAMES["seated-ham-curl"] = "Seated hamstring curl";
 NAMES["single-leg-rdl"] = "Single-leg RDL";
+NAMES["serratus-slide"] = "Serratus wall slide";
 Object.assign(NAMES, {"step-up":"Step-ups", "seated-cable-row":"Seated cable row", "lat-pulldown":"Lat pulldown",
   "db-bench":"DB bench press", "pallof-press":"Pallof press", "side-plank":"Side plank", "dead-bug":"Dead bug",
   "hollow-hold":"Hollow hold", "bird-dog":"Bird dog", "reverse-crunch":"Reverse crunch",
@@ -1264,8 +1306,10 @@ function weekRange(n){
 function stampedIn(a, b){
   return Object.keys(db.workouts).filter(dk=>dk>=a && dk<=b && db.workouts[dk].stamped).length;
 }
+/* optional days (Wednesday recovery) stay in the plan but never count as a miss —
+   finishing one shows up as a bonus session instead */
 function plannedPerWeek(){
-  return WEEK_ORDER.filter(k=>!PLAN[k].rest || routineRows(k).some(x=>!isHidden(x))).length;
+  return WEEK_ORDER.filter(k=>!PLAN[k].optional && (!PLAN[k].rest || routineRows(k).some(x=>!isHidden(x)))).length;
 }
 /* reps she actually typed — a range like "8–10" is the plan's autofill, not a result */
 function repsGot(e){
@@ -1338,12 +1382,13 @@ function checkIn(){
   const [ws] = weekRange(wk);
   const thisWk = stampedIn(ws, key(new Date()));
   let past = 0, span = 0;
-  for (let k=Math.max(1, wk-4); k<wk; k++){ const [a,b] = weekRange(k); past += stampedIn(a,b); span++; }
+  for (let k=Math.max(1, wk-4); k<wk; k++){ const [a,b] = weekRange(k); past += Math.min(stampedIn(a,b), planned); span++; }
   const rate = span ? past / (planned*span) : null;
   if (span){
     const [la, lz] = weekRange(wk-1);
     const lastWk = stampedIn(la, lz);
-    rows.push({icon:"heart", text:`${lastWk} of ${planned} sessions last week${thisWk?` · ${thisWk} so far this week`:""}`,
+    const lastTxt = lastWk > planned ? `${planned} of ${planned} sessions last week + ${lastWk-planned} bonus` : `${lastWk} of ${planned} sessions last week`;
+    rows.push({icon:"heart", text:`${lastTxt}${thisWk?` · ${thisWk} so far this week`:""}`,
       sub: span > 1 ? `${past} of ${planned*span} over the last ${span} weeks — ` + (rate>=.8 ? "the kind of consistency that changes shape."
         : rate>=.6 ? "solid. The weeks you show up matter more than the ones you miss."
         : "a busy stretch. Express mode keeps the essentials in ~25 min.") : ""});
@@ -1401,6 +1446,12 @@ function checkIn(){
   if (!typed && n >= 3) rows.push({icon:"note", pri:2, text:"Type the reps you actually got",
     sub:"Right now reps fill in from the plan's range. A real number (say 10, not 8–10) lets this tell you when a lift is ready to go up."});
 
+  /* monthly measurements — once she's started, or once there's a month of training */
+  if (bodyDue() && ((db.body||[]).length || n >= 8)) rows.push({icon:"spark", pri:2,
+    text: (db.body||[]).length ? "Monthly measurements are due" : "Start monthly measurements",
+    sub:"Five tape numbers and a few photos, once a month — it shows the changes the scale can't.",
+    action:{body:true, label:(db.body||[]).length ? "log this month" : "log your first"}});
+
   /* the whole log lives on this phone — nudge a backup every month or so */
   const le = db.settings.lastExport;
   const sinceBackup = le ? Math.floor((new Date() - fromKey(le)) / 864e5) : null;
@@ -1442,7 +1493,8 @@ function checkInHTML(where){
     <div class="cihead"><span>Week ${c.wk} check-in</span>${today?`<button class="msdismiss" data-act="cidismiss" data-wk="${c.wk}" data-mark="${c.mark||""}" aria-label="dismiss">×</button>`:""}</div>
     ${rows.length ? `<ul class="cirows">${rows.map(r=>`<li><span class="ciic">${CI_ICON[r.icon]()}</span><div>
       <b>${esc(r.text)}</b>${r.sub?`<p>${esc(r.sub)}</p>`:""}
-      ${r.action && r.action.export?`<button class="choice ciact" data-act="export">${esc(r.action.label)}</button>`
+      ${r.action && r.action.body?`<button class="choice ciact" data-act="bodyopen">${esc(r.action.label)}</button>`
+       :r.action && r.action.export?`<button class="choice ciact" data-act="export">${esc(r.action.label)}</button>`
        :r.action?`<button class="choice ciact" data-act="ciaction" data-id="${esc(r.action.id)}" data-day="${r.action.day}" data-key="${esc(r.action.key)}" data-sets="${r.action.sets}" data-reps="${esc(r.action.reps)}" data-wk="${c.wk}">${esc(r.action.label)}</button>`:""}
     </div></li>`).join("")}</ul>` : ""}
     <p class="ciphase">${esc(c.phase)}${more?` <button class="cimore" data-act="gotab" data-tab-to="progress">${more} more in Progress →</button>`:""}</p>
@@ -2452,7 +2504,7 @@ function renderPlan(){
   if (sub) h += `<div class="sub">${esc(sub)}</div>`;
   h += `</div>`;
 
-  if (day.recovery) h += `<p class="plannote">The recovery blocks — posture, Pilates or a walk — stay as they are. Anything you add here shows up underneath them.</p>`;
+  if (day.recovery) h += `<p class="plannote">Optional — it doesn't count toward your weekly sessions, so skipping it never shows as a miss. Finish it and it counts as a bonus. The recovery blocks stay as they are; anything you add here shows up underneath them.</p>`;
   else if (day.rest && !vis.length) h += `<p class="plannote">${esc(day.line)} Add an exercise below to turn it into a training day.</p>`;
 
   /* warm-up */
@@ -2535,7 +2587,7 @@ function rhythmHTML(){
     const [a, b] = weekRange(k);
     const n = stampedIn(a, b);
     const cur = k===wk;
-    if (!cur){ done += n; total += planned; }
+    if (!cur){ done += Math.min(n, planned); total += planned; }
     const slots = Math.max(planned, n);
     let dots = "";
     for (let d=0; d<slots; d++) dots += `<i class="${d<n?"on":""}${d>=planned?" extra":""}"></i>`;
@@ -2764,7 +2816,7 @@ function renderProgress(){
   const repTracked = [...all].filter(id=>!tracked.includes(id) && repSeries(id).length>0)
     .sort((a,b)=>{ const x = repSeries(a), y = repSeries(b); return y[y.length-1].dk.localeCompare(x[x.length-1].dk); });
   let h = `<div class="pagehead"><h2>Progress</h2>
-    <p>Weight over time, one lift at a time.</p></div>` + checkInHTML("progress");
+    <p>Weight over time, one lift at a time.</p></div>` + checkInHTML("progress") + bodyHTML();
   const repGroup = start => !repTracked.length ? "" :
     `<div class="pgroup">Bodyweight · reps<small>the reps you type in</small></div><ul class="plist">`
     + repTracked.map((id,n)=>repRowHTML(id, start+n)).join("") + `</ul>`;
@@ -2795,6 +2847,104 @@ function renderProgress(){
   }
   h += repGroup(i);
   $("#view-progress").innerHTML = h;
+}
+
+/* ══════════════════ monthly measurements ══════════════════
+   Tape + optional photos, once a month. db.body = [{dk, waist, hips, …, photos:{front,side,back}}].
+   Deltas are shown plainly, never as good/bad — the numbers are hers to read. */
+const BODY_FIELDS = [
+  {k:"waist", label:"Waist", tip:"narrowest point, after a relaxed exhale"},
+  {k:"hips", label:"Hips · glutes", tip:"widest part of the glutes, feet together"},
+  {k:"thigh", label:"Thigh", tip:"widest part, same leg every time"},
+  {k:"arm", label:"Upper arm", tip:"halfway shoulder to elbow, arm relaxed"},
+  {k:"shoulders", label:"Shoulders", tip:"around the widest point, arms down"},
+  {k:"weight", label:"Bodyweight", unit:"lb", tip:"optional — morning, before eating"}
+];
+const POSES = ["front","side","back"];
+function bodyList(){ return (db.body||[]).slice().sort((a,b)=>a.dk.localeCompare(b.dk)); }
+function bodyDue(){
+  const list = bodyList();
+  if (!list.length) return true;
+  const t = new Date();
+  return list[list.length-1].dk < key(new Date(t.getFullYear(), t.getMonth(), 1));
+}
+function bodySeries(k){ return bodyList().filter(e=>e[k]!=null && e[k]!=="").map(e=>({dk:e.dk, w:parseFloat(e[k])})); }
+const fmtNum = n => String(Math.round(n*100)/100);
+function bodyFormHTML(){
+  const ed = ui.bodyForm !== "new" ? bodyList().find(e=>e.dk===ui.bodyForm) : null;
+  const ph = Object.assign({}, (ed && ed.photos) || {}, ui.bodyPhotos || {});
+  return `<div class="bodyform editform" id="bodyform">
+    <label class="bdatel">date <input type="date" class="bdate" value="${ed?ed.dk:key(new Date())}"></label>
+    <p class="bodytip">Same routine each time: morning, before eating, relaxed — tape snug, not tight. Leave anything blank.</p>
+    ${BODY_FIELDS.map(f=>`<label class="brow"><span><b>${f.label}</b><small>${f.tip}</small></span>
+      <span class="bin-wrap"><input class="bin" data-k="${f.k}" inputmode="decimal" value="${ed&&ed[f.k]!=null?esc(ed[f.k]):""}" placeholder="–" aria-label="${f.label}"><em>${f.unit||"in"}</em></span></label>`).join("")}
+    <div class="bphotos">
+      <div class="bphead">photos <small>optional · they never leave this phone</small></div>
+      <div class="bpgrid">${POSES.map(p=>`<div class="bpslot">
+        ${ph[p] ? `<img class="bpprev" data-pose="${p}" src="${ph[p]}" alt="${p} photo"><button class="bpdel" data-act="bodyphotodel" data-pose="${p}" aria-label="remove ${p} photo">×</button>`
+               : `<label class="bpadd">＋<span>${p}</span><input type="file" accept="image/*" class="bodyphoto" data-pose="${p}" hidden></label>`}
+      </div>`).join("")}</div>
+    </div>
+    <textarea class="clnotes bnote" rows="2" placeholder="A note — how you feel in your clothes, anything to remember">${ed&&ed.note?esc(ed.note):""}</textarea>
+    <div class="ef-btns">
+      <button class="choice sel" data-act="bodysave">save</button>
+      <button class="choice" data-act="bodycancel">cancel</button>
+      ${ed?`<button class="plandel" data-act="bodydel" style="margin-left:auto">delete this entry…</button>`:""}
+    </div>
+  </div>`;
+}
+function bodyHTML(){
+  const list = bodyList();
+  let h = `<div class="pgroup" id="bodysec">Measurements<small>monthly · stays on this phone</small></div>`;
+  if (ui.bodyForm) return h + `<div class="bodywrap">${bodyFormHTML()}</div>`;
+  if (!list.length){
+    return h + `<div class="bodywrap"><p class="bodyintro">Once a month: a tape measure and three photos. The scale misses most of what this program changes — the tape and the photos catch it.</p>
+      <button class="choice sel" data-act="bodyopen">log your first</button></div>`;
+  }
+  const last = list[list.length-1];
+  h += `<div class="bodywrap bodytop"><span class="bodylast">last logged ${fmtShort(last.dk)}</span>
+    <button class="choice ${bodyDue()?"sel":""}" data-act="bodyopen">${bodyDue()?"log this month":"add an entry"}</button></div>`;
+  h += `<ul class="plist">`;
+  let i = 0;
+  for (const f of BODY_FIELDS){
+    const pts = bodySeries(f.k);
+    if (!pts.length) continue;
+    const u = f.unit || "in";
+    const first = pts[0].w, latest = pts[pts.length-1].w, d = latest - first;
+    const dTxt = pts.length===1 ? "first entry" : d===0 ? `same as ${fmtShort(pts[0].dk)}` : `${d>0?"＋":"−"}${fmtNum(Math.abs(d))} ${u} since ${fmtShort(pts[0].dk)}`;
+    const open = ui.progOpen === "body:"+f.k;
+    h += `<li style="--i:${i++}"><button class="prow" data-act="prog" data-ex="body:${f.k}" aria-expanded="${open}">
+      <span class="lft"><span class="nm">${f.label}</span><span class="delta zero">${dTxt}</span></span>
+      <span class="latest">${fmtNum(latest)}<small class="unitsm"> ${u}</small></span></button>`;
+    if (open){
+      h += `<div class="pbody">${pts.length>1?chartSVG(pts, f.label.toLowerCase()):""}<ul class="pentries">`;
+      for (const p of [...pts].reverse()) h += `<li><span>${fmtShort(p.dk)}</span><span class="r">${fmtNum(p.w)}<small>${u}</small></span></li>`;
+      h += `</ul></div>`;
+    }
+    h += `</li>`;
+  }
+  h += `</ul>`;
+  /* photos: first vs latest, per pose */
+  const withPh = list.filter(e=>e.photos && Object.values(e.photos).some(Boolean));
+  if (withPh.length){
+    const pose = ui.bodyPose || POSES.find(p=>withPh.some(e=>e.photos[p])) || "front";
+    const shots = withPh.filter(e=>e.photos[pose]);
+    h += `<div class="bodywrap"><div class="bphead">photos
+      <span class="bptabs">${POSES.filter(p=>withPh.some(e=>e.photos[p])).map(p=>`<button class="${p===pose?"on":""}" data-act="bodypose" data-pose="${p}">${p}</button>`).join("")}</span></div>`;
+    if (shots.length){
+      const a = shots[0], b = shots[shots.length-1];
+      h += `<div class="bpcompare">
+        <figure><img src="${a.photos[pose]}" alt="${pose}, ${fmtShort(a.dk)}"><figcaption>${fmtShort(a.dk)}${shots.length>1?" · first":""}</figcaption></figure>
+        ${shots.length>1?`<figure><img src="${b.photos[pose]}" alt="${pose}, ${fmtShort(b.dk)}"><figcaption>${fmtShort(b.dk)} · latest</figcaption></figure>`:""}
+      </div>`;
+    }
+    h += `</div>`;
+  }
+  /* every entry, tap to edit */
+  h += `<div class="bodywrap bodyhist"><button class="bodyent bodytoggle" data-act="bodyhist" aria-expanded="${!!ui.bodyHist}"><span>${list.length} ${list.length===1?"entry":"entries"}</span><span class="r">${ui.bodyHist?"hide":"view &amp; edit"}</span></button>${!ui.bodyHist ? "" : list.slice().reverse().map(e=>`<button class="bodyent" data-act="bodyedit" data-dk="${e.dk}">
+    <span>${fmtShort(e.dk)}${e.note?` <em>· ${esc(e.note.length>40?e.note.slice(0,40)+"…":e.note)}</em>`:""}</span><span class="r">edit</span></button>`).join("")}</div>`;
+  /* the photo compare and history sit tidily above the lifts; the history opens on demand */
+  return h;
 }
 
 /* ══════════════════ render: library ══════════════════ */
@@ -2901,7 +3051,7 @@ function renderLibrary(){
     </div>
     <div class="libwrap" id="librows">${libRowsHTML()}</div>`;
 }
-function processLibImage(file, cb){
+function processLibImage(file, cb, max, q){
   if (file.type === "image/gif"){
     if (file.size > 2.5*1024*1024){ alert("That gif is a little large — try one under 2.5 MB."); return; }
     const rd = new FileReader();
@@ -2913,11 +3063,11 @@ function processLibImage(file, cb){
   rd.onload = ()=>{
     const im = new Image();
     im.onload = ()=>{
-      const scale = Math.min(1, 640/Math.max(im.width, im.height));
+      const scale = Math.min(1, (max||640)/Math.max(im.width, im.height));
       const cv = document.createElement("canvas");
       cv.width = Math.round(im.width*scale); cv.height = Math.round(im.height*scale);
       cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
-      cb(cv.toDataURL("image/jpeg", .82));
+      cb(cv.toDataURL("image/jpeg", q || .82));
     };
     im.src = rd.result;
   };
@@ -3357,6 +3507,43 @@ document.addEventListener("click", e=>{
     ui.planEdit = null; ui.planAdding = false;
     save(); renderPlan(); return;
   }
+  if (act==="bodyopen" || act==="bodyedit"){
+    ui.bodyForm = act==="bodyedit" ? t.dataset.dk : "new"; ui.bodyPhotos = {};
+    if (ui.tab !== "progress"){ ui.tab = "progress"; render(); } else renderProgress();
+    const f = document.getElementById("bodysec"); if (f) f.scrollIntoView({block:"start", behavior:"smooth"});
+    return;
+  }
+  if (act==="bodycancel"){ ui.bodyForm = null; ui.bodyPhotos = {}; renderProgress(); return; }
+  if (act==="bodyphotodel"){
+    ui.bodyPhotos = ui.bodyPhotos || {}; ui.bodyPhotos[t.dataset.pose] = null;
+    const slot = t.closest(".bpslot"), p = t.dataset.pose;
+    slot.innerHTML = `<label class="bpadd">＋<span>${p}</span><input type="file" accept="image/*" class="bodyphoto" data-pose="${p}" hidden></label>`;
+    return;
+  }
+  if (act==="bodysave"){
+    const f = document.getElementById("bodyform");
+    const dk = f.querySelector(".bdate").value || key(new Date());
+    const old = ui.bodyForm !== "new" ? bodyList().find(e=>e.dk===ui.bodyForm) : null;
+    const e = {dk};
+    for (const inp of f.querySelectorAll(".bin")){ const v = parseFloat(inp.value); if (!isNaN(v) && v > 0) e[inp.dataset.k] = v; }
+    const photos = Object.assign({}, (old && old.photos) || {}, ui.bodyPhotos || {});
+    for (const p of Object.keys(photos)) if (!photos[p]) delete photos[p];
+    if (Object.keys(photos).length) e.photos = photos;
+    const note = f.querySelector(".bnote").value.trim(); if (note) e.note = note;
+    if (Object.keys(e).length === 1){ alert("Add at least one measurement or photo."); return; }
+    db.body = (db.body||[]).filter(x=>x.dk!==dk && (!old || x.dk!==old.dk));
+    db.body.push(e);
+    ui.bodyForm = null; ui.bodyPhotos = {};
+    save(); renderProgress(); return;
+  }
+  if (act==="bodydel"){
+    if (!confirm("Delete this measurement entry and its photos?")) return;
+    db.body = (db.body||[]).filter(x=>x.dk!==ui.bodyForm);
+    ui.bodyForm = null; ui.bodyPhotos = {};
+    save(); renderProgress(); return;
+  }
+  if (act==="bodyhist"){ ui.bodyHist = !ui.bodyHist; renderProgress(); return; }
+  if (act==="bodypose"){ ui.bodyPose = t.dataset.pose; renderProgress(); return; }
   if (act==="gotab"){ ui.tab = t.dataset.tabTo; render(); window.scrollTo(0,0); return; }
   if (act==="cidismiss"){
     db.seen["wk"+t.dataset.wk] = 1;
@@ -3467,6 +3654,14 @@ document.addEventListener("change", e=>{
     if (el.dataset.mins) entry.mins = el.value.trim();
     else entry.reps = el.value.trim();
     save();
+  }
+  if (el.classList.contains("bodyphoto")){
+    const f = el.files && el.files[0], p = el.dataset.pose, slot = el.closest(".bpslot");
+    if (f) processLibImage(f, data=>{
+      ui.bodyPhotos = ui.bodyPhotos || {}; ui.bodyPhotos[p] = data;
+      slot.innerHTML = `<img class="bpprev" data-pose="${p}" src="${data}" alt="${p} photo"><button class="bpdel" data-act="bodyphotodel" data-pose="${p}" aria-label="remove ${p} photo">×</button>`;
+    }, 560, .72);
+    return;
   }
   if (el.id==="clImg"){
     const f = el.files && el.files[0];
