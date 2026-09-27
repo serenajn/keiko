@@ -549,6 +549,26 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 }
 .cleardaylink:active{color:var(--hanko)}
 
+/* last-8-weeks rhythm strip */
+.rhythm{margin:0 1.25rem 1.4rem}
+.rhead{
+  display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;
+  font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
+  padding-bottom:.5rem;
+}
+.rhead em{font-style:normal;font-weight:500;letter-spacing:.06em;text-transform:none;font-size:.72rem;color:var(--ink-2)}
+.rcols{display:flex;justify-content:space-between;gap:.2rem}
+.rwk{flex:1;display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.35rem 0;border-radius:.6rem}
+.rwk:active{background:var(--paper-2)}
+.rwk.cur{background:var(--paper-2)}
+.rdots{display:flex;flex-direction:column-reverse;gap:4px;min-height:calc(5*9px + 4*4px);justify-content:flex-start}
+.rdots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ink-3);opacity:.7}
+.rdots i.on{background:var(--hanko);border-color:var(--hanko);opacity:1}
+.rdots i.extra.on{background:var(--lav);border-color:var(--lav)}
+.rlbl{font-size:.58rem;font-weight:600;letter-spacing:.08em;color:var(--ink-3)}
+.rwk.cur .rlbl{color:var(--hanko)}
+.unitsm{font-family:var(--sans);font-weight:400;font-size:.62rem;color:var(--ink-2)}
+
 /* data section */
 .datazone{margin:2.6rem 1.25rem 1rem;padding-top:1rem;border-top:1px solid var(--line)}
 .datazone p{font-size:.7rem;color:var(--ink-3);line-height:1.6}
@@ -2427,6 +2447,30 @@ function renderPlan(){
   $("#view-plan").innerHTML = h;
 }
 
+/* the last eight program weeks at a glance — one column of dots per week,
+   a dot per planned session, filled for each one she finished */
+function rhythmHTML(){
+  const wk = weeksIn(), planned = plannedPerWeek();
+  const first = Math.max(1, wk-7);
+  let done = 0, total = 0, cols = "";
+  for (let k=first; k<=wk; k++){
+    const [a, b] = weekRange(k);
+    const n = stampedIn(a, b);
+    const cur = k===wk;
+    if (!cur){ done += n; total += planned; }
+    const slots = Math.max(planned, n);
+    let dots = "";
+    for (let d=0; d<slots; d++) dots += `<i class="${d<n?"on":""}${d>=planned?" extra":""}"></i>`;
+    cols += `<button class="rwk ${cur?"cur":""}" data-act="rhythmwk" data-dk="${a}" aria-label="Week ${k}: ${n} of ${planned} sessions${cur?", so far":""}">
+      <span class="rdots">${dots}</span><span class="rlbl">${cur?"now":"W"+k}</span></button>`;
+  }
+  const weeks = wk - first;
+  return `<div class="rhythm">
+    <div class="rhead"><span>Last ${weeks+1} weeks</span>${weeks?`<em>${done} of ${total} sessions${total?` · ${Math.round(done/total*100)}%`:""}</em>`:""}</div>
+    <div class="rcols">${cols}</div>
+  </div>`;
+}
+
 /* ══════════════════ render: history ══════════════════ */
 function renderLog(){
   const [y,m] = ui.calMonth;
@@ -2437,6 +2481,7 @@ function renderLog(){
 
   let h = `<div class="pagehead"><h2>Record</h2>
     <p>Week ${weeksIn()} of the program · ${sessionsLogged()} ${sessionsLogged()===1?'session':'sessions'} logged</p></div>`;
+  h += rhythmHTML();
   h += `<div class="calhead"><h3>${MONTHS[m]} ${y}</h3>
     <div class="mnav">
       <button data-act="mnav" data-dir="-1" aria-label="previous month">‹</button>
@@ -2526,7 +2571,7 @@ function series(exId){
   }
   return out;
 }
-function chartSVG(pts){
+function chartSVG(pts, label){
   const W=340, H=120, padL=34, padR=16, padT=14, padB=22;
   const ws = pts.map(p=>p.w);
   let lo = Math.min(...ws), hi = Math.max(...ws);
@@ -2536,7 +2581,7 @@ function chartSVG(pts){
   const X = i => pts.length===1 ? W/2 : padL + (W-padL-padR)*(i/(pts.length-1));
   const Y = w => padT + (H-padT-padB)*(1-(w-lo)/(hi-lo));
   const yTop = Math.max(...ws), yBot = Math.min(...ws);
-  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="weight over time">`;
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${label||"weight"} over time">`;
   s += `<line class="grid" x1="${padL}" y1="${Y(yTop)}" x2="${W-padR}" y2="${Y(yTop)}"/>`;
   if (yBot!==yTop) s += `<line class="grid" x1="${padL}" y1="${Y(yBot)}" x2="${W-padR}" y2="${Y(yBot)}"/>`;
   s += `<text x="${padL-6}" y="${Y(yTop)+3.5}" text-anchor="end">${yTop}</text>`;
@@ -2593,12 +2638,58 @@ function progRowHTML(id, i){
   }
   return h + `</li>`;
 }
+/* bodyweight moves have no weight to chart — their progress is the reps she typed */
+function repSeries(exId){
+  const out = [];
+  for (const dk of Object.keys(db.workouts).sort()){
+    const w = db.workouts[dk], e = w.entries && w.entries[exId];
+    if (!e || !countsEntry(w, e) || (e.weight != null && e.weight !== "")) continue;
+    const r = repsGot(e);
+    if (r != null) out.push({dk, w:r});
+  }
+  return out;
+}
+function repRowHTML(id, i){
+  const pts = repSeries(id);
+  const first = pts[0].w, latest = pts[pts.length-1].w, best = Math.max(...pts.map(p=>p.w));
+  const delta = latest - first;
+  let dTxt, dCls = "";
+  if (pts.length===1) dTxt = "first entry";
+  else if (delta>0) dTxt = `＋${delta} ${delta===1?"rep":"reps"} since ${fmtShort(pts[0].dk)}`;
+  else if (best > latest) { dTxt = `best so far · ${best} reps`; dCls = "zero"; }
+  else { dTxt = "holding steady"; dCls = "zero"; }
+  const open = ui.progOpen===id;
+  let h = `<li style="--i:${i}">
+    <button class="prow" data-act="prog" data-ex="${id}" aria-expanded="${open}">
+      <span class="lft">
+        <span class="nm">${esc(nameOf(id))}</span>
+        <span class="delta ${dCls}">${dTxt}</span>
+      </span>
+      <span class="latest">${latest}<small class="unitsm"> reps</small></span>
+    </button>`;
+  if (open){
+    h += `<div class="pbody">${chartSVG(pts, "reps")}<ul class="pentries">`;
+    for (const p of [...pts].reverse()) h += `<li><span>${fmtShort(p.dk)}</span><span class="r">${p.w}<small>reps</small></span></li>`;
+    h += `</ul></div>`;
+  }
+  return h + `</li>`;
+}
 function renderProgress(){
   const all = new Set([...Object.keys(NAMES), ...Object.keys(LIBNAMES), ...Object.keys(db.customNames)]);
   for (const e of db.customLib) all.add(e.id);
   const tracked = [...all].filter(id=>series(id).length>0);
+  for (const id of loggedIds()) all.add(id);
+  const repTracked = [...all].filter(id=>!tracked.includes(id) && repSeries(id).length>0)
+    .sort((a,b)=>{ const x = repSeries(a), y = repSeries(b); return y[y.length-1].dk.localeCompare(x[x.length-1].dk); });
   let h = `<div class="pagehead"><h2>Progress</h2>
     <p>Weight over time, one lift at a time.</p></div>` + checkInHTML("progress");
+  const repGroup = start => !repTracked.length ? "" :
+    `<div class="pgroup">Bodyweight · reps<small>the reps you type in</small></div><ul class="plist">`
+    + repTracked.map((id,n)=>repRowHTML(id, start+n)).join("") + `</ul>`;
+  if (!tracked.length && repTracked.length){
+    $("#view-progress").innerHTML = h + repGroup(0);
+    return;
+  }
   if (!tracked.length){
     h += `<div class="pempty">
       <img class="bunnygif" src="assets/ui/bunny.gif" alt="a patient bunny">
@@ -2620,6 +2711,7 @@ function renderProgress(){
     for (const id of rest) h += progRowHTML(id, i++);
     h += `</ul>`;
   }
+  h += repGroup(i);
   $("#view-progress").innerHTML = h;
 }
 
@@ -3213,6 +3305,11 @@ document.addEventListener("click", e=>{
     let [y,m]=ui.calMonth; m+=Number(t.dataset.dir);
     if (m<0){m=11;y--;} if (m>11){m=0;y++;}
     ui.calMonth=[y,m]; renderLog(); return;
+  }
+  if (act==="rhythmwk"){
+    const d = fromKey(t.dataset.dk);
+    ui.calMonth = [d.getFullYear(), d.getMonth()]; ui.calSel = t.dataset.dk;
+    renderLog(); return;
   }
   if (act==="calsel"){ ui.calSel=t.dataset.dk; renderLog(); return; }
   if (act==="delentry"){
