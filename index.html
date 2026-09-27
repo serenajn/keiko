@@ -158,22 +158,32 @@ input{font:inherit;color:inherit}
   font-size:.78rem;color:var(--ink-2);line-height:1.6;
 }
 .daynote b{color:var(--ink);font-weight:500}
-.milestone{
-  margin:1rem 1.25rem 0;
-  display:flex;align-items:flex-start;gap:.75rem;
-  background:rgba(185,168,232,.16);border-radius:.8rem;
-  padding:.85rem .95rem;
+.checkin{
+  margin:1rem .8rem 0;
+  background:rgba(185,168,232,.14);border-radius:.9rem;
+  padding:.85rem 1.05rem .95rem;
   animation:rise .5s cubic-bezier(.16,1,.3,1) both;
 }
-.msheart{flex:none;width:15px;margin-top:.15rem}
-.msheart svg{width:100%;height:auto;display:block}
-.msbody b{font-size:.8rem;font-weight:600}
-.msbody p{font-size:.78rem;color:var(--ink-2);line-height:1.55;margin-top:.15rem}
-.msstat{font-weight:600;color:var(--ms-stat) !important;font-size:.74rem !important}
+.checkin.ciinline{margin:0 1.25rem .4rem}
+.cihead{
+  display:flex;align-items:center;justify-content:space-between;min-height:1.6rem;
+  font-size:.64rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ms-stat);
+}
+.cirows{list-style:none;margin-top:.35rem}
+.cirows li{display:flex;gap:.7rem;align-items:flex-start;padding:.45rem 0}
+.cirows li + li{border-top:1px solid var(--line-soft)}
+.ciic{flex:none;width:12px;margin-top:.3rem}
+.ciic svg{width:100%;height:auto;display:block}
+.cirows b{display:block;font-size:.84rem;font-weight:600;line-height:1.4}
+.cirows p{font-size:.76rem;color:var(--ink-2);line-height:1.5;margin-top:.1rem}
+.ciact{margin-top:.5rem;font-size:.72rem;border-color:var(--ms-stat);color:var(--ms-stat)}
+.ciphase{font-size:.74rem;color:var(--ink-2);font-style:italic;line-height:1.55;margin-top:.55rem;padding-top:.55rem;border-top:1px solid var(--line-soft)}
+.cimore{font-style:normal;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ms-stat);padding:.3rem 0;display:inline-block}
+.cihead + .ciphase{border-top:none;padding-top:0;margin-top:.2rem}
 .msdismiss{
-  flex:none;width:2.2rem;height:2.2rem;border-radius:50%;
-  display:grid;place-items:center;color:var(--ink-3);font-size:1.05rem;
-  margin:-.45rem -.55rem 0 0;
+  flex:none;width:2.4rem;height:2.4rem;border-radius:50%;
+  display:grid;place-items:center;color:var(--ink-3);font-size:1.1rem;
+  margin:-.5rem -.7rem -.5rem 0;
 }
 
 /* ───────── warm-up ───────── */
@@ -538,6 +548,26 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   transition:color .2s;
 }
 .cleardaylink:active{color:var(--hanko)}
+
+/* last-8-weeks rhythm strip */
+.rhythm{margin:0 1.25rem 1.4rem}
+.rhead{
+  display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;
+  font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
+  padding-bottom:.5rem;
+}
+.rhead em{font-style:normal;font-weight:500;letter-spacing:.06em;text-transform:none;font-size:.72rem;color:var(--ink-2)}
+.rcols{display:flex;justify-content:space-between;gap:.2rem}
+.rwk{flex:1;display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.35rem 0;border-radius:.6rem}
+.rwk:active{background:var(--paper-2)}
+.rwk.cur{background:var(--paper-2)}
+.rdots{display:flex;flex-direction:column-reverse;gap:4px;min-height:calc(5*9px + 4*4px);justify-content:flex-start}
+.rdots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ink-3);opacity:.7}
+.rdots i.on{background:var(--hanko);border-color:var(--hanko);opacity:1}
+.rdots i.extra.on{background:var(--lav);border-color:var(--lav)}
+.rlbl{font-size:.58rem;font-weight:600;letter-spacing:.08em;color:var(--ink-3)}
+.rwk.cur .rlbl{color:var(--hanko)}
+.unitsm{font-family:var(--sans);font-weight:400;font-size:.62rem;color:var(--ink-2)}
 
 /* data section */
 .datazone{margin:2.6rem 1.25rem 1rem;padding-top:1rem;border-top:1px solid var(--line)}
@@ -1164,6 +1194,7 @@ function seed(){
   }};
 }
 let db;
+let seriesMemo = {}; /* Progress-tab cache of per-lift weight series; cleared on every save */
 try { db = JSON.parse(localStorage.getItem(KEY)) || seed(); } catch(e){ db = seed(); }
 db.settings = db.settings || {express:false};
 db.settings.programStart = db.settings.programStart || "2026-05-25"; /* week 6 as of 2026-07-05, per Serena */
@@ -1172,6 +1203,7 @@ db.customNames = db.customNames || {};
 db.customLib = db.customLib || [];
 db.seen = db.seen || {};
 function save(){
+  seriesMemo = {};
   try{ localStorage.setItem(KEY, JSON.stringify(db)); }
   catch(e){ alert("Storage is full — that image may be too large. Try a smaller one."); }
 }
@@ -1218,7 +1250,10 @@ function resolveExId(name){
   return id;
 }
 
-/* ── program milestones ── */
+/* ══════════════════ weekly check-in — written from her own logs ══════════════════
+   Program weeks run from programStart. Each week gets one card on Today (dismissable)
+   and the same card lives at the top of Progress. Everything in it comes from what
+   she's actually logged: sessions vs plan, weights, and the reps she typed. */
 function sessionsLogged(){
   return Object.values(db.workouts).filter(w=>w.stamped).length;
 }
@@ -1226,51 +1261,196 @@ function weeksIn(){
   const ms = new Date() - fromKey(db.settings.programStart);
   return Math.max(1, Math.floor(ms / (7*24*3600*1000)) + 1);
 }
-const MILESTONES = [
-  {id:"log1",  test:(w,n)=>n>=1,  title:"First log in the book",
-    body:"Progress you can point at starts here. The mirror lies day to day — the log doesn't."},
-  {id:"wk4",   test:(w,n)=>w>=4,  title:"Weeks 1–4 · learning the moves",
-    body:"Early strength jumps are mostly your nervous system getting efficient — they're fast, real, and normal. Enjoy them."},
-  {id:"wk6",   test:(w,n)=>w>=6,  title:"Week 6 · under the surface",
-    body:"By now hinge lifts are typically up 20–40% from your start, sessions feel smoother, and the in-session pump shows. Shape changes are brewing but mostly invisible yet — clothes usually notice before the scale does."},
-  {id:"wk8",   test:(w,n)=>w>=8,  title:"Week 8 · mirror territory",
-    body:"This is when early glute and shoulder changes tend to show in the mirror. A hip thrust around 1.5× your starting weight means you're right on schedule."},
-  {id:"n10",   test:(w,n)=>n>=10, title:"10 sessions logged",
-    body:"Enough data that your Progress charts start showing real trends instead of noise. Add small weight whenever the top of a rep range feels easy."},
-  {id:"wk12",  test:(w,n)=>w>=12, title:"Week 12 · visible to others",
-    body:"Around three months, changes stop being a secret. For recomposition, lifts climbing while the scale stays put isn't a stall — it's the whole plan working."},
-  {id:"n25",   test:(w,n)=>n>=25, title:"25 sessions logged",
-    body:"The habit is real, and you have receipts. Consistency is beating intensity, exactly as designed."},
-  {id:"wk16",  test:(w,n)=>w>=16, title:"Week 16 · the long game",
-    body:"Newbie-gain pace naturally eases off from here. Progress becomes slower and steadier — double progression (reps first, then weight) is now your best friend."}
-];
-function bestGain(){
-  let best = null;
-  const ids = new Set([...Object.keys(NAMES), ...Object.keys(LIBNAMES), ...Object.keys(db.customNames)]);
-  for (const e of db.customLib) ids.add(e.id);
-  for (const id of ids){
-    const pts = series(id);
-    if (pts.length < 2) continue;
-    const d = pts[pts.length-1].w - pts[0].w;
-    if (d > 0 && (!best || d > best.d)) best = {id, d, from:pts[0].w, to:pts[pts.length-1].w};
-  }
-  return best;
+function weekRange(n){
+  const s = fromKey(db.settings.programStart); s.setDate(s.getDate() + (n-1)*7);
+  const e = new Date(s); e.setDate(e.getDate() + 6);
+  return [key(s), key(e)];
 }
-function milestoneHTML(){
-  const w = weeksIn(), n = sessionsLogged();
-  const unlocked = MILESTONES.filter(m=>m.test(w,n));
-  const unseen = unlocked.filter(m=>!db.seen[m.id]);
-  if (!unseen.length) return "";
-  const m = unseen[unseen.length-1];
-  const ids = unlocked.map(x=>x.id).join(",");
-  const g = bestGain();
-  const stat = g
-    ? `Yours so far: ${nameOf(g.id)} ${g.from} → ${g.to} lb · ${n} ${n===1?"session":"sessions"} logged.`
-    : (n ? `${n} ${n===1?"session":"sessions"} logged so far.` : "");
-  return `<div class="milestone">
-    <span class="msheart">${MINIHEART("#8f7ec9")}</span>
-    <div class="msbody"><b>${esc(m.title)}</b><p>${esc(m.body)}</p>${stat?`<p class="msstat">${esc(stat)}</p>`:""}</div>
-    <button class="msdismiss" data-act="msdismiss" data-ms="${ids}" aria-label="dismiss">×</button>
+function stampedIn(a, b){
+  return Object.keys(db.workouts).filter(dk=>dk>=a && dk<=b && db.workouts[dk].stamped).length;
+}
+function plannedPerWeek(){
+  return WEEK_ORDER.filter(k=>!PLAN[k].rest || routineRows(k).some(x=>!isHidden(x))).length;
+}
+/* reps she actually typed — a range like "8–10" is the plan's autofill, not a result */
+function repsGot(e){
+  if (!e || !e.reps || /\d\s*[–-]\s*\d/.test(e.reps)) return null;
+  return repLow(e.reps);
+}
+function liftLog(id){
+  const out = [];
+  for (const dk of Object.keys(db.workouts).sort()){
+    const w = db.workouts[dk], e = w.entries && w.entries[id];
+    if (!e || !countsEntry(w, e)) continue;
+    const wt = parseFloat(e.weight);
+    out.push({dk, w:isNaN(wt) ? null : wt, reps:repsGot(e), full:!(e.sets && e.sets.some(s=>!s))});
+  }
+  return out;
+}
+/* where a lift sits in her week right now — first weekday that has it */
+function planFor(id){
+  for (const k of WEEK_ORDER){
+    for (const x of routineRows(k)){
+      if (isHidden(x)) continue;
+      const it = x.it, o = x.o || {};
+      const ids = o.id ? [o.id] : it.choices ? it.choices.map(c=>c.id) : [it.id];
+      if (ids.includes(id)) return Object.assign({day:k, key:x.ikey}, rowScheme(x, false));
+    }
+  }
+  return null;
+}
+function nextWeight(id, w){ return ASSISTED[id] ? Math.max(0, w - wStep(w - 0.1)) : w + wStep(w); }
+/* ready (top of the range twice), building (reps climbing at one weight), or stalled */
+function liftStatus(id){
+  const log = liftLog(id).filter(p=>p.w != null);
+  if (log.length < 2) return null;
+  const plan = planFor(id);
+  const top = plan ? repTop(plan.reps) : null;
+  const last = log[log.length-1], prev = log[log.length-2];
+  if (top && last.w===prev.w && last.full && prev.full && last.reps>=top && prev.reps>=top)
+    return {kind:"ready", id, w:last.w, reps:last.reps, next:nextWeight(id, last.w), plan};
+  let same = 0;
+  for (let i=log.length-1; i>=0 && log[i].w===last.w; i--) same++;
+  if (same >= 3){
+    const first = log[log.length-same];
+    const days = (fromKey(last.dk) - fromKey(first.dk)) / 864e5;
+    if (first.reps!=null && last.reps!=null && last.reps > first.reps)
+      return {kind:"building", id, w:last.w, from:first.reps, to:last.reps, plan};
+    if (days >= 12 && log.slice(-same).every(p=>p.full))
+      return {kind:"stall", id, w:last.w, n:same, next:nextWeight(id, last.w), plan};
+  }
+  return null;
+}
+function liftGain(id, since){
+  const log = liftLog(id).filter(p=>p.w != null && (!since || p.dk >= since));
+  if (log.length < 2) return null;
+  const a = log[0].w, b = log[log.length-1].w;
+  const d = ASSISTED[id] ? a - b : b - a;
+  return {id, from:a, to:b, d, pct: a ? d/a : 0};
+}
+function loggedIds(){
+  const s = new Set();
+  for (const w of Object.values(db.workouts)) for (const id of Object.keys(w.entries||{})) s.add(id);
+  return [...s];
+}
+const lb = w => `${w} lb`;
+const COUNT_MARKS = [1, 10, 25, 50, 100, 150, 200];
+function checkIn(){
+  const wk = weeksIn(), n = sessionsLogged(), planned = plannedPerWeek();
+  const rows = [];
+
+  /* 1 · showing up */
+  const [ws] = weekRange(wk);
+  const thisWk = stampedIn(ws, key(new Date()));
+  let past = 0, span = 0;
+  for (let k=Math.max(1, wk-4); k<wk; k++){ const [a,b] = weekRange(k); past += stampedIn(a,b); span++; }
+  const rate = span ? past / (planned*span) : null;
+  if (span){
+    const [la, lz] = weekRange(wk-1);
+    const lastWk = stampedIn(la, lz);
+    rows.push({icon:"heart", text:`${lastWk} of ${planned} sessions last week${thisWk?` · ${thisWk} so far this week`:""}`,
+      sub: span > 1 ? `${past} of ${planned*span} over the last ${span} weeks — ` + (rate>=.8 ? "the kind of consistency that changes shape."
+        : rate>=.6 ? "solid. The weeks you show up matter more than the ones you miss."
+        : "a busy stretch. Express mode keeps the essentials in ~25 min.") : ""});
+  } else if (thisWk){
+    rows.push({icon:"heart", text:`${thisWk} of ${planned} sessions so far this week`});
+  }
+
+  /* 2 · session-count milestones she hasn't seen yet */
+  const topMark = COUNT_MARKS.filter(m=>n>=m).pop();
+  const mark = (topMark && !db.seen["n"+topMark] && !(topMark===1 && db.seen.log1)) ? topMark : null;
+  if (mark) rows.push({icon:"spark", pri:2, text: mark===1 ? "First log in the book" : `${mark} sessions logged`,
+    sub: mark===1 ? "The mirror lies day to day — the log doesn't." : mark>=25 ? "The habit is real, and you have receipts." : "Enough data for real trends, not noise.", mark});
+
+  /* 3 · the lifts */
+  const ids = loggedIds();
+  const monthAgo = (()=>{ const d = new Date(); d.setDate(d.getDate()-28); return key(d); })();
+  const keyFirst = (a,b)=>{ const ia = KEY_LIFTS.indexOf(a.id), ib = KEY_LIFTS.indexOf(b.id);
+    return (ia<0?99:ia) - (ib<0?99:ib); };
+  const gains = ids.map(id=>liftGain(id, monthAgo)).filter(g=>g && g.d>0).sort((a,b)=>b.pct-a.pct);
+  const allTime = ids.map(id=>liftGain(id)).filter(g=>g && g.d>0).sort((a,b)=>b.pct-a.pct);
+  const g = gains[0] || allTime[0];
+  const st = ids.map(liftStatus).filter(Boolean).sort(keyFirst);
+  const ready = st.filter(s=>s.kind==="ready").slice(0, 2);
+  if (g && !ready.some(s=>s.id===g.id)) rows.push({icon:"up", text:`${nameOf(g.id)} ${lb(g.from)} → ${lb(g.to)}${ASSISTED[g.id]?" assist":""}`,
+    sub:`${gains[0]?"in the last four weeks":"since you started"} · ${ASSISTED[g.id]?"less help needed, ":""}+${Math.round(g.pct*100)}%`});
+
+  for (const s of ready){
+    const up = g && g.id===s.id ? ` You've come from ${lb(g.from)}${gains[0]?" in four weeks":""} — +${Math.round(g.pct*100)}%.` : "";
+    rows.push({icon:"up", pri:0, text:`Ready to go up: ${nameOf(s.id)}`,
+      sub:`${s.reps} reps on every set at ${lb(s.w)}, twice in a row — try ${lb(s.next)}${ASSISTED[s.id]?" assist":""} next time.${up}`});
+  }
+  const building = st.find(s=>s.kind==="building");
+  if (building) rows.push({icon:"spark", pri:2, text:`${nameOf(building.id)}: reps climbing`,
+    sub:`${building.from} → ${building.to} at ${lb(building.w)}. When you reach ${building.plan ? repTop(building.plan.reps) : "the top of the range"} on every set, add weight.`});
+
+  const stall = st.find(s=>s.kind==="stall");
+  let phaseStalls = st.filter(s=>s.kind==="stall").length;
+  const setDone = db.seen["ciset"+wk];
+  if (setDone){
+    const [sid, sday, sn] = String(setDone).split("|");
+    rows.push({icon:"heart", pri:1, text:`Added: ${nameOf(sid)} is ${sn} sets on ${WDAYS[DAYKEYS.indexOf(sday)]}s now`,
+      sub:"Give it three or four weeks before judging it."});
+  } else if (stall){
+    const p = stall.plan;
+    const canAddSet = p && wk >= 8 && rate != null && rate >= .75 && parseInt(p.sets,10) < 5;
+    rows.push({icon:"note", pri:1, text: ASSISTED[stall.id] ? `${nameOf(stall.id)}: assist has held at ${lb(stall.w)} for ${stall.n} sessions` : `${nameOf(stall.id)} has sat at ${lb(stall.w)} for ${stall.n} sessions`,
+      sub: canAddSet
+        ? `You're showing up consistently, so this is a volume question — one more set on ${WDAYS[DAYKEYS.indexOf(p.day)]}s usually gets it moving.`
+        : `Try ${lb(stall.next)} for the first set only, or add one rep per set before adding weight.`,
+      action: canAddSet ? {label:`make it ${parseInt(p.sets,10)+1} × ${p.reps} on ${WDAYS[DAYKEYS.indexOf(p.day)]}s`, id:stall.id, day:p.day, key:p.key, sets:parseInt(p.sets,10)+1, reps:p.reps} : null});
+  }
+
+  /* reps she types are what make "ready to go up" possible — say so, once there's data */
+  const typed = ids.some(id=>liftLog(id).some(p=>p.reps!=null));
+  if (!typed && n >= 3) rows.push({icon:"note", pri:2, text:"Type the reps you actually got",
+    sub:"Right now reps fill in from the plan's range. A real number (say 10, not 8–10) lets this tell you when a lift is ready to go up."});
+
+  /* the whole log lives on this phone — nudge a backup every month or so */
+  const le = db.settings.lastExport;
+  const sinceBackup = le ? Math.floor((new Date() - fromKey(le)) / 864e5) : null;
+  if (n >= 8 && (sinceBackup == null || sinceBackup > 30)) rows.push({icon:"note", pri:3,
+    text: le ? `Last backup was ${sinceBackup} days ago` : "Your log has never been backed up",
+    sub:"Everything lives only on this phone. Export saves a copy to Files — iCloud Drive is a good home for it.",
+    action:{export:true, label:"export a copy"}});
+
+  /* the phase of the program, adjusted to how it's actually going */
+  let phase;
+  if (wk <= 4) phase = "Weeks 1–4: early strength jumps are mostly your nervous system learning the moves — fast, real, and normal.";
+  else if (wk <= 8) phase = (g && g.pct >= .2)
+    ? `Weeks 5–8: you're up ${Math.round(g.pct*100)}% on ${nameOf(g.id).toLowerCase()} — right in the usual 20–40% range. Shape changes are brewing under the surface.`
+    : "Weeks 5–8 are usually the fastest strength climb. When the top of a rep range feels easy, go up.";
+  else if (wk <= 12) phase = "Mirror territory: glute and shoulder changes tend to show around now. Lifts climbing while the scale holds is recomposition working.";
+  else if (wk <= 16) phase = "Month four: progress gets steadier and slower. Reps first, then weight.";
+  else phase = phaseStalls >= 2
+    ? "Past week 16, gains mostly come from volume — an extra set on a lift that's stalled, or one more rep before more weight."
+    : "Past week 16 and still climbing. Keep doing exactly this.";
+  return {wk, rows, phase, mark};
+}
+const CI_ICON = {
+  heart: ()=>MINIHEART("#b9a8e8"),
+  spark: ()=>SPARK("#f2c94c"),
+  up: ()=>pix(["...U...","..UUU..",".UUUUU.","UU.U.UU","...U...","...U..."],{U:"#ee6fa4"},"",""),
+  note: ()=>pix([".UUU.","UU.UU","UU.UU","UUUUU","UU.UU",".UUU."],{U:"#8fd0c8"},"","")
+};
+function checkInHTML(where){
+  const c = checkIn();
+  const today = where==="today";
+  if (today && db.seen["wk"+c.wk]) return "";
+  /* Today gets the three that matter most right now; Progress gets the whole note */
+  let rows = c.rows, more = 0;
+  if (today && rows.length > 3){
+    rows = rows.map((r,i)=>({r,i,p:r.pri==null?4:r.pri})).sort((a,b)=>a.p-b.p || a.i-b.i).slice(0,3).sort((a,b)=>a.i-b.i).map(x=>x.r);
+    more = c.rows.length - 3;
+  }
+  return `<div class="checkin ${today?"":"ciinline"}">
+    <div class="cihead"><span>Week ${c.wk} check-in</span>${today?`<button class="msdismiss" data-act="cidismiss" data-wk="${c.wk}" data-mark="${c.mark||""}" aria-label="dismiss">×</button>`:""}</div>
+    ${rows.length ? `<ul class="cirows">${rows.map(r=>`<li><span class="ciic">${CI_ICON[r.icon]()}</span><div>
+      <b>${esc(r.text)}</b>${r.sub?`<p>${esc(r.sub)}</p>`:""}
+      ${r.action && r.action.export?`<button class="choice ciact" data-act="export">${esc(r.action.label)}</button>`
+       :r.action?`<button class="choice ciact" data-act="ciaction" data-id="${esc(r.action.id)}" data-day="${r.action.day}" data-key="${esc(r.action.key)}" data-sets="${r.action.sets}" data-reps="${esc(r.action.reps)}" data-wk="${c.wk}">${esc(r.action.label)}</button>`:""}
+    </div></li>`).join("")}</ul>` : ""}
+    <p class="ciphase">${esc(c.phase)}${more?` <button class="cimore" data-act="gotab" data-tab-to="progress">${more} more in Progress →</button>`:""}</p>
   </div>`;
 }
 function buildDatalist(){
@@ -1866,7 +2046,7 @@ function renderToday(){
     ${(r&&r.stamped)?hankoSVG("headstamp"):sparksFor(dk)}
   </div>`;
 
-  if (isToday) h += milestoneHTML();
+  if (isToday) h += checkInHTML("today");
 
   /* a rest day stays a rest day until she gives it exercises in the Plan tab */
   if (day.rest && !visible.length){
@@ -2025,8 +2205,8 @@ function workRowHTML(x, i, r, dk, sessKey){
     h += `<div class="editform">
       <input class="ef-name" list="exlist" value="${esc(dispName)}" aria-label="exercise name">
       <div class="ef-row">
-        <label>sets<input class="ef-sets" inputmode="numeric" value="${sc.sets}"></label>
-        <label>reps<input class="ef-reps" value="${esc(sc.reps)}"></label>
+        <label>sets<input class="ef-sets" inputmode="numeric" value="${rowScheme(x,false).sets}"></label>
+        <label>reps<input class="ef-reps" value="${esc(rowScheme(x,false).reps)}"></label>
       </div>
       <div class="ef-note">applies to every ${WDAYS[DAYKEYS.indexOf(sessKey)]}</div>
       <div class="ef-btns">
@@ -2074,7 +2254,11 @@ function workRowHTML(x, i, r, dk, sessKey){
           : ` · <span class="nudge">try ${lw + wStep(lw)}?</span>`;
       }
     }
-    const hint = (!bw && last)
+    if (!nudge && !done && !bw && sameDay(fromKey(dk), new Date())){
+    const s = liftStatus(cid);
+    if (s && s.kind==="stall") nudge = ` · <span class="nudge">${s.n}× at ${s.w} — try ${s.next}${ASSISTED[cid]?" assist":""}?</span>`;
+  }
+  const hint = (!bw && last)
       ? `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${nudge}</div>` : "";
     if (pips || hint) h += `<div class="rowfoot">${pips}${hint}</div>`;
   }
@@ -2263,6 +2447,30 @@ function renderPlan(){
   $("#view-plan").innerHTML = h;
 }
 
+/* the last eight program weeks at a glance — one column of dots per week,
+   a dot per planned session, filled for each one she finished */
+function rhythmHTML(){
+  const wk = weeksIn(), planned = plannedPerWeek();
+  const first = Math.max(1, wk-7);
+  let done = 0, total = 0, cols = "";
+  for (let k=first; k<=wk; k++){
+    const [a, b] = weekRange(k);
+    const n = stampedIn(a, b);
+    const cur = k===wk;
+    if (!cur){ done += n; total += planned; }
+    const slots = Math.max(planned, n);
+    let dots = "";
+    for (let d=0; d<slots; d++) dots += `<i class="${d<n?"on":""}${d>=planned?" extra":""}"></i>`;
+    cols += `<button class="rwk ${cur?"cur":""}" data-act="rhythmwk" data-dk="${a}" aria-label="Week ${k}: ${n} of ${planned} sessions${cur?", so far":""}">
+      <span class="rdots">${dots}</span><span class="rlbl">${cur?"now":"W"+k}</span></button>`;
+  }
+  const weeks = wk - first;
+  return `<div class="rhythm">
+    <div class="rhead"><span>Last ${weeks+1} weeks</span>${weeks?`<em>${done} of ${total} sessions${total?` · ${Math.round(done/total*100)}%`:""}</em>`:""}</div>
+    <div class="rcols">${cols}</div>
+  </div>`;
+}
+
 /* ══════════════════ render: history ══════════════════ */
 function renderLog(){
   const [y,m] = ui.calMonth;
@@ -2273,6 +2481,7 @@ function renderLog(){
 
   let h = `<div class="pagehead"><h2>Record</h2>
     <p>Week ${weeksIn()} of the program · ${sessionsLogged()} ${sessionsLogged()===1?'session':'sessions'} logged</p></div>`;
+  h += rhythmHTML();
   h += `<div class="calhead"><h3>${MONTHS[m]} ${y}</h3>
     <div class="mnav">
       <button data-act="mnav" data-dir="-1" aria-label="previous month">‹</button>
@@ -2340,7 +2549,8 @@ function renderLog(){
   }
 
   h += `<div class="datazone">
-    <p>Everything lives on this device. Export a copy now and then — paper burns, JSON doesn't.</p>
+    <p>Everything lives on this device. Export a copy now and then — paper burns, JSON doesn't.
+      <br>Last backup: ${db.settings.lastExport ? fmtShort(db.settings.lastExport) : "never"}.</p>
     <div class="row">
       <button class="databtn" data-act="export">export</button>
       <button class="databtn" data-act="import">import</button>
@@ -2351,7 +2561,8 @@ function renderLog(){
 
 /* ══════════════════ render: progress ══════════════════ */
 function series(exId){
-  const out = [];
+  if (seriesMemo[exId]) return seriesMemo[exId];
+  const out = seriesMemo[exId] = [];
   for (const dk of Object.keys(db.workouts).sort()){
     const w = db.workouts[dk];
     const e = w.entries && w.entries[exId];
@@ -2360,7 +2571,7 @@ function series(exId){
   }
   return out;
 }
-function chartSVG(pts){
+function chartSVG(pts, label){
   const W=340, H=120, padL=34, padR=16, padT=14, padB=22;
   const ws = pts.map(p=>p.w);
   let lo = Math.min(...ws), hi = Math.max(...ws);
@@ -2370,7 +2581,7 @@ function chartSVG(pts){
   const X = i => pts.length===1 ? W/2 : padL + (W-padL-padR)*(i/(pts.length-1));
   const Y = w => padT + (H-padT-padB)*(1-(w-lo)/(hi-lo));
   const yTop = Math.max(...ws), yBot = Math.min(...ws);
-  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="weight over time">`;
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${label||"weight"} over time">`;
   s += `<line class="grid" x1="${padL}" y1="${Y(yTop)}" x2="${W-padR}" y2="${Y(yTop)}"/>`;
   if (yBot!==yTop) s += `<line class="grid" x1="${padL}" y1="${Y(yBot)}" x2="${W-padR}" y2="${Y(yBot)}"/>`;
   s += `<text x="${padL-6}" y="${Y(yTop)+3.5}" text-anchor="end">${yTop}</text>`;
@@ -2427,12 +2638,58 @@ function progRowHTML(id, i){
   }
   return h + `</li>`;
 }
+/* bodyweight moves have no weight to chart — their progress is the reps she typed */
+function repSeries(exId){
+  const out = [];
+  for (const dk of Object.keys(db.workouts).sort()){
+    const w = db.workouts[dk], e = w.entries && w.entries[exId];
+    if (!e || !countsEntry(w, e) || (e.weight != null && e.weight !== "")) continue;
+    const r = repsGot(e);
+    if (r != null) out.push({dk, w:r});
+  }
+  return out;
+}
+function repRowHTML(id, i){
+  const pts = repSeries(id);
+  const first = pts[0].w, latest = pts[pts.length-1].w, best = Math.max(...pts.map(p=>p.w));
+  const delta = latest - first;
+  let dTxt, dCls = "";
+  if (pts.length===1) dTxt = "first entry";
+  else if (delta>0) dTxt = `＋${delta} ${delta===1?"rep":"reps"} since ${fmtShort(pts[0].dk)}`;
+  else if (best > latest) { dTxt = `best so far · ${best} reps`; dCls = "zero"; }
+  else { dTxt = "holding steady"; dCls = "zero"; }
+  const open = ui.progOpen===id;
+  let h = `<li style="--i:${i}">
+    <button class="prow" data-act="prog" data-ex="${id}" aria-expanded="${open}">
+      <span class="lft">
+        <span class="nm">${esc(nameOf(id))}</span>
+        <span class="delta ${dCls}">${dTxt}</span>
+      </span>
+      <span class="latest">${latest}<small class="unitsm"> reps</small></span>
+    </button>`;
+  if (open){
+    h += `<div class="pbody">${chartSVG(pts, "reps")}<ul class="pentries">`;
+    for (const p of [...pts].reverse()) h += `<li><span>${fmtShort(p.dk)}</span><span class="r">${p.w}<small>reps</small></span></li>`;
+    h += `</ul></div>`;
+  }
+  return h + `</li>`;
+}
 function renderProgress(){
   const all = new Set([...Object.keys(NAMES), ...Object.keys(LIBNAMES), ...Object.keys(db.customNames)]);
   for (const e of db.customLib) all.add(e.id);
   const tracked = [...all].filter(id=>series(id).length>0);
+  for (const id of loggedIds()) all.add(id);
+  const repTracked = [...all].filter(id=>!tracked.includes(id) && repSeries(id).length>0)
+    .sort((a,b)=>{ const x = repSeries(a), y = repSeries(b); return y[y.length-1].dk.localeCompare(x[x.length-1].dk); });
   let h = `<div class="pagehead"><h2>Progress</h2>
-    <p>Weight over time, one lift at a time.</p></div>`;
+    <p>Weight over time, one lift at a time.</p></div>` + checkInHTML("progress");
+  const repGroup = start => !repTracked.length ? "" :
+    `<div class="pgroup">Bodyweight · reps<small>the reps you type in</small></div><ul class="plist">`
+    + repTracked.map((id,n)=>repRowHTML(id, start+n)).join("") + `</ul>`;
+  if (!tracked.length && repTracked.length){
+    $("#view-progress").innerHTML = h + repGroup(0);
+    return;
+  }
   if (!tracked.length){
     h += `<div class="pempty">
       <img class="bunnygif" src="assets/ui/bunny.gif" alt="a patient bunny">
@@ -2454,6 +2711,7 @@ function renderProgress(){
     for (const id of rest) h += progRowHTML(id, i++);
     h += `</ul>`;
   }
+  h += repGroup(i);
   $("#view-progress").innerHTML = h;
 }
 
@@ -2989,9 +3247,16 @@ document.addEventListener("click", e=>{
     ui.planEdit = null; ui.planAdding = false;
     save(); renderPlan(); return;
   }
-  if (act==="msdismiss"){
-    for (const id of t.dataset.ms.split(",")) db.seen[id] = 1;
+  if (act==="gotab"){ ui.tab = t.dataset.tabTo; render(); window.scrollTo(0,0); return; }
+  if (act==="cidismiss"){
+    db.seen["wk"+t.dataset.wk] = 1;
+    if (t.dataset.mark) db.seen["n"+t.dataset.mark] = 1;
     save(); renderToday(); return;
+  }
+  if (act==="ciaction"){
+    saveRoutineItem(t.dataset.day, t.dataset.key, {sets:t.dataset.sets, reps:t.dataset.reps});
+    db.seen["ciset"+t.dataset.wk] = [t.dataset.id, t.dataset.day, t.dataset.sets].join("|");
+    save(); render(); return;
   }
   if (act==="celebrate"){ celebrate(t, t.dataset.dk); return; }
   if (act==="dance"){
@@ -3041,6 +3306,11 @@ document.addEventListener("click", e=>{
     if (m<0){m=11;y--;} if (m>11){m=0;y++;}
     ui.calMonth=[y,m]; renderLog(); return;
   }
+  if (act==="rhythmwk"){
+    const d = fromKey(t.dataset.dk);
+    ui.calMonth = [d.getFullYear(), d.getMonth()]; ui.calSel = t.dataset.dk;
+    renderLog(); return;
+  }
   if (act==="calsel"){ ui.calSel=t.dataset.dk; renderLog(); return; }
   if (act==="delentry"){
     const w = db.workouts[t.dataset.dk];
@@ -3064,7 +3334,9 @@ document.addEventListener("click", e=>{
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "keiko-log-"+key(new Date())+".json";
-    a.click(); URL.revokeObjectURL(a.href); return;
+    a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+    db.settings.lastExport = key(new Date());
+    save(); render(); return;
   }
   if (act==="import"){ $("#importFile").click(); return; }
 });
@@ -3232,7 +3504,14 @@ document.addEventListener("touchend", e=>{
   if (!touchS) return;
   const p = e.changedTouches[0];
   const dx = p.clientX - touchS.x, dy = p.clientY - touchS.y;
-  if (touchS.head){
+  if (touchS.head && touchS.head.classList.contains("plancard")){
+    /* on the Plan tab, swiping the day card steps through the weekdays */
+    if (Math.abs(dx)>55 && Math.abs(dy)<45 && ui.planEdit==null){
+      const i = WEEK_ORDER.indexOf(ui.planDay) + (dx<0?1:-1);
+      ui.planDay = WEEK_ORDER[(i+7)%7]; ui.planAdding = false;
+      renderPlan();
+    }
+  } else if (touchS.head){
     if (Math.abs(dx)>55 && Math.abs(dy)<45){
       const d = fromKey(ui.viewDate); d.setDate(d.getDate()+(dx<0?1:-1));
       ui.viewDate = key(d);
@@ -3256,6 +3535,19 @@ document.addEventListener("touchend", e=>{
 
 buildDatalist();
 render();
+
+/* a home-screen app can sit in memory overnight — when it comes back on a new day,
+   move "today" along with it (unless she'd deliberately navigated to another date) */
+let shownToday = key(new Date());
+document.addEventListener("visibilitychange", ()=>{
+  if (document.hidden) return;
+  const now = key(new Date());
+  if (now === shownToday) return;
+  if (ui.viewDate === shownToday) ui.viewDate = now;
+  if (ui.calSel === shownToday){ ui.calSel = now; const t = new Date(); ui.calMonth = [t.getFullYear(), t.getMonth()]; }
+  shownToday = now;
+  render();
+});
 
 /* offline shell + durable storage — months of logs shouldn't hinge on a cache sweep */
 if ("serviceWorker" in navigator){
