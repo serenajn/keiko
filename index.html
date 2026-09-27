@@ -627,18 +627,28 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .pempty{margin:3rem 1.5rem;text-align:center}
 .pempty p{font-size:.85rem;color:var(--ink-2);font-style:italic;line-height:1.7}
 
-/* hold-and-drag reorder */
-[data-drag]{-webkit-touch-callout:none}
-[data-drag] .exname,[data-drag] .exdetail,[data-drag] .scheme,.planrowbtn{-webkit-user-select:none;user-select:none}
+/* hold-and-drag reorder — the ⋯ is the grip */
+[data-grip]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 body.nosel{-webkit-user-select:none;user-select:none}
-.sorting>[data-drag]{transition:transform .22s cubic-bezier(.2,.8,.2,1)}
-.sorting>[data-drag].lifted{
-  transition:box-shadow .2s;position:relative;z-index:20;
-  background:var(--paper);border-radius:.8rem;
-  box-shadow:0 12px 32px rgba(52,46,52,.18),0 0 0 1px var(--line);
+.sorting>[data-drag]{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.sorting>[data-drag].lifted{transition:none;position:relative;z-index:20;overflow:visible;border-bottom-color:transparent}
+/* a soft floating card that sits a little outside the row, so the text has room to breathe */
+.sorting>[data-drag].lifted::before{
+  content:"";position:absolute;inset:-.35rem -.8rem;z-index:-1;
+  background:var(--paper);border-radius:1.1rem;
+  box-shadow:0 18px 40px -12px rgba(52,46,52,.28),0 4px 12px -6px rgba(52,46,52,.12);
+  animation:liftin .2s ease-out both;
 }
+@keyframes liftin{from{opacity:0;transform:scale(.97)}}
 .sorting>[data-drag].lifted .rowslide{background:transparent}
-@media (prefers-color-scheme: dark){ .sorting>[data-drag].lifted{background:var(--paper-2);box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px var(--line)} }
+.sorting>[data-drag].lifted .rowactions{visibility:hidden}
+.sorting>[data-drag].lifted [data-grip]{color:var(--hanko)}
+@media (prefers-color-scheme: dark){
+  .sorting>[data-drag].lifted::before{background:#352d36;box-shadow:0 18px 40px -10px rgba(0,0,0,.65)}
+}
+.planli{display:flex;align-items:center}
+.planli .planrowbtn{flex:1;min-width:0}
+.planli .rowmore{margin:0 -.3rem 0 .2rem;align-self:center}
 
 /* ───────── plan (weekly routine editor) ───────── */
 .kickr{display:flex;align-items:baseline;gap:.2rem}
@@ -924,8 +934,8 @@ const PLAN = {
   tue: {
     title:"Upper Body\n+ Posture", sub:"width + taper · 45 min",
     note:"<b>Shoulders down and away from the ears</b> on every rep. The stop signal is the shrug — if a shoulder rides up and won't stay down, the weight is too heavy.",
-    warmup:["Arm circles","Band pull-aparts × 15","Cat-cow × 10"],
-    warmTime:"5 min",
+    warmup:["Arm circles","Band pull-aparts × 15","Cat-cow × 10","Doorway pec stretch × 30s / side","Chin tuck × 10, 3s hold — level glide, not a nod"],
+    warmTime:"6–7 min",
     main:[
       {id:"assisted-pullup", name:"Assisted pull-up", detail:"machine · assist weight", sets:3, reps:"8–10", ex:{sets:3,reps:"8"},
         cue:"Pull the shoulder blades down first. Full hang at the bottom."},
@@ -950,12 +960,10 @@ const PLAN = {
         cue:"Face down, thumbs up, lift into a Y. This is the muscle that holds the shoulder blade down — the whole open-neck line runs through it."},
       {id:"serratus-slide", name:"Serratus wall slide", sets:2, reps:"10", bw:true,
         cue:"Full forearm contact with the wall. Reach long at the top."},
-      {id:"chin-tuck", name:"Chin tuck", detail:"3s hold each", sets:2, reps:"10", bw:true, ex:{sets:1,reps:"10"},
-        cue:"Slide the chin straight back — a level glide, not a nod. Hold three seconds. This is the forward-head fix, and it takes a minute."},
-      {id:"doorway-pec-stretch", name:"Doorway pec stretch", sets:2, reps:"30s / side", bw:true,
-        cue:"Forearm on the frame at shoulder height, step through until the chest opens. Rounded shoulders are short pecs as much as a weak back."}
+      {id:"push-up", name:"Push-up", detail:"incline is fine · chest open", sets:2, reps:"max / 12", bw:true, ex:{sets:2,reps:"max / 12"},
+        cue:"Shoulder blades set back and down, body one straight line. Use a bench or bar to incline it until you can get 8 clean reps."}
     ],
-    finish:"Dead bug × 10 / side, then a 30s plank — shoulder blades broad and flat."
+    finish:"Pallof press 2 × 10 / side, then dead bug × 10 / side — ribs down, shoulder blades flat."
   },
   wed: {
     title:"Active Recovery\n& Posture", sub:"25–35 min · mobility & alignment", recovery:true,
@@ -1030,49 +1038,11 @@ const PLAN = {
   },
   fri: { rest:true, title:"Rest or easy walk",
     line:"Recovery and decompression. A slow walk counts double on a pretty day." },
-  sat: {
-    title:"Full Body +\nDeep Core", sub:"integration day · 40 min",
-    warmup:[
-      "Incline walk or bike × 3 min",
-      "Glute bridges × 15",
-      "Band pull-aparts × 15, arm circles × 10"
-    ],
-    warmTime:"5 min",
-    main:[
-      {id:"rdl", name:"Romanian deadlift", detail:"dumbbells · weight per hand", sets:3, reps:"10", ex:{sets:3,reps:"10"},
-        cue:"Hinge at the hips, DBs trace the shins. Stretch the hamstrings before standing."},
-      {id:"step-up", name:"Step-ups", sets:3, reps:"10 / leg", ex:{sets:3,reps:"10 / leg"},
-        cue:"Drive through the heel of the working leg. Don't push off the back foot."},
-      {slot:"sat-pull", label:"Horizontal pull", sets:3, reps:"10", ex:{sets:3,reps:"10"},
-        cue:"Shoulders down and back. Squeeze at full contraction.",
-        choices:[
-          {id:"seated-cable-row", name:"Seated cable row", tag:""},
-          {id:"one-arm-row", name:"One-arm DB row", tag:""},
-          {id:"lat-pulldown", name:"Lat pulldown", tag:""}
-        ]},
-      {slot:"sat-push", label:"Push · chest open", sets:2, reps:"max / 12",
-        cue:"Shoulder blades pinched together. Full range of motion.",
-        choices:[
-          {id:"push-up", name:"Push-up", tag:"incline regression", bw:true},
-          {id:"db-bench", name:"DB bench press", tag:""}
-        ]},
-      {slot:"sat-coreA", label:"Core · anti-rotation", sets:2, reps:"10",
-        cue:"Resist the pull — the stillness is the exercise.",
-        choices:[
-          {id:"pallof-press", name:"Pallof press", tag:""},
-          {id:"side-plank", name:"Side plank", tag:"", bw:true},
-          {id:"dead-bug", name:"Dead bug", tag:"", bw:true}
-        ]},
-      {slot:"sat-coreB", label:"Core · deep activation", sets:2, reps:"10",
-        cue:"Ribs down, lower back pressed to the floor.",
-        choices:[
-          {id:"hollow-hold", name:"Hollow hold", tag:"", bw:true},
-          {id:"bird-dog", name:"Bird dog", tag:"", bw:true},
-          {id:"reverse-crunch", name:"Reverse crunch", tag:"", bw:true}
-        ]}
-    ],
-    finish:"Zone-2 or a long walk if there's time — bank the weekend steps."
-  },
+  /* Saturday used to be a full-body day, but it sat one day after Thursday's legs and one
+     day before Monday's heavy hinge — legs never got a full recovery, and it rarely happened.
+     Its only unique pieces (a chest push, anti-rotation core) moved to Tuesday. */
+  sat: { rest:true, title:"Rest · legs recover",
+    line:"Thursday's work lands today. A walk or some sun is plenty — Monday's hinge day will thank you." },
   sun: { rest:true, title:"Rest",
     line:"Complete nervous-system reset. The growing happens here." }
 };
@@ -1099,6 +1069,10 @@ NAMES["tricep-dip"] = "Tricep dip";
 NAMES["cc-straight-leg"] = "Captain's chair — straight-leg raise";
 NAMES["seated-ham-curl"] = "Seated hamstring curl";
 NAMES["single-leg-rdl"] = "Single-leg RDL";
+Object.assign(NAMES, {"step-up":"Step-ups", "seated-cable-row":"Seated cable row", "lat-pulldown":"Lat pulldown",
+  "db-bench":"DB bench press", "pallof-press":"Pallof press", "side-plank":"Side plank", "dead-bug":"Dead bug",
+  "hollow-hold":"Hollow hold", "bird-dog":"Bird dog", "reverse-crunch":"Reverse crunch",
+  "chin-tuck":"Chin tuck", "doorway-pec-stretch":"Doorway pec stretch"});
 const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "bulgarian-split-squat":"contralateral DB",
   "assisted-pullup":"assist", "tricep-dip":"assist" };
 
@@ -2229,7 +2203,7 @@ function renderToday(){
   const hiddenN = allRows.length - visible.length;
   h += `<div class="workwrap">
     <div class="workkicker"><span>Main work</span><span class="kickr">${express?'<em>express · ~25 min</em>':''}<button class="kickedit" data-act="planjump" data-day="${sessKey}">edit routine</button></span></div>
-    ${!db.seen.sethint?`<div class="skipnote">new · tap the set dots to log fewer sets than planned${db.seen.rowhint?"":" · tap ⋯ for today-only swaps and every-week changes"} · hold a lift to drag it into a new order</div>`:""}
+    ${!db.seen.sethint?`<div class="skipnote">new · tap the set dots to log fewer sets than planned${db.seen.rowhint?"":" · tap ⋯ for today-only swaps and every-week changes"} · hold ⋯ to drag a lift into a new order</div>`:""}
     <ol class="work" data-dragwrap="${sessKey}">`;
   items.forEach((x,i)=>{ h += workRowHTML(x, i, r, dk, sessKey); });
   h += extrasHTML(r, dk, items.length);
@@ -2277,7 +2251,7 @@ function workRowHTML(x, i, r, dk, sessKey){
           :it.detail?`<div class="exdetail">${esc(it.detail)}</div>`:''}
       </div>
       <div class="scheme">${sc.sets} × ${esc(sc.reps)}</div>
-      <button class="rowmore" data-act="rowmore" data-key="${ikey}" aria-label="exercise options">⋯</button>
+      <button class="rowmore" data-act="rowmore" data-key="${ikey}" ${editing?"":"data-grip"} aria-label="exercise options — hold to move">⋯</button>
     </div>`;
   if (ui.cueOpen===ikey && hasCue){
     h += `<div class="cuebox">${esc(cueText)}${le?`${cueText?'<br>':''}<button class="toguide" data-act="openlib" data-id="${le.id}">form guide ＋ demo →</button>`:""}</div>`;
@@ -2418,11 +2392,11 @@ function planRowHTML(k, x, idx, n){
   else if (it.choices) det = "pick on the day: " + it.choices.map(c=>c.name).join(" · ");
   else if (it.detail) det = it.detail;
   if (ui.planEdit !== x.ikey){
-    return `<li style="--i:${idx}" data-drag="${x.ikey}"><button class="planrowbtn" data-act="planedit" data-key="${x.ikey}" aria-label="edit ${esc(rowName(x))}">
+    return `<li class="planli" style="--i:${idx}" data-drag="${x.ikey}"><button class="planrowbtn" data-act="planedit" data-key="${x.ikey}" aria-label="edit ${esc(rowName(x))}">
       <span class="pnum">${idx+1}</span>
       <span class="pmain"><span class="pname">${esc(rowName(x))}</span>${det?`<span class="pdet ${detCls}">${esc(det)}</span>`:""}</span>
       <span class="scheme">${esc(sc.sets)} × ${esc(sc.reps)}</span>
-    </button></li>`;
+    </button><button class="rowmore" data-act="planedit" data-key="${x.ikey}" data-grip aria-label="edit — hold to move">⋯</button></li>`;
   }
   const custom = !it.added && (o.id || o.sets || o.reps);
   return `<li class="planedit" style="--i:${idx}"><div class="editform">
@@ -2503,7 +2477,7 @@ function renderPlan(){
   }
 
   /* main work */
-  h += `<div class="plansec"><div class="workkicker"><span>${day.recovery?"Added to recovery day":"Main work"}</span><em class="plancount">${vis.length>1?"hold &amp; drag to reorder":`${vis.length} ${vis.length===1?"exercise":"exercises"}`}</em></div>
+  h += `<div class="plansec"><div class="workkicker"><span>${day.recovery?"Added to recovery day":"Main work"}</span><em class="plancount">${vis.length>1?"hold ⋯ to reorder":`${vis.length} ${vis.length===1?"exercise":"exercises"}`}</em></div>
     <ol class="planlist" data-dragwrap="${k}">`;
   vis.forEach((x,i)=>{ h += planRowHTML(k, x, i, vis.length); });
   h += `<li class="planaddrow">`;
@@ -3680,10 +3654,10 @@ document.addEventListener("touchend", e=>{
    weekday's routine, so it sticks every week (same as the Plan tab's arrows). */
 let drag = null, dragEatClick = false;
 function dragStart(x, y, target){
-  const row = target.closest("[data-drag]");
+  /* only the ⋯ grip picks a row up — a tap on it still opens its menu */
+  const grip = target.closest("[data-grip]");
+  const row = grip && grip.closest("[data-drag]");
   if (!row || drag) return;
-  if (target.closest("input,textarea,select,.rowactions")) return;
-  if (target.closest("button") && !target.closest(".planrowbtn")) return;
   if (row.closest(".exrow.open")) return;
   drag = {row, list:row.parentNode, x0:x, y0:y, x, y, sy0:window.scrollY, live:false,
     timer:setTimeout(dragLift, 350)};
@@ -3710,7 +3684,7 @@ function dragLift(){
 }
 function dragPlace(){
   const dy = (drag.y + window.scrollY) - (drag.y0 + drag.sy0);
-  drag.row.style.transform = `translateY(${dy}px) scale(1.02)`;
+  drag.row.style.transform = `translateY(${dy}px) scale(1.015)`;
   const me = drag.tops[drag.from];
   const cy = me.top + me.h/2 + dy;
   let to = drag.from;
