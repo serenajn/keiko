@@ -381,6 +381,8 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
   padding:.42rem .3rem;font:inherit;font-weight:600;outline:none;color:var(--ink);
 }
 .ef-btns{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.ef-check{display:flex;align-items:center;gap:.5rem;font-size:.74rem;color:var(--ink-2);cursor:pointer;align-self:flex-start;padding:.2rem 0}
+.ef-check input{width:1.1rem;height:1.1rem;accent-color:var(--hanko)}
 .ef-note{font-size:.64rem;color:var(--ink-3);letter-spacing:.04em;font-style:italic}
 .restorelink{color:var(--hanko);font-style:normal;text-decoration:underline;text-underline-offset:2px}
 .wt{
@@ -432,11 +434,11 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .daydetail li.ledit{display:flex;flex-direction:column;align-items:stretch;gap:.5rem}
 .lename{font-size:.85rem;font-weight:500}
 .ledrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-.lew,.ler{
+.lew,.ler,.les{
   width:3.6rem;text-align:center;background:var(--paper-2);border:none;border-radius:999px;
   padding:.42rem .3rem;font-family:var(--serif);font-size:.95rem;font-weight:600;outline:none;color:var(--ink);
 }
-.lew::placeholder,.ler::placeholder{color:var(--ink-3);font-family:var(--sans);font-size:.66rem;font-weight:400;letter-spacing:.05em}
+.lew::placeholder,.ler::placeholder,.les::placeholder{color:var(--ink-3);font-family:var(--sans);font-size:.66rem;font-weight:400;letter-spacing:.05em}
 /* set pips + last-time hint share a footer row */
 .rowfoot{display:flex;align-items:center;gap:.3rem .8rem;margin-top:.35rem;min-height:1.5rem;flex-wrap:wrap}
 .setpips{display:flex;align-items:center;gap:.05rem;margin-left:-.35rem}
@@ -452,6 +454,12 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .lasthint{font-size:.68rem;color:var(--ink-3);margin-left:auto;text-align:right}
 .lasthint b{color:var(--ink-2);font-weight:500}
 .lasthint .nudge{color:var(--hanko);font-weight:600}
+.xsets{display:flex;align-items:center;gap:.1rem;margin-left:-.4rem}
+.xsets button{width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center;color:var(--ink-2);font-size:.95rem}
+.xsets button:active{background:var(--paper-2)}
+.xsets b{min-width:1.3rem;text-align:center;font-family:var(--serif);font-weight:600;font-size:.95rem}
+.xsets b.ghost{color:var(--ink-3);font-weight:400}
+.xsets .piplabel{font-size:.58rem;color:var(--ink-3);letter-spacing:.14em;text-transform:uppercase;margin-left:.3rem}
 .skipnote{font-size:.72rem;color:var(--ink-3);font-style:italic;padding:.8rem 0;text-align:center}
 
 .finishline{
@@ -618,6 +626,19 @@ li.done .c,.c.on{background:var(--ink);border-color:var(--ink)}
 .pentries li .r small{color:var(--ink-2);font-family:var(--sans);font-weight:400;font-size:.66rem;margin-left:.35em}
 .pempty{margin:3rem 1.5rem;text-align:center}
 .pempty p{font-size:.85rem;color:var(--ink-2);font-style:italic;line-height:1.7}
+
+/* hold-and-drag reorder */
+[data-drag]{-webkit-touch-callout:none}
+[data-drag] .exname,[data-drag] .exdetail,[data-drag] .scheme,.planrowbtn{-webkit-user-select:none;user-select:none}
+body.nosel{-webkit-user-select:none;user-select:none}
+.sorting>[data-drag]{transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+.sorting>[data-drag].lifted{
+  transition:box-shadow .2s;position:relative;z-index:20;
+  background:var(--paper);border-radius:.8rem;
+  box-shadow:0 12px 32px rgba(52,46,52,.18),0 0 0 1px var(--line);
+}
+.sorting>[data-drag].lifted .rowslide{background:transparent}
+@media (prefers-color-scheme: dark){ .sorting>[data-drag].lifted{background:var(--paper-2);box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px var(--line)} }
 
 /* ───────── plan (weekly routine editor) ───────── */
 .kickr{display:flex;align-items:baseline;gap:.2rem}
@@ -1586,6 +1607,52 @@ function addRoutineItem(k, name, sets, reps){
   if (rt.order) rt.order.push(key);
   return key;
 }
+/* drag-to-reorder hands back the shown rows in their new order. Rows that weren't
+   on screen (express mode hides some) keep their slots; removed rows go last. */
+function reorderShown(k, shownKeys){
+  const rows = routineRows(k);
+  const vis = rows.filter(x=>!isHidden(x)).map(x=>x.ikey);
+  const shown = new Set(shownKeys);
+  let j = 0;
+  const merged = vis.map(q=>shown.has(q) ? shownKeys[j++] : q);
+  dayRtMake(k).order = merged.concat(rows.filter(isHidden).map(x=>x.ikey));
+}
+/* weight or no weight — her call sticks per exercise. db.bwPref[id] true = no weight.
+   Without a choice: the plan's own flag, else core & mobility moves default to none. */
+function libBW(id){
+  const le = libEntry(id);
+  return !!(le && (le.cat==="Core" || le.cat==="Stretches & Mobility") && le.id!=="pallof-press");
+}
+function noWeight(id, dflt){
+  const p = db.bwPref && db.bwPref[id];
+  if (p != null) return !!p;
+  return dflt != null ? !!dflt : libBW(id);
+}
+function setTrackWeight(id, track, dflt){
+  db.bwPref = db.bwPref || {};
+  delete db.bwPref[id];
+  if (noWeight(id, dflt) !== !track) db.bwPref[id] = !track;
+  if (!Object.keys(db.bwPref).length) delete db.bwPref;
+}
+/* the fixed exercise a routine row stands for (null for pick-on-the-day slots),
+   and whether the plan itself calls it bodyweight */
+function rowExId(x){ return (x.o && x.o.id) || (x.it.choices ? null : x.it.id); }
+function rowBWDefault(x){ return (x.it.added || (x.o && x.o.id)) ? undefined : !!x.it.bw; }
+
+/* the "track weight" switch in the edit forms — hidden for pick-on-the-day slots */
+function weightCheckHTML(x){
+  const id = x ? rowExId(x) : "new";
+  if (!id) return "";
+  const on = x ? !noWeight(id, rowBWDefault(x)) : true;
+  return `<label class="ef-check"><input type="checkbox" class="ef-wt" ${on?"checked":""}> track weight (lb)</label>`;
+}
+function applyWeightCheck(k, key, form){
+  const cb = form && form.querySelector(".ef-wt");
+  const x = routineRows(k).find(r=>r.ikey===key);
+  const id = x && rowExId(x);
+  if (cb && id) setTrackWeight(id, cb.checked, rowBWDefault(x));
+}
+
 /* swap with the nearest visible neighbour; removed rows keep their spot */
 function moveRoutineItem(k, key, dir){
   const rows = routineRows(k);
@@ -1641,10 +1708,25 @@ function lastWeight(exId, beforeKey){
   if (HINTS[exId] != null) return {w:HINTS[exId], when:null};
   return null;
 }
-/* "same as last time" — fill weight & reps unless she already typed something */
-function inheritInto(entry, exId, repsFallback){
+/* the last time she logged it at all — reps and sets count, not only weight */
+function lastLog(exId, beforeKey){
+  const dates = Object.keys(db.workouts).sort().reverse();
+  for (const dk of dates){
+    if (dk >= beforeKey) continue;
+    const w = db.workouts[dk];
+    const e = w.entries && w.entries[exId];
+    if (e && countsEntry(w, e) && (e.reps || e.nsets || (e.weight != null && e.weight !== "")))
+      return {w:e.weight, reps:e.reps, nsets:e.nsets, when:dk};
+  }
+  return null;
+}
+/* "same as last time" — fill weight & reps (and an extra's set count) unless she already typed something */
+function inheritInto(entry, exId, repsFallback, nowt){
   const last = lastWeight(exId, ui.viewDate);
-  if (last && (entry.weight == null || entry.weight === "")) entry.weight = last.w;
+  if (!nowt && last && (entry.weight == null || entry.weight === "")) entry.weight = last.w;
+  const ll = lastLog(exId, ui.viewDate);
+  if (entry.nsets == null && ll && ll.nsets) entry.nsets = ll.nsets;
+  if (nowt && !entry.reps && ll && ll.reps){ entry.reps = ll.reps; return; }
   if (!entry.reps){
     const rr = (last && last.reps) || repsFallback;
     if (rr) entry.reps = rr;
@@ -1984,7 +2066,13 @@ function extrasHTML(r, dk, startIdx){
     const wVal = entry && entry.weight != null ? entry.weight : "";
     const le = libEntry(id);
     const cueText = (le && (le.cues||[])[0]) || "";
-    h += `<li class="exrow ${ui.rowOpen==="x:"+id?'open':''}" data-rowkey="x:${id}" style="--i:${startIdx+n};--tray:112px">
+    const nw = noWeight(id);
+    const ll = lastLog(id, dk);
+    const nsets = entry && entry.nsets;
+    const lastTxt = ll ? (nw || ll.w == null || ll.w === ""
+        ? `${ll.nsets?`${ll.nsets} × `:""}${ll.reps?esc(ll.reps):""}${!ll.nsets&&ll.reps?" reps":""}`
+        : `${ll.w} lb${ll.reps?` × ${esc(ll.reps)}`:""}${ll.nsets?` · ${ll.nsets} sets`:""}`) : "";
+    h += `<li class="exrow ${ui.rowOpen==="x:"+id?'open':''}" data-rowkey="x:${id}" style="--i:${startIdx+n};--tray:224px">
       <div class="rowslide">
       <div class="exhead">
         <div>
@@ -1995,20 +2083,31 @@ function extrasHTML(r, dk, startIdx){
       </div>
       ${ui.cueOpen==="x:"+id && le ? `<div class="cuebox">${esc(cueText)}${cueText?'<br>':''}<button class="toguide" data-act="openlib" data-id="${le.id}">form guide ＋ demo →</button></div>` : ""}
       <div class="logrow">
-        <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${id}" ${last&&last.reps?`data-reps="${esc(last.reps)}"`:""} aria-pressed="${done}">
+        <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${id}" ${ll&&ll.reps?`data-reps="${esc(ll.reps)}"`:""} ${nw?'data-nowt="1"':""} aria-pressed="${done}">
           <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
         </button>
-        <div class="wt">
+        ${nw ? "" : `<div class="wt">
           <button data-act="wdec" data-ex="${id}">−</button>
           <input class="wtin" inputmode="decimal" data-ex="${id}" value="${wVal!==""?esc(wVal):""}" placeholder="${last?last.w:'–'}" aria-label="weight">
           <span class="unit">lb</span>
           <button data-act="winc" data-ex="${id}">＋</button>
+        </div>`}
+        <input class="repsin" inputmode="numeric" data-ex="${id}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${ll&&ll.reps?esc(ll.reps):'reps'}" aria-label="reps" ${nw?'style="margin-left:auto"':""}>
+      </div>
+      <div class="rowfoot">
+        <div class="xsets" aria-label="sets">
+          <button data-act="xsets" data-ex="${id}" data-d="-1" aria-label="one fewer set">−</button>
+          <b class="${nsets?"":"ghost"}">${nsets || (ll && ll.nsets) || 0}</b>
+          <button data-act="xsets" data-ex="${id}" data-d="1" aria-label="one more set">＋</button>
+          <span class="piplabel">sets</span>
         </div>
-        <input class="repsin" inputmode="numeric" data-ex="${id}" value="${entry&&entry.reps?esc(entry.reps):""}" placeholder="${last&&last.reps?esc(last.reps):'reps'}" aria-label="reps">
+        ${lastTxt?`<div class="lasthint">last · <b>${lastTxt}</b></div>`:""}
       </div>
-      ${last?`<div class="rowfoot"><div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b></div></div>`:""}
       </div>
-      <div class="rowactions"><div class="trayzone"><span class="zonelbl">today only</span><button class="warn" data-act="rmex" data-id="${id}">remove</button></div></div>
+      <div class="rowactions">
+        <div class="trayzone"><span class="zonelbl">today only</span><button class="warn" data-act="rmex" data-id="${id}">remove</button></div>
+        <div class="trayzone"><span class="zonelbl">every time</span><button data-act="bwtoggle" data-id="${id}">${nw?"track lb":"no weight"}</button></div>
+      </div>
     </li>`;
   });
   h += `<li style="--i:${startIdx+list.length}">
@@ -2101,7 +2200,7 @@ function renderToday(){
       </li></ol></div>`;
     }
     /* anything she's added to Wednesday in the Plan tab sits under the recovery blocks */
-    h += `<div class="workwrap"><ol class="work">`;
+    h += `<div class="workwrap"><ol class="work" data-dragwrap="${sessKey}">`;
     visible.forEach((x,i)=>{ h += workRowHTML(x, i, r, dk, sessKey); });
     h += extrasHTML(r, dk, visible.length) + `</ol></div>`;
     h += noteHTML(r, dk);
@@ -2130,8 +2229,8 @@ function renderToday(){
   const hiddenN = allRows.length - visible.length;
   h += `<div class="workwrap">
     <div class="workkicker"><span>Main work</span><span class="kickr">${express?'<em>express · ~25 min</em>':''}<button class="kickedit" data-act="planjump" data-day="${sessKey}">edit routine</button></span></div>
-    ${!db.seen.sethint?`<div class="skipnote">new · tap the set dots to log fewer sets than planned${db.seen.rowhint?"":" · tap ⋯ for today-only swaps and every-week changes"}</div>`:""}
-    <ol class="work">`;
+    ${!db.seen.sethint?`<div class="skipnote">new · tap the set dots to log fewer sets than planned${db.seen.rowhint?"":" · tap ⋯ for today-only swaps and every-week changes"} · hold a lift to drag it into a new order</div>`:""}
+    <ol class="work" data-dragwrap="${sessKey}">`;
   items.forEach((x,i)=>{ h += workRowHTML(x, i, r, dk, sessKey); });
   h += extrasHTML(r, dk, items.length);
   h += `</ol>`;
@@ -2155,7 +2254,7 @@ function workRowHTML(x, i, r, dk, sessKey){
   const permId = o && o.id;
   const cid = sub ? sub.id : (permId || chosenId(it, r));
   const entry = r && r.entries && r.entries[cid];
-  const bw = (sub || permId) ? false : isBW(it, cid);
+  const bw = noWeight(cid, (sub || permId || it.added) ? undefined : isBW(it, cid));
   const done = !!(entry && entry.done);
   const last = lastWeight(cid, dk);
   const wVal = entry && entry.weight != null ? entry.weight : "";
@@ -2168,7 +2267,7 @@ function workRowHTML(x, i, r, dk, sessKey){
   const hasCue = !!(cueText || le);
   let h = "";
 
-  h += `<li class="exrow ${ui.rowOpen===ikey?'open':''}" data-rowkey="${ikey}" style="--i:${i}">
+  h += `<li class="exrow ${ui.rowOpen===ikey?'open':''}" data-rowkey="${ikey}" ${editing?"":`data-drag="${ikey}"`} style="--i:${i}">
     <div class="rowslide">
     <div class="exhead">
       <div>
@@ -2208,6 +2307,7 @@ function workRowHTML(x, i, r, dk, sessKey){
         <label>sets<input class="ef-sets" inputmode="numeric" value="${rowScheme(x,false).sets}"></label>
         <label>reps<input class="ef-reps" value="${esc(rowScheme(x,false).reps)}"></label>
       </div>
+      ${weightCheckHTML(x)}
       <div class="ef-note">applies to every ${WDAYS[DAYKEYS.indexOf(sessKey)]}</div>
       <div class="ef-btns">
         <button class="choice sel" data-act="editsave" data-key="${ikey}">save</button>
@@ -2217,7 +2317,7 @@ function workRowHTML(x, i, r, dk, sessKey){
   } else {
     const repHint = (last && last.reps) ? last.reps : sc.reps;
     h += `<div class="logrow">
-      <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${cid}" data-reps="${esc(repHint)}" aria-pressed="${done}">
+      <button class="donebtn ${done?'on':''}" data-act="done" data-ex="${cid}" data-reps="${esc(repHint)}" ${bw?'data-nowt="1"':""} aria-pressed="${done}">
         <span class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 7"/></svg></span>done
       </button>`;
     if (!bw){
@@ -2255,11 +2355,13 @@ function workRowHTML(x, i, r, dk, sessKey){
       }
     }
     if (!nudge && !done && !bw && sameDay(fromKey(dk), new Date())){
-    const s = liftStatus(cid);
-    if (s && s.kind==="stall") nudge = ` · <span class="nudge">${s.n}× at ${s.w} — try ${s.next}${ASSISTED[cid]?" assist":""}?</span>`;
-  }
-  const hint = (!bw && last)
-      ? `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${nudge}</div>` : "";
+      const s = liftStatus(cid);
+      if (s && s.kind==="stall") nudge = ` · <span class="nudge">${s.n}× at ${s.w} — try ${s.next}${ASSISTED[cid]?" assist":""}?</span>`;
+    }
+    const llb = bw ? lastLog(cid, dk) : null;
+    const hint = (!bw && last)
+      ? `<div class="lasthint">last · <b>${last.w} lb${last.reps?` × ${esc(last.reps)}`:""}</b>${nudge}</div>`
+      : (llb && llb.reps) ? `<div class="lasthint">last · <b>× ${esc(llb.reps)}</b></div>` : "";
     if (pips || hint) h += `<div class="rowfoot">${pips}${hint}</div>`;
   }
   h += `</div>
@@ -2316,7 +2418,7 @@ function planRowHTML(k, x, idx, n){
   else if (it.choices) det = "pick on the day: " + it.choices.map(c=>c.name).join(" · ");
   else if (it.detail) det = it.detail;
   if (ui.planEdit !== x.ikey){
-    return `<li style="--i:${idx}"><button class="planrowbtn" data-act="planedit" data-key="${x.ikey}" aria-label="edit ${esc(rowName(x))}">
+    return `<li style="--i:${idx}" data-drag="${x.ikey}"><button class="planrowbtn" data-act="planedit" data-key="${x.ikey}" aria-label="edit ${esc(rowName(x))}">
       <span class="pnum">${idx+1}</span>
       <span class="pmain"><span class="pname">${esc(rowName(x))}</span>${det?`<span class="pdet ${detCls}">${esc(det)}</span>`:""}</span>
       <span class="scheme">${esc(sc.sets)} × ${esc(sc.reps)}</span>
@@ -2330,6 +2432,7 @@ function planRowHTML(k, x, idx, n){
       <label>sets<input class="ef-sets" inputmode="numeric" value="${esc(sc.sets)}"></label>
       <label>reps<input class="ef-reps" value="${esc(sc.reps)}"></label>
     </div>
+    ${weightCheckHTML(x)}
     <div class="ef-btns">
       <button class="choice sel" data-act="plansave" data-key="${x.ikey}">save</button>
       <button class="choice" data-act="planeditcancel">cancel</button>
@@ -2400,8 +2503,8 @@ function renderPlan(){
   }
 
   /* main work */
-  h += `<div class="plansec"><div class="workkicker"><span>${day.recovery?"Added to recovery day":"Main work"}</span><em class="plancount">${vis.length} ${vis.length===1?"exercise":"exercises"}</em></div>
-    <ol class="planlist">`;
+  h += `<div class="plansec"><div class="workkicker"><span>${day.recovery?"Added to recovery day":"Main work"}</span><em class="plancount">${vis.length>1?"hold &amp; drag to reorder":`${vis.length} ${vis.length===1?"exercise":"exercises"}`}</em></div>
+    <ol class="planlist" data-dragwrap="${k}">`;
   vis.forEach((x,i)=>{ h += planRowHTML(k, x, i, vis.length); });
   h += `<li class="planaddrow">`;
   if (ui.planAdding){
@@ -2411,6 +2514,7 @@ function renderPlan(){
         <label>sets<input class="ef-sets" inputmode="numeric" value="3"></label>
         <label>reps<input class="ef-reps" value="10"></label>
       </div>
+      ${weightCheckHTML(null)}
       <div class="ef-btns">
         <button class="choice sel" data-act="planaddsave">add to ${esc(wd)}</button>
         <button class="choice" data-act="planaddcancel">cancel</button>
@@ -2525,7 +2629,7 @@ function renderLog(){
               ${pn>1?editPipsHTML(ex, pn, pf, sel):""}
               ${isMins
                 ?`<input class="ler" inputmode="numeric" data-mins="1" value="${e.mins?esc(e.mins):""}" placeholder="min" aria-label="minutes">`
-                :`<input class="lew" inputmode="decimal" value="${e.weight!=null&&e.weight!==""?esc(e.weight):""}" placeholder="lb" aria-label="weight"><input class="ler" value="${e.reps?esc(e.reps):""}" placeholder="reps" aria-label="reps">`}
+                :`${pn>1 ? "" : `<input class="les" inputmode="numeric" value="${e.nsets?esc(e.nsets):""}" placeholder="sets" aria-label="sets">`}${(noWeight(ex) && (e.weight==null || e.weight==="")) ? "" : `<input class="lew" inputmode="decimal" value="${e.weight!=null&&e.weight!==""?esc(e.weight):""}" placeholder="lb" aria-label="weight">`}<input class="ler" value="${e.reps?esc(e.reps):""}" placeholder="reps" aria-label="reps">`}
               <button class="choice sel" data-act="logeditsave" data-dk="${sel}" data-ex="${ex}">save</button>
               <button class="choice" data-act="logeditcancel">cancel</button>
             </div>
@@ -2534,7 +2638,11 @@ function renderLog(){
         }
         const done = e.done || (e.sets||[]).some(Boolean);
         const st = pn>1 && pf>0 && pf<pn ? `${pf}/${pn}` : "";
-        const right = (e.weight!=null&&e.weight!=="") ? `${e.weight} lb${e.reps?`<small>× ${esc(e.reps)}</small>`:''}` : e.mins ? `${esc(e.mins)} min` : (e.reps?`× ${esc(e.reps)}`:'—');
+        const ns = e.nsets ? `${e.nsets} × ` : "";
+        const right = (e.weight!=null&&e.weight!=="") ? `${e.weight} lb${e.reps?`<small>${ns}${esc(e.reps)}</small>`:(ns?`<small>${e.nsets} sets</small>`:"")}`
+          : e.mins ? `${esc(e.mins)} min`
+          : e.reps ? (ns ? `${ns}${esc(e.reps)}` : `× ${esc(e.reps)}`)
+          : ns ? `${e.nsets} sets` : '—';
         h += `<li><button class="lerow" data-act="logedit" data-dk="${sel}" data-ex="${ex}" aria-label="edit ${esc(nameOf(ex))}"><span>${esc(nameOf(ex))}${done?' <span style="color:var(--hanko)">✓</span>':''}</span><span class="r">${right}${st?`<small> · ${st} sets</small>`:''}</span></button><button class="delentry" data-act="delentry" data-dk="${sel}" data-ex="${ex}" aria-label="delete this entry">×</button></li>`;
       }
       h += `</ul>`;
@@ -2931,7 +3039,7 @@ document.addEventListener("click", e=>{
     else {
       entry.done = true;
       if (entry.sets && !entry.sets.some(s=>!s)) delete entry.sets;
-      inheritInto(entry, ex, t.dataset.reps);
+      inheritInto(entry, ex, t.dataset.reps, !!t.dataset.nowt);
       heartBurst(t, 6);
     }
     save(); renderToday();
@@ -2963,7 +3071,7 @@ document.addEventListener("click", e=>{
     if (cur===0 && next>0 && !t.dataset.dk){
       const slide = t.closest(".rowslide");
       const dbtn = slide && slide.querySelector(".donebtn");
-      inheritInto(entry, ex, dbtn ? dbtn.dataset.reps : null);
+      inheritInto(entry, ex, dbtn ? dbtn.dataset.reps : null, !!(dbtn && dbtn.dataset.nowt));
     }
     const justFinished = entry.done && !wasDone;
     if (justFinished) heartBurst(t, 6);
@@ -3015,7 +3123,8 @@ document.addEventListener("click", e=>{
     const w = db.workouts[t.dataset.dk];
     const e2 = w && w.entries && w.entries[t.dataset.ex];
     if (li && e2){
-      const lew = li.querySelector(".lew"), ler = li.querySelector(".ler");
+      const lew = li.querySelector(".lew"), ler = li.querySelector(".ler"), les = li.querySelector(".les");
+      if (les){ const n = parseInt(les.value, 10); if (n > 0) e2.nsets = Math.min(n, 20); else delete e2.nsets; }
       if (ler && ler.dataset.mins) e2.mins = ler.value.trim();
       else {
         if (lew){ const v = parseFloat(lew.value); e2.weight = isNaN(v) ? "" : v; }
@@ -3036,11 +3145,14 @@ document.addEventListener("click", e=>{
   if (act==="editcancel"){ ui.editing = null; renderToday(); return; }
   if (act==="editsave"){
     const li = t.closest("li.exrow");
-    if (li) saveRoutineItem(sessOf(ui.viewDate), t.dataset.key, {
-      name: li.querySelector(".ef-name").value,
-      sets: li.querySelector(".ef-sets").value,
-      reps: li.querySelector(".ef-reps").value
-    });
+    if (li){
+      saveRoutineItem(sessOf(ui.viewDate), t.dataset.key, {
+        name: li.querySelector(".ef-name").value,
+        sets: li.querySelector(".ef-sets").value,
+        reps: li.querySelector(".ef-reps").value
+      });
+      applyWeightCheck(sessOf(ui.viewDate), t.dataset.key, li);
+    }
     ui.editing = null;
     save(); renderToday(); return;
   }
@@ -3059,6 +3171,23 @@ document.addEventListener("click", e=>{
     const inp = document.querySelector('.swapin[data-adding]');
     if (inp) inp.focus();
     return;
+  }
+  if (act==="xsets"){
+    const r = rec(ui.viewDate, true);
+    const ex = t.dataset.ex;
+    const entry = r.entries[ex] = r.entries[ex] || {};
+    const ll = lastLog(ex, ui.viewDate);
+    /* the first tap starts from last time's count, so "same as last time" is one tap */
+    let n = entry.nsets != null ? entry.nsets : ((ll && ll.nsets) || 0);
+    if (entry.nsets == null && ll && ll.nsets && Number(t.dataset.d) > 0) n = ll.nsets;
+    else n = Math.max(0, Math.min(20, n + Number(t.dataset.d)));
+    if (n) entry.nsets = n; else delete entry.nsets;
+    save(); renderToday(); return;
+  }
+  if (act==="bwtoggle"){
+    setTrackWeight(t.dataset.id, noWeight(t.dataset.id));
+    ui.rowOpen = null;
+    save(); render(); return;
   }
   if (act==="rmex"){
     const r = rec(ui.viewDate, true);
@@ -3164,11 +3293,14 @@ document.addEventListener("click", e=>{
   if (act==="planeditcancel"){ ui.planEdit = null; renderPlan(); return; }
   if (act==="plansave"){
     const f = t.closest(".editform");
-    if (f) saveRoutineItem(ui.planDay, t.dataset.key, {
-      name: f.querySelector(".plannamein").value,
-      sets: f.querySelector(".ef-sets").value,
-      reps: f.querySelector(".ef-reps").value
-    });
+    if (f){
+      saveRoutineItem(ui.planDay, t.dataset.key, {
+        name: f.querySelector(".plannamein").value,
+        sets: f.querySelector(".ef-sets").value,
+        reps: f.querySelector(".ef-reps").value
+      });
+      applyWeightCheck(ui.planDay, t.dataset.key, f);
+    }
     ui.planEdit = null;
     save(); renderPlan(); return;
   }
@@ -3209,7 +3341,8 @@ document.addEventListener("click", e=>{
     const f = t.closest(".editform");
     const nm = f.querySelector(".plannamein");
     if (!nm.value.trim()){ nm.focus(); return; }
-    addRoutineItem(ui.planDay, nm.value.trim(), f.querySelector(".ef-sets").value, f.querySelector(".ef-reps").value);
+    const nk = addRoutineItem(ui.planDay, nm.value.trim(), f.querySelector(".ef-sets").value, f.querySelector(".ef-reps").value);
+    applyWeightCheck(ui.planDay, nk, f);
     ui.planAdding = false;
     save(); renderPlan(); return;
   }
@@ -3217,6 +3350,9 @@ document.addEventListener("click", e=>{
     const f = t.closest(".editform");
     const inp = f && f.querySelector(".plannamein");
     if (inp) inp.value = t.dataset.name;
+    const cb = f && inp && inp.classList.contains("planaddname") && f.querySelector(".ef-wt");
+    const id = cb && [...Object.keys(NAMES), ...Object.keys(LIBNAMES)].find(k=>nameOf(k)===t.dataset.name);
+    if (cb && id) cb.checked = !noWeight(id);
     t.parentNode.innerHTML = "";
     return;
   }
@@ -3420,6 +3556,12 @@ document.addEventListener("input", e=>{
     const rows = document.getElementById("librows");
     if (rows) rows.innerHTML = libRowsHTML();
   }
+  if (e.target.classList && e.target.classList.contains("planaddname")){
+    const cb = e.target.closest(".editform").querySelector(".ef-wt");
+    const n = e.target.value.trim().toLowerCase();
+    const id = n && [...Object.keys(NAMES), ...Object.keys(LIBNAMES)].find(k=>nameOf(k).toLowerCase()===n);
+    if (cb && id) cb.checked = !noWeight(id);
+  }
   if (e.target.classList && e.target.classList.contains("plannamein")){
     const box = e.target.parentNode.querySelector(".plansugg");
     const q = e.target.value.trim().toLowerCase();
@@ -3532,6 +3674,97 @@ document.addEventListener("touchend", e=>{
   }
   touchS = null;
 }, {passive:true});
+
+/* ══════ hold-and-drag to reorder — Today's lifts and the Plan list ══════
+   Hold still ~0.35s to pick a row up, then drag. The new order is saved to that
+   weekday's routine, so it sticks every week (same as the Plan tab's arrows). */
+let drag = null, dragEatClick = false;
+function dragStart(x, y, target){
+  const row = target.closest("[data-drag]");
+  if (!row || drag) return;
+  if (target.closest("input,textarea,select,.rowactions")) return;
+  if (target.closest("button") && !target.closest(".planrowbtn")) return;
+  if (row.closest(".exrow.open")) return;
+  drag = {row, list:row.parentNode, x0:x, y0:y, x, y, sy0:window.scrollY, live:false,
+    timer:setTimeout(dragLift, 350)};
+}
+function dragLift(){
+  if (!drag) return;
+  drag.live = true;
+  touchS = null; /* the swipe-for-actions gesture stands down */
+  drag.rows = [...drag.list.children].filter(el=>el.hasAttribute("data-drag"));
+  drag.from = drag.to = drag.rows.indexOf(drag.row);
+  drag.tops = drag.rows.map(r=>{ const b = r.getBoundingClientRect(); return {top:b.top + window.scrollY, h:b.height}; });
+  drag.row.classList.add("lifted");
+  drag.list.classList.add("sorting");
+  document.body.classList.add("nosel");
+  if (navigator.vibrate) navigator.vibrate(10);
+  const tick = ()=>{
+    if (!drag || !drag.live) return;
+    const edge = 90, H = window.innerHeight;
+    const v = drag.y < edge ? -(edge - drag.y)/6 : drag.y > H - edge ? (drag.y - (H - edge))/6 : 0;
+    if (v){ window.scrollBy(0, v); dragPlace(); }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+function dragPlace(){
+  const dy = (drag.y + window.scrollY) - (drag.y0 + drag.sy0);
+  drag.row.style.transform = `translateY(${dy}px) scale(1.02)`;
+  const me = drag.tops[drag.from];
+  const cy = me.top + me.h/2 + dy;
+  let to = drag.from;
+  drag.tops.forEach((t,i)=>{
+    const mid = t.top + t.h/2;
+    if (i < drag.from && cy < mid) to = Math.min(to, i);
+    if (i > drag.from && cy > mid) to = Math.max(to, i);
+  });
+  drag.to = to;
+  drag.rows.forEach((r,i)=>{
+    if (r === drag.row) return;
+    let sh = 0;
+    if (drag.from < to && i > drag.from && i <= to) sh = -me.h;
+    if (drag.from > to && i >= to && i < drag.from) sh = me.h;
+    r.style.transform = sh ? `translateY(${sh}px)` : "";
+  });
+}
+function dragMove(x, y){
+  if (!drag) return false;
+  drag.x = x; drag.y = y;
+  if (!drag.live){
+    if (Math.hypot(x - drag.x0, y - drag.y0) > 8){ clearTimeout(drag.timer); drag = null; }
+    return false;
+  }
+  dragPlace();
+  return true;
+}
+function dragEnd(){
+  if (!drag) return;
+  clearTimeout(drag.timer);
+  const d = drag; drag = null;
+  document.body.classList.remove("nosel");
+  if (!d.live) return;
+  dragEatClick = true; setTimeout(()=>{ dragEatClick = false; }, 80); /* only the drop's own click, never her next tap */
+  d.list.classList.remove("sorting");
+  const keys = d.rows.map(r=>r.dataset.drag);
+  if (d.to !== d.from){
+    const [k] = keys.splice(d.from, 1);
+    keys.splice(d.to, 0, k);
+    reorderShown(d.list.dataset.dragwrap, keys);
+    save();
+  }
+  if (ui.tab==="plan") renderPlan(); else renderToday();
+}
+document.addEventListener("touchstart", e=>{ if (e.touches.length===1) dragStart(e.touches[0].clientX, e.touches[0].clientY, e.target); }, {passive:true});
+document.addEventListener("touchmove", e=>{ if (dragMove(e.touches[0].clientX, e.touches[0].clientY)) e.preventDefault(); }, {passive:false});
+document.addEventListener("touchend", dragEnd, {passive:true});
+document.addEventListener("touchcancel", dragEnd, {passive:true});
+document.addEventListener("mousedown", e=>{ if (e.button===0) dragStart(e.clientX, e.clientY, e.target); });
+document.addEventListener("mousemove", e=>{ if (drag) dragMove(e.clientX, e.clientY); });
+document.addEventListener("mouseup", dragEnd);
+/* the lift-off would otherwise land as a tap on whatever was under the finger */
+document.addEventListener("click", e=>{ if (dragEatClick){ e.stopPropagation(); e.preventDefault(); dragEatClick = false; } }, true);
+document.addEventListener("contextmenu", e=>{ if (drag || e.target.closest("[data-drag]")) e.preventDefault(); });
 
 buildDatalist();
 render();
