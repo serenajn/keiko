@@ -931,8 +931,15 @@ button:focus-visible{outline:1.5px solid rgba(224,87,138,.5);outline-offset:2px}
 <script>
 /* ══════════════════ plan data (from the Obsidian workout plan) ══════════════════ */
 const PLAN = {
+  /* Oct 29 revamp. What the log showed: hip thrust, abduction and the row kept climbing;
+     hamstring curl sat at 25 since July, step-ups at 20 since August, shoulder press never
+     left 5 lb. Monday and Thursday had drifted into the same day with two hinges each, and
+     Saturday hadn't happened since July. Now: one hinge per lower day, the curl on both,
+     step-ups (never reverse lunges) on Monday, leg press on Thursday, a second dose of
+     lateral raises for the shoulder-to-waist line, and Saturday becomes a walk. */
   mon: {
-    title:"Glutes +\nHamstrings", sub:"hinge-dominant · 45 min · primary glute builder",
+    title:"Glutes +\nHamstrings", sub:"hinge day · ~45 min · primary glute builder",
+    note:"<b>How hard:</b> end every set with one or two clean reps left — not five. On the last set of curls and abduction, keep going until you can't.<br><b>When to add weight:</b> top of the range on every set, then go up. Keiko will flag it.",
     warmup:[
       "Incline walk — 3.0 mph at 8% × 3 min",
       "90/90 hip switches × 1 min",
@@ -943,61 +950,52 @@ const PLAN = {
     ],
     warmTime:"6–7 min",
     main:[
-      {id:"hip-thrust", name:"Hip thrust", detail:"barbell or DB · weight per side", sets:4, reps:"8–10", ex:{sets:3,reps:"8–10"},
-        cue:"Tuck the pelvis at the top, two-second squeeze. Chin stays neutral."},
-      {id:"rdl", name:"Romanian deadlift", detail:"dumbbells · weight per hand", sets:3, reps:"10", ex:{sets:3,reps:"10"},
-        cue:"Soft knees, hinge at the hips. Feel the hamstring stretch before pulling back up."},
-      {slot:"mon-uni", label:"Unilateral glute", sets:3, reps:"8–10 / leg",
-        cue:"Squeeze at the top, one leg at a time. Hips stay level — the free side will want to drop.",
-        choices:[
-          {id:"single-leg-hip-thrust", name:"Single-leg hip thrust", tag:"no quad"},
-          {id:"b-stance-rdl", name:"B-stance RDL", tag:"kickstand"},
-          {id:"bulgarian-split-squat", name:"Bulgarian split squat", tag:"more quad"}
-        ]},
-      {slot:"mon-iso", label:"Glute isolation", sets:2, reps:"12–15", ex:{sets:2,reps:"12"},
-        cue:"Squeeze and hold the top for a second. Don't arch the lower back.",
-        choices:[
-          {id:"cable-kickback", name:"Cable kickback", tag:"gym"},
-          {id:"banded-kickback", name:"Banded kickback", tag:"home"},
-          {id:"frog-pump", name:"Frog pump", tag:"anywhere"}
-        ]},
-      {slot:"mon-med", label:"Glute medius · width", sets:3, reps:"12–15", ex:{sets:2,reps:"15"},
-        cue:"The shelf and the hip width come from here. Lean forward 30–45° on the machine — that lean is most of the exercise.",
-        choices:[
-          {id:"hip-abduction", name:"Hip abduction machine", tag:"lean forward"},
-          {id:"banded-lateral-walk", name:"Banded lateral walk", tag:"home"},
-          {id:"curtsy-lunge", name:"Curtsy lunge", tag:""}
-        ]}
+      {id:"hip-thrust", name:"Hip thrust", detail:"barbell · weight per side", sets:3, reps:"8–12", ex:{sets:3,reps:"8–12"},
+        cue:"Tuck the pelvis at the top, two-second squeeze. Chin stays neutral. 12 on all three sets → add 5 per side."},
+      {id:"rdl", name:"Romanian deadlift", detail:"dumbbells · weight per hand", sets:3, reps:"8–12", ex:{sets:2,reps:"8–12"},
+        cue:"Soft knees, hinge at the hips. Feel the hamstring stretch before pulling back up. The set ends when your back position changes, not when the number does."},
+      {id:"step-up", name:"Step-up", detail:"knee-height box · weight per hand", sets:3, reps:"10–12 / leg",
+        cue:"Chest leans forward over the front knee and you drive through the front heel — that lean is what makes it a glute lift instead of a quad lift. The back foot doesn't push off."},
+      {id:"seated-ham-curl", name:"Seated hamstring curl", detail:"machine · 3 seconds on the way back", sets:3, reps:"10–15",
+        cue:"Heels all the way under, brief squeeze, three seconds back. This one has sat at 25 since July — take the last set to failure and let the number tell you."},
+      {id:"hip-abduction", name:"Hip abduction machine", detail:"lean forward 30–45°", sets:2, reps:"15–20", ex:{sets:2,reps:"15–20"},
+        cue:"The shelf and the hip width come from here. Lean forward 30–45° — that lean is most of the exercise. Last set to failure."}
     ],
     finish:"Stair walking 5–10 min — drive entirely through the heel."
   },
-  /* Tuesday was ~26 sets over 10 lifts — closer to an hour than 45 min. Push-ups, the Y-raise,
-     hammer curls and Pallof press now live on Saturday; captain's chair (her own swap) is now
-     part of the plan. ~7 lifts, ~35–40 min, lateral raise and face pull paired. */
+  /* Tuesday: the cable row she'd been adding by hand replaces the one-arm row, a press
+     comes back (push-ups first — horizontal pushing had all but vanished), and the shoulder
+     press that sat at 5 lb becomes an option inside that slot instead of its own lift.
+     Hammer curls and the Y-raise are gone; rows and pull-ups already train the biceps. */
   tue: {
-    title:"Upper Body\n+ Posture", sub:"width + taper · ~35–40 min",
-    note:"<b>Shoulders down and away from the ears</b> on every rep. The stop signal is the shrug — if a shoulder rides up and won't stay down, the weight is too heavy.<br><b>Pair to save time:</b> lateral raise ↔ face pull — one set of each, then rest.",
+    title:"Back +\nShoulders", sub:"the taper day · arms and abs last · ~40 min",
+    note:"<b>Shoulders down and away from the ears</b> on every rep. The stop signal is the shrug — if a shoulder rides up and won't stay down, the weight is too heavy.<br><b>Pair to save time:</b> lateral raise ↔ face pull — one set of each, then rest.<br><b>How hard:</b> one or two clean reps left at the end of each set.",
     warmup:["Arm circles","Band pull-aparts × 15","Cat-cow × 10","Serratus wall slide × 10 — full forearm contact, reach long","Doorway pec stretch × 30s / side","Chin tuck × 10, 3s hold — level glide, not a nod"],
     warmTime:"7 min",
     main:[
-      {id:"assisted-pullup", name:"Assisted pull-up", detail:"machine · assist weight", sets:3, reps:"8–10", ex:{sets:3,reps:"8"},
-        cue:"Pull the shoulder blades down first. Full hang at the bottom."},
-      {id:"db-shoulder-press", name:"DB shoulder press", detail:"seated · the width lever", sets:3, reps:"8–10", ex:{sets:2,reps:"8–10"},
-        cue:"Ribs down, press up and slightly in. Don't arch the lower back."},
-      {id:"one-arm-row", name:"One-arm DB row", sets:3, reps:"10 / side", ex:{sets:3,reps:"10 / side"},
-        cue:"Pull toward the hip, not the chest. Squeeze the lat at the top."},
-      {id:"lateral-raise", name:"DB lateral raise", detail:"pair with face pull · highest value for taper", sets:3, reps:"12–15", ex:{sets:2,reps:"12–15"},
-        cue:"Lead with the elbow, stay at or below shoulder height. Stop if the shoulder shrugs up."},
-      {id:"face-pull", name:"Face pull", detail:"pair with lateral raise", sets:2, reps:"15", ex:{sets:2,reps:"15"},
+      {id:"assisted-pullup", name:"Assisted pull-up", detail:"machine · assist weight", sets:3, reps:"6–10", ex:{sets:2,reps:"6–10"},
+        cue:"Pull the shoulder blades down first. Full hang at the bottom. 10 on every set → take 5 lb of assist away."},
+      {id:"seated-cable-row", name:"Seated cable row", detail:"cable · stack weight", sets:3, reps:"8–12", ex:{sets:2,reps:"8–12"},
+        cue:"Lead with the elbows, handle to the lower ribs, one-second squeeze between the shoulder blades. Torso stays still — no rocking back."},
+      {slot:"tue-press", label:"Press", sets:3, reps:"8–12", ex:{sets:2,reps:"8–12"},
+        cue:"Shoulder blades set back and down the whole set. Push-ups: pick the incline where 8 clean reps is hard; when you get 12 on every set, go one step lower.",
+        choices:[
+          {id:"push-up", name:"Push-up", tag:"incline is fine", bw:true},
+          {id:"db-bench", name:"DB bench press", tag:"gym"},
+          {id:"db-shoulder-press", name:"DB shoulder press", tag:"seated"}
+        ]},
+      {id:"lateral-raise", name:"DB lateral raise", detail:"pair with face pull · the waist-narrowing lift", sets:3, reps:"12–20", ex:{sets:2,reps:"12–20"},
+        cue:"Lead with the elbow, stay at or below shoulder height. Wider shoulders make the waist read smaller — this is the one to never skip. Stop if the shoulder shrugs up."},
+      {id:"face-pull", name:"Face pull", detail:"pair with lateral raise", sets:2, reps:"12–20",
         cue:"Pull to forehead height, hands outside the ears. Squeeze the rear delts."},
-      {slot:"tue-tri", label:"Tricep · long head", sets:2, reps:"12–15", ex:{sets:2,reps:"12–15"},
-        cue:"Elbows stay pointed forward and tucked. Light weight, full stretch at the bottom — this is a shaping lift, not a strength lift. Get to 15 reps before adding weight.",
+      {slot:"tue-tri", label:"Tricep · long head", sets:2, reps:"10–15",
+        cue:"Elbows stay pointed forward and tucked, full stretch at the bottom. Two sets firms the back of the arm without adding size — making it slimmer is the food side, not this. Get to 15 reps before adding weight.",
         choices:[
           {id:"overhead-tricep-extension", name:"Overhead tricep extension", tag:"long head"},
           {id:"tricep-rope-pushdown", name:"Rope pushdown", tag:"gym"},
           {id:"db-tricep-kickback", name:"DB kickback", tag:"home"}
         ]},
-      {id:"cc-straight-leg", name:"Captain's chair — straight-leg raise", detail:"lower abs · no swinging", sets:3, reps:"10–15", bw:true, ex:{sets:2,reps:"10–15"},
+      {id:"cc-straight-leg", name:"Captain's chair — straight-leg raise", detail:"lower abs · no swinging", sets:2, reps:"10–15", bw:true,
         cue:"Back flat against the pad, lift with the abs rather than the hip flexors. Slow on the way down — no swinging."}
     ]
   },
@@ -1033,73 +1031,59 @@ const PLAN = {
       ]}
     ]
   },
+  /* Thursday: one hinge (B-stance, so it isn't Monday's RDL again), leg press as the only
+     knee-dominant lift — feet high, it stays glute-biased and holds steady for slim legs —
+     the curl and abduction again, then lateral raises: shoulders recover fast, and two
+     doses a week is what moves the shoulder-to-waist line. */
   thu: {
-    title:"Glutes +\nQuads", sub:"glute-biased squat day · 45 min",
+    title:"Glutes +\nShoulders", sub:"glute day two · lateral raises to finish · ~45 min",
+    note:"<b>How hard:</b> one or two clean reps left on the big lifts; last set of the curl, abduction and lateral raise to failure.",
     warmup:[
       "Bike or incline walk × 3 min",
       "90/90 hip switches × 1 min",
       "Adductor rockback × 10",
       "Kneeling hip flexor stretch × 30s / side",
       "Glute bridges × 15",
-      "Sumo DB squat × 10 — light warm-up"
+      "Bodyweight hip thrust or bridge × 10, slow"
     ],
     warmTime:"6–7 min",
     main:[
-      {id:"hip-thrust", name:"Hip thrust", detail:"weight per side", sets:3, reps:"10", ex:{sets:3,reps:"10"},
-        cue:"Tuck the pelvis at the top, two-second squeeze."},
-      {slot:"thu-hinge", label:"Hip extension", sets:3, reps:"10–12",
-        cue:"All hip, no knee — the front knee barely travels. Feel the stretch at the bottom, then drive the hips forward and squeeze. Stop at a straight body line, don't arch past it.",
-        choices:[
-          {id:"b-stance-rdl", name:"B-stance RDL", tag:"kickstand"},
-          {id:"back-extension", name:"45° back extension", tag:"glute focus"},
-          {id:"frog-pump", name:"Frog pump", tag:"home"}
-        ]},
-      {id:"sumo-squat", name:"Sumo DB squat", detail:"kettlebell or DB", sets:3, reps:"10", ex:{sets:3,reps:"10"},
-        cue:"Toes turned out ~45°. Sit straight down between the heels."},
-      {slot:"thu-med", label:"Glute medius · width", sets:3, reps:"12–15", ex:{sets:2,reps:"15"},
-        cue:"Slow and controlled — feel the outer glute working.",
-        choices:[
-          {id:"hip-abduction", name:"Hip abduction machine", tag:"lean forward"},
-          {id:"curtsy-lunge", name:"Curtsy lunge", tag:""},
-          {id:"banded-lateral-walk", name:"Banded lateral walk", tag:"home"}
-        ]},
-      {slot:"thu-lunge", label:"Glute-biased lunge", sets:2, reps:"12 / leg", ex:{sets:2,reps:"12 / leg"},
-        cue:"Long stride, push through the front heel.",
-        choices:[
-          {id:"reverse-lunge", name:"Reverse lunge", tag:"knee-friendly"},
-          {id:"walking-lunge", name:"Walking lunge", tag:""}
-        ]}
+      {id:"hip-thrust", name:"Hip thrust", detail:"barbell · weight per side", sets:3, reps:"8–12", ex:{sets:3,reps:"8–12"},
+        cue:"Tuck the pelvis at the top, two-second squeeze. Same range as Monday so the two days build on each other."},
+      {id:"b-stance-rdl", name:"B-stance RDL", detail:"dumbbells · weight per hand", sets:3, reps:"8–12 / leg", ex:{sets:2,reps:"8–12 / leg"},
+        cue:"Back foot is a kickstand — about 80% of the weight stays in the front leg. Hinge until the front hamstring stretches, then drive that hip forward and squeeze."},
+      {id:"leg-press", name:"Leg press", detail:"single-leg · feet high on the platform", sets:3, reps:"10–15 / leg",
+        cue:"Foot high on the platform and let the knee come toward the chest — the deep hip bend is the glute part. Stop before the lower back peels off the pad. Single-leg every time, so the numbers compare."},
+      {id:"seated-ham-curl", name:"Seated hamstring curl", detail:"machine · 3 seconds on the way back", sets:2, reps:"10–15",
+        cue:"Heels all the way under, three seconds back. Last set to failure."},
+      {id:"hip-abduction", name:"Hip abduction machine", detail:"lean forward 30–45°", sets:2, reps:"15–20", ex:{sets:2,reps:"15–20"},
+        cue:"Lean forward, push the knees out, pause a beat at the end. Last set to failure."},
+      {id:"lateral-raise", name:"DB lateral raise", detail:"second dose this week", sets:2, reps:"15–20",
+        cue:"Lighter than Tuesday is fine. Lead with the elbow, stop at shoulder height, no shrug."}
     ],
-    finish:"Stairmaster 5–10 min — slow, heavy steps driving through the heels."
+    finish:"Incline walk 10–15 min, easy pace — steps, not a workout."
   },
   fri: { rest:true, title:"Rest or easy walk",
     line:"Recovery and decompression. A slow walk counts double on a pretty day." },
-  /* Saturday used to be full body (RDL + step-ups) — one day after Thursday's legs, one before
-     Monday's hinge, so legs never recovered and it rarely happened. Now it's a short no-legs
-     day for the work that kept getting skipped at the end of Tuesday: posture, arms, chest,
-     deep core. Optional (a bonus) until it's a habit. */
+  /* Saturday hadn't been done since July in either of its forms. The lifting it held now
+     lives on Tuesday, so it becomes what actually serves the waist goal: a long walk, plus
+     ten minutes of core. Still optional — it never counts as a miss. */
   sat: {
-    title:"Posture + Arms\n+ Core", sub:"bonus · ~30 min · no legs", optional:true,
-    note:"<b>No legs today</b> — Thursday's work is still landing, and Monday's hinge day wants them fresh. This one's for the idol line: open chest, shoulders down, a long neck, a flat and strong middle.",
-    warmup:["Arm circles","Band pull-aparts × 15","Cat-cow × 10"],
-    warmTime:"3 min",
+    title:"Long Walk\n+ Core", sub:"bonus · ~60 min, mostly walking", optional:true,
+    note:"<b>No lifting today.</b> The waist and arms change when the week's energy balance does, and walking is the easiest place to find it without touching recovery. Outside if it's nice.",
     main:[
-      {id:"push-up", name:"Push-up", detail:"incline is fine · chest open", sets:3, reps:"max / 12", bw:true, ex:{sets:2,reps:"max / 12"},
-        cue:"Shoulder blades set back and down, body one straight line. Use a bench or bar to incline it until you can get 8 clean reps."},
-      {id:"prone-y-raise", name:"Prone Y-raise", detail:"lower trap · bodyweight or 2–5 lb", sets:2, reps:"12", ex:{sets:2,reps:"12"},
-        cue:"Face down, thumbs up, lift into a Y. This is the muscle that holds the shoulder blade down — the whole open-neck line runs through it."},
-      {id:"hammer-curl", name:"Hammer curl", detail:"neutral grip · weight per hand", sets:2, reps:"12",
-        cue:"Elbows pinned at the sides, palms facing each other the whole set. It fills the gap between bicep and tricep so the arm reads narrower from the side."},
+      {id:"light-walk", name:"Long walk", detail:"type the minutes in reps", sets:1, reps:"45–60 min", bw:true, ex:{sets:1,reps:"30–45 min"},
+        cue:"Brisk enough that talking takes a little effort. Podcast, phone call, whatever makes it easy to keep going."},
       {id:"pallof-press", name:"Pallof press", detail:"cable or band · per side", sets:2, reps:"10 / side", ex:{sets:2,reps:"10 / side"},
         cue:"Press straight out and resist the pull — the stillness is the exercise. Ribs down, hips square."},
-      {slot:"sat-core", label:"Deep core", sets:2, reps:"30–40s", ex:{sets:2,reps:"30–40s"},
+      {slot:"sat-core", label:"Deep core", sets:2, reps:"30–40s",
         cue:"Lower back stays glued to the floor the whole time. The moment it lifts, shorten the lever.",
         choices:[
           {id:"hollow-hold", name:"Hollow hold", tag:"30–40s", bw:true},
           {id:"dead-bug", name:"Dead bug", tag:"10 / side", bw:true}
         ]}
     ],
-    finish:"Posture circuit, 5 min: chin tuck × 10 (3s hold), doorway pec stretch 30s / side, serratus wall slide × 10. Then if you're up for it — a 20–30 min walk or some dance cardio."
+    finish:"Posture circuit, 5 min: chin tuck × 10 (3s hold), doorway pec stretch 30s / side, serratus wall slide × 10."
   },
   sun: { rest:true, title:"Rest",
     line:"Complete nervous-system reset. The growing happens here." }
@@ -1121,6 +1105,14 @@ for (const d of Object.values(PLAN)) {
 }
 NAMES["mat-pilates"] = "Mat Pilates";
 NAMES["light-walk"] = "Light walk";
+/* left the plan in the Oct 29 revamp — names stay so their history and charts still show */
+for (const [id, n] of Object.entries({
+  "sumo-squat":"Sumo DB squat", "reverse-lunge":"Reverse lunge", "walking-lunge":"Walking lunge",
+  "single-leg-hip-thrust":"Single-leg hip thrust", "bulgarian-split-squat":"Bulgarian split squat",
+  "cable-kickback":"Cable kickback", "banded-kickback":"Banded kickback", "frog-pump":"Frog pump",
+  "banded-lateral-walk":"Banded lateral walk", "curtsy-lunge":"Curtsy lunge", "back-extension":"45° back extension",
+  "one-arm-row":"One-arm DB row", "prone-y-raise":"Prone Y-raise", "hammer-curl":"Hammer curl"
+})) if (!NAMES[id]) NAMES[id] = n;
 /* retired from the plan — kept resolvable so old logs still read properly */
 NAMES["leg-press"] = "Leg press";
 NAMES["tricep-dip"] = "Tricep dip";
@@ -1132,7 +1124,7 @@ Object.assign(NAMES, {"step-up":"Step-ups", "seated-cable-row":"Seated cable row
   "db-bench":"DB bench press", "pallof-press":"Pallof press", "side-plank":"Side plank", "dead-bug":"Dead bug",
   "hollow-hold":"Hollow hold", "bird-dog":"Bird dog", "reverse-crunch":"Reverse crunch",
   "chin-tuck":"Chin tuck", "doorway-pec-stretch":"Doorway pec stretch"});
-const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "bulgarian-split-squat":"contralateral DB",
+const DETAILS = { "hip-thrust":"per side", "rdl":"per hand", "b-stance-rdl":"per hand", "step-up":"per hand", "bulgarian-split-squat":"contralateral DB",
   "assisted-pullup":"assist", "tricep-dip":"assist" };
 
 /* lifts where the logged weight is machine ASSISTANCE — less weight = stronger */
@@ -1161,9 +1153,10 @@ function wStep(w){ return (w < 25) ? 2.5 : 5; }
 
 /* the lifts where progressive overload matters most, in priority order — these lead the Progress tab */
 const KEY_LIFTS = [
-  "hip-thrust","rdl","bulgarian-split-squat","sumo-squat","leg-press",
-  "assisted-pullup","db-shoulder-press","one-arm-row","seated-cable-row","lat-pulldown",
-  "db-bench","step-up","tricep-dip","seated-ham-curl","back-extension","hip-abduction"
+  "hip-thrust","rdl","b-stance-rdl","seated-ham-curl","hip-abduction",
+  "assisted-pullup","seated-cable-row","lateral-raise","db-bench","db-shoulder-press",
+  "step-up","leg-press","bulgarian-split-squat","sumo-squat","one-arm-row","lat-pulldown",
+  "tricep-dip","back-extension"
 ];
 
 /* Exercise Library — generated from the vault's Exercise Library.md by sync-library.py.
@@ -1329,6 +1322,18 @@ function migrateAliases(){
   for (const rt of Object.values(db.routine||{})) for (const a of (rt.add||[])) used.add(a.id);
   for (const id of Object.keys(db.customNames||{})) if (!used.has(id)) delete db.customNames[id];
   db.migrAlias = 1;
+}
+/* one-time, Oct 29 revamp: the new Mon/Tue/Thu/Sat already fold in her own edits (step-ups
+   for lunges, the hamstring curl, the cable row, the extra sets) — clear the old per-day
+   edits so they don't stack on top of the new plan. Logged workouts aren't touched. */
+function migratePlanRevamp(){
+  for (const k of ["mon","tue","thu","sat"]){
+    if (db.planOv) delete db.planOv[k];
+    if (db.routine) delete db.routine[k];
+  }
+  if (db.planOv && !Object.keys(db.planOv).length) delete db.planOv;
+  if (db.routine && !Object.keys(db.routine).length) delete db.routine;
+  db.migrPlanOct = 1;
 }
 function resolveExId(name){
   const lower = name.toLowerCase();
@@ -3844,6 +3849,7 @@ $("#importFile").addEventListener("change", e=>{
       db.customLib = db.customLib || [];
       db.seen = db.seen || {};
       if (!db.migrAlias) migrateAliases();
+      if (!db.migrPlanOct) migratePlanRevamp();
       save(); buildDatalist(); render();
     } catch(err){ alert("That file doesn't look like a Keiko export."); }
   };
@@ -4002,6 +4008,7 @@ document.addEventListener("click", e=>{ if (dragEatClick){ e.stopPropagation(); 
 document.addEventListener("contextmenu", e=>{ if (drag || e.target.closest("[data-drag]")) e.preventDefault(); });
 
 if (!db.migrAlias){ migrateAliases(); save(); }
+if (!db.migrPlanOct){ migratePlanRevamp(); save(); }
 buildDatalist();
 render();
 
