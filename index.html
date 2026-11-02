@@ -939,7 +939,7 @@ const PLAN = {
      lateral raises for the shoulder-to-waist line, and Saturday becomes a walk. */
   mon: {
     title:"Glutes +\nHamstrings", sub:"hinge day · ~45 min · primary glute builder",
-    note:"<b>How hard:</b> end every set with one or two clean reps left — not five. On the last set of curls and abduction, keep going until you can't.<br><b>When to add weight:</b> top of the range on every set, then go up. Keiko will flag it.",
+    note:"<b>How hard:</b> end every set with one or two clean reps left — not five. Keep one or two clean reps in reserve on curls and abduction too.<br><b>When to add weight:</b> top of the range on every set, then go up. Keiko will flag it.",
     warmup:[
       "Incline walk — 3.0 mph at 8% × 3 min",
       "90/90 hip switches × 1 min",
@@ -954,14 +954,14 @@ const PLAN = {
         cue:"Tuck the pelvis at the top, two-second squeeze. Chin stays neutral. 12 on all three sets → add 5 per side."},
       {id:"rdl", name:"Romanian deadlift", detail:"dumbbells · weight per hand", sets:3, reps:"8–12", ex:{sets:2,reps:"8–12"},
         cue:"Soft knees, hinge at the hips. Feel the hamstring stretch before pulling back up. The set ends when your back position changes, not when the number does."},
-      {id:"step-up", name:"Step-up", detail:"knee-height box · weight per hand", sets:3, reps:"10–12 / leg",
+      {id:"step-up", name:"Step-up", detail:"knee-height box · weight per hand", sets:2, reps:"10–12 / leg",
         cue:"Chest leans forward over the front knee and you drive through the front heel — that lean is what makes it a glute lift instead of a quad lift. The back foot doesn't push off."},
-      {id:"seated-ham-curl", name:"Seated hamstring curl", detail:"machine · 3 seconds on the way back", sets:3, reps:"10–15",
-        cue:"Heels all the way under, brief squeeze, three seconds back. This one has sat at 25 since July — take the last set to failure and let the number tell you."},
+      {id:"seated-ham-curl", name:"Seated hamstring curl", detail:"machine · 3 seconds on the way back", sets:2, reps:"10–15",
+        cue:"Heels all the way under, brief squeeze, three seconds back. Reach 15 controlled reps on every set before increasing the weight."},
       {id:"hip-abduction", name:"Hip abduction machine", detail:"lean forward 30–45°", sets:2, reps:"15–20", ex:{sets:2,reps:"15–20"},
-        cue:"The shelf and the hip width come from here. Lean forward 30–45° — that lean is most of the exercise. Last set to failure."}
+        cue:"Train the outer glutes through a comfortable range with a stable pelvis. Finish with one or two clean reps left."}
     ],
-    finish:"Stair walking 5–10 min — drive entirely through the heel."
+    finish:"Optional stair walking 5–10 min at a comfortable pace."
   },
   /* Tuesday: the cable row she'd been adding by hand replaces the one-arm row, a press
      comes back (push-ups first — horizontal pushing had all but vanished), and the shoulder
@@ -977,26 +977,25 @@ const PLAN = {
         cue:"Pull the shoulder blades down first. Full hang at the bottom. 10 on every set → take 5 lb of assist away."},
       {id:"seated-cable-row", name:"Seated cable row", detail:"cable · stack weight", sets:3, reps:"8–12", ex:{sets:2,reps:"8–12"},
         cue:"Lead with the elbows, handle to the lower ribs, one-second squeeze between the shoulder blades. Torso stays still — no rocking back."},
-      {slot:"tue-press", label:"Press", sets:3, reps:"8–12", ex:{sets:2,reps:"8–12"},
-        cue:"Shoulder blades set back and down the whole set. Push-ups: pick the incline where 8 clean reps is hard; when you get 12 on every set, go one step lower.",
+      {slot:"tue-press", label:"Press", sets:2, reps:"8–12", ex:{sets:2,reps:"8–12"},
+        cue:"For push-ups, let the shoulder blades move naturally and reach forward at the top. For bench press, keep a comfortable stable shoulder position. Push-ups: pick the incline where 8 clean reps is hard; when you get 12 on every set, go one step lower.",
         choices:[
           {id:"push-up", name:"Push-up", tag:"incline is fine", bw:true},
-          {id:"db-bench", name:"DB bench press", tag:"gym"},
-          {id:"db-shoulder-press", name:"DB shoulder press", tag:"seated"}
+          {id:"db-bench", name:"DB bench press", tag:"gym"}
         ]},
-      {id:"lateral-raise", name:"DB lateral raise", detail:"pair with face pull · the waist-narrowing lift", sets:3, reps:"12–20", ex:{sets:2,reps:"12–20"},
+      {id:"lateral-raise", name:"DB lateral raise", detail:"pair with face pull · side delts", sets:3, reps:"12–20", ex:{sets:2,reps:"12–20"},
         cue:"Lead with the elbow, stay at or below shoulder height. Wider shoulders make the waist read smaller — this is the one to never skip. Stop if the shoulder shrugs up."},
       {id:"face-pull", name:"Face pull", detail:"pair with lateral raise", sets:2, reps:"12–20",
         cue:"Pull to forehead height, hands outside the ears. Squeeze the rear delts."},
-      {slot:"tue-tri", label:"Tricep · long head", sets:2, reps:"10–15",
-        cue:"Elbows stay pointed forward and tucked, full stretch at the bottom. Two sets firms the back of the arm without adding size — making it slimmer is the food side, not this. Get to 15 reps before adding weight.",
+      {slot:"tue-tri", label:"Triceps · optional if short on time", sets:2, reps:"10–15",
+        cue:"Elbows stay pointed forward and tucked, full stretch at the bottom. Build triceps strength with controlled reps. Optional when short on time. Get to 15 reps before adding weight.",
         choices:[
           {id:"overhead-tricep-extension", name:"Overhead tricep extension", tag:"long head"},
           {id:"tricep-rope-pushdown", name:"Rope pushdown", tag:"gym"},
           {id:"db-tricep-kickback", name:"DB kickback", tag:"home"}
         ]},
       {id:"cc-straight-leg", name:"Captain's chair — straight-leg raise", detail:"lower abs · no swinging", sets:2, reps:"10–15", bw:true,
-        cue:"Back flat against the pad, lift with the abs rather than the hip flexors. Slow on the way down — no swinging."}
+        cue:"Use controlled knee or leg raises with a gentle pelvic curl. Bend the knees if needed; avoid swinging or arching the back."}
     ]
   },
   wed: {
@@ -1037,7 +1036,7 @@ const PLAN = {
      doses a week is what moves the shoulder-to-waist line. */
   thu: {
     title:"Glutes +\nShoulders", sub:"glute day two · lateral raises to finish · ~45 min",
-    note:"<b>How hard:</b> one or two clean reps left on the big lifts; last set of the curl, abduction and lateral raise to failure.",
+    note:"<b>How hard:</b> one or two clean reps left on every lift; stop before form breaks down.",
     warmup:[
       "Bike or incline walk × 3 min",
       "90/90 hip switches × 1 min",
@@ -1050,14 +1049,12 @@ const PLAN = {
     main:[
       {id:"hip-thrust", name:"Hip thrust", detail:"barbell · weight per side", sets:3, reps:"8–12", ex:{sets:3,reps:"8–12"},
         cue:"Tuck the pelvis at the top, two-second squeeze. Same range as Monday so the two days build on each other."},
-      {id:"b-stance-rdl", name:"B-stance RDL", detail:"dumbbells · weight per hand", sets:3, reps:"8–12 / leg", ex:{sets:2,reps:"8–12 / leg"},
-        cue:"Back foot is a kickstand — about 80% of the weight stays in the front leg. Hinge until the front hamstring stretches, then drive that hip forward and squeeze."},
       {id:"leg-press", name:"Leg press", detail:"single-leg · feet high on the platform", sets:3, reps:"10–15 / leg",
         cue:"Foot high on the platform and let the knee come toward the chest — the deep hip bend is the glute part. Stop before the lower back peels off the pad. Single-leg every time, so the numbers compare."},
       {id:"seated-ham-curl", name:"Seated hamstring curl", detail:"machine · 3 seconds on the way back", sets:2, reps:"10–15",
-        cue:"Heels all the way under, three seconds back. Last set to failure."},
+        cue:"Heels all the way under, three seconds back. Finish with one or two clean reps left."},
       {id:"hip-abduction", name:"Hip abduction machine", detail:"lean forward 30–45°", sets:2, reps:"15–20", ex:{sets:2,reps:"15–20"},
-        cue:"Lean forward, push the knees out, pause a beat at the end. Last set to failure."},
+        cue:"Lean forward, push the knees out, pause a beat at the end. Finish with one or two clean reps left."},
       {id:"lateral-raise", name:"DB lateral raise", detail:"second dose this week", sets:2, reps:"15–20",
         cue:"Lighter than Tuesday is fine. Lead with the elbow, stop at shoulder height, no shrug."}
     ],
@@ -1107,7 +1104,7 @@ NAMES["mat-pilates"] = "Mat Pilates";
 NAMES["light-walk"] = "Light walk";
 /* left the plan in the Oct 29 revamp — names stay so their history and charts still show */
 for (const [id, n] of Object.entries({
-  "sumo-squat":"Sumo DB squat", "reverse-lunge":"Reverse lunge", "walking-lunge":"Walking lunge",
+  "b-stance-rdl":"B-stance RDL", "sumo-squat":"Sumo DB squat", "reverse-lunge":"Reverse lunge", "walking-lunge":"Walking lunge",
   "single-leg-hip-thrust":"Single-leg hip thrust", "bulgarian-split-squat":"Bulgarian split squat",
   "cable-kickback":"Cable kickback", "banded-kickback":"Banded kickback", "frog-pump":"Frog pump",
   "banded-lateral-walk":"Banded lateral walk", "curtsy-lunge":"Curtsy lunge", "back-extension":"45° back extension",
@@ -1334,6 +1331,27 @@ function migratePlanRevamp(){
   if (db.planOv && !Object.keys(db.planOv).length) delete db.planOv;
   if (db.routine && !Object.keys(db.routine).length) delete db.routine;
   db.migrPlanOct = 1;
+}
+function migratePlanNov(){
+  // Update only the agreed prescription fields; preserve logs and unrelated edits.
+  db.planNovBackup = db.planNovBackup || JSON.parse(JSON.stringify({
+    planOv: db.planOv || {}, routine: db.routine || {}
+  }));
+  const changes = {mon: {"step-up":2, "seated-ham-curl":2}, tue: {"tue-press":2}};
+  for (const [day, changesForDay] of Object.entries(changes)){
+    const overrides = db.planOv && db.planOv[day];
+    if (!overrides) continue;
+    for (const [id, sets] of Object.entries(changesForDay)){
+      if (overrides[id]) overrides[id].sets = sets;
+    }
+  }
+  const press = db.planOv && db.planOv.tue && db.planOv.tue["tue-press"];
+  if (press && press.id === "db-shoulder-press") delete press.id;
+  if (db.planOv && db.planOv.thu) delete db.planOv.thu["b-stance-rdl"];
+  const thursday = db.routine && db.routine.thu;
+  if (thursday && thursday.add) thursday.add = thursday.add.filter(x=>x.id !== "b-stance-rdl");
+  if (thursday && thursday.order) thursday.order = thursday.order.filter(x=>x !== "b-stance-rdl");
+  db.migrPlanNov = 1;
 }
 function resolveExId(name){
   const lower = name.toLowerCase();
@@ -3850,6 +3868,7 @@ $("#importFile").addEventListener("change", e=>{
       db.seen = db.seen || {};
       if (!db.migrAlias) migrateAliases();
       if (!db.migrPlanOct) migratePlanRevamp();
+      if (!db.migrPlanNov) migratePlanNov();
       save(); buildDatalist(); render();
     } catch(err){ alert("That file doesn't look like a Keiko export."); }
   };
@@ -4009,6 +4028,7 @@ document.addEventListener("contextmenu", e=>{ if (drag || e.target.closest("[dat
 
 if (!db.migrAlias){ migrateAliases(); save(); }
 if (!db.migrPlanOct){ migratePlanRevamp(); save(); }
+if (!db.migrPlanNov){ migratePlanNov(); save(); }
 buildDatalist();
 render();
 
@@ -4033,3 +4053,4 @@ if ("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
